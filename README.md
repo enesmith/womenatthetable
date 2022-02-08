@@ -1,4 +1,10 @@
 # womenatthetable
 Spring 2022 project with Women@TheTable
 
-Elisabeth Nesmith
+
+- Amrita Acharya
+- Dianne Caravela
+- Eunice Kim
+- Elisabeth Nesmith
+- Emma Kornberg
+
