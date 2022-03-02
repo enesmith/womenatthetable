@@ -32,6 +32,7 @@ journal: water
 type: article
 status: submit
 bibliography: mybibfile.bib
+csl: ../resources/chicago-author-date.csl
 appendix: appendix.tex
 simplesummary: |
   A Simple summary goes here.
