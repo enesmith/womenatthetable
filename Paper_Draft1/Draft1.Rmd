@@ -3,7 +3,6 @@ title: Full title of the paper (Capitalized)
 author:
   - name: Amrita Acharya
     affil: 1,2,\ddagger,*
-    orcid: 0000-0003-3293-2315
   - name: Dianne Caravela
     affil: 2, \dagger, \ddagger
   - name: Eunice Kim
@@ -15,8 +14,10 @@ author:
 affiliation:
   - num: 1
     address: |
+      Statistical and Data Sciences
       Smith College
-    email: aarcharya@smith.edu
+      Northampton, MA 01063
+    email: aacharya@smith.edu
   - num: 2
     address: |
       Smith College
@@ -124,30 +125,36 @@ Numbered lists can be added as follows:
 2. Second item
 3. Third item
 
+See Figure \ref{fig:random-plot} below.
+
+```{r random-plot, fig.cap="This is a plot.", fig.align='center'}
+plot(rnorm(10), rnorm(10))
+```
+
+
+
 The text continues here.
 
-All figures and tables should be cited in the main text as Figure 1, Table 1, etc.
+All figures and tables should be cited in the main text as Figure \ref{fig:mdpi-logo}, Table 1, etc.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=3 cm]{logo-mdpi}
-\caption{This is a figure, Schemes follow the same formatting. If there are multiple panels, they should be listed as: (\textbf{a}) Description of what is contained in the first panel. (\textbf{b}) Description of what is contained in the second panel. Figures should be placed in the main text near to the first time they are cited. A caption on a single line should be centered.}
-\end{figure}
+```{r mdpi-logo, fig.align='center', echo=FALSE, fig.cap="This is a figure, Schemes follow the same formatting. If there are multiple panels, they should be listed as: (\\textbf{a}) Description of what is contained in the first panel. (\\textbf{b}) Description of what is contained in the second panel. Figures should be placed in the main text near to the first time they are cited. A caption on a single line should be centered."}
+
+# Ben's tutorial on how to include figures with R code chunk
+knitr::include_graphics("logo-mdpi.pdf")
+```
 
 
-\begin{table}[H]
-\caption{This is a table caption. Tables should be placed in the main text near to the first time they are cited.}
-\centering
-%% \tablesize{} %% You can specify the fontsize here, e.g.  \tablesize{\footnotesize}. If commented out \small will be used.
-\begin{tabular}{ccc}
-\toprule
-\textbf{Title 1}	& \textbf{Title 2}	& \textbf{Title 3}\\
-\midrule
-entry 1		& data			& data\\
-entry 2		& data			& data\\
-\bottomrule
-\end{tabular}
-\end{table}
+Please see Table \ref{tab:mytable}.
+
+```{r}
+x <- tibble::tribble(~`Title 1`, ~`Title 2`, ~`Title 3`,
+"entry 1", "data", "data",
+"entry 2", "data", "data"
+)
+
+knitr::kable(x, caption = "This is a table caption. Tables should be placed in the main text near to the first time they are cited.\\label{tab:mytable}")
+```
+
 
 This is an example of an equation:
 
@@ -178,6 +185,9 @@ Authors should discuss the results and how they can be interpreted in perspectiv
 
 This section is not mandatory, but can be added to the manuscript if the discussion is unusually long or complex.
 
-# Patents
+# Bibliography
+Citing book reference @gujer_systems_2008
+Citing reference with parentheses [@leutnant_stormwater_2016]
 
-This section is not mandatory, but may be added if there are patents resulting from the work reported in this manuscript.
+@hardin2015data advocated for more data science in statistics curricula.
+
