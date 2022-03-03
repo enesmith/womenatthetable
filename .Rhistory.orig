@@ -82,4 +82,21 @@ install.packages rticles
 install.packages 'rticles'
 install.packages('rticles')
 library(rticles)
-
+=======
+pr_fetch()
+usethis::pr_init()
+usethis()
+usethis::pr_init("<emmakornberg>")
+git merge --strategy-option ours
+install.packages("rticles")
+library(rticles)
+library(rticles)
+library(rticles)
+install.packages(rticles)
+install.packages("articles")
+install.packages("rticles")
+install.packages("rticles")
+install.packages("rticles")
+options("install.lock"=FALSE)
+install.packages("rticles")
+>>>>>>> bb3bf845ca946f76bf8ee6d1d80c674489cadcc0
