@@ -187,8 +187,24 @@ Authors should discuss the results and how they can be interpreted in perspectiv
 This section is not mandatory, but can be added to the manuscript if the discussion is unusually long or complex.
 
 # Bibliography
-Citing book reference @gujer_systems_2008
-Citing reference with parentheses [@leutnant_stormwater_2016]
 
-@hardin2015data advocated for more data science in statistics curricula.
+@angwin2016machine
+@hardin2015data
+@larson2016we
+@gebru2021datasheets
+@noauthor_aif360datasetscompasdataset_2018
+@noauthor_propublicacompas-analysis_2022
+@larson2016technical
+@bao2021s
+@barocas2017fairness
+@knight2020automated
+@kypraiou_what_2021
+@equivant_response_2018
+@baumer2017texts
+@james2013introduction
+@noauthor_ai_nodate
+@noauthor_trusted-ai_360
+@vartan_1st_2022
+@noauthor_womenthetable_nodate
+
 
