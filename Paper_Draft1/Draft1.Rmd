@@ -189,22 +189,20 @@ This section is not mandatory, but can be added to the manuscript if the discuss
 # Bibliography
 
 @angwin2016machine
-@hardin2015data
-@larson2016we
-@gebru2021datasheets
-@noauthor_aif360datasetscompasdataset_2018
-@noauthor_propublicacompas-analysis_2022
-@larson2016technical
 @bao2021s
 @barocas2017fairness
+@baumer2017texts
+@equivant_response_2018
+@gebru2021datasheets
+@hardin2015data
+@james2013introduction
 @knight2020automated
 @kypraiou_what_2021
-@equivant_response_2018
-@baumer2017texts
-@james2013introduction
+@larson2016technical
+@larson2016we
 @noauthor_ai_nodate
+@noauthor_aif360datasetscompasdataset_2018
 @noauthor_trusted-ai_360
-@vartan_1st_2022
+@noauthor_propublicacompas-analysis_2022
 @noauthor_womenthetable_nodate
-
-
+@vartan_1st_2022
