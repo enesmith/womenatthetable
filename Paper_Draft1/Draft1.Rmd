@@ -67,25 +67,26 @@ Our project builds on Women at the Table’s various debiasing algorithms to con
 
 The data we are using for this project is the COMPAS General Recidivism Risk Scores dataset from ProPublica used in their original analysis [@larson_propublicacompas-analysiscompas-scores-two-yearscsv_2022]. The COMPAS dataset we are using is from AI Fairness 360 (AIF360) toolkit [@noauthor_trusted-ai_360] which does the same initial preprocessing as ProPublica. The raw data has 6,167 rows and each row represents an arrest charge for a defendant. ProPublica’s COMPAS data includes the defendant's age, race, sex, what they were charged with, and whether or not the defendant ultimately recidivated within a two-year period after their arrest. For the purposes of our project, which endeavors to evaluate the differing effects of the COMPAS algorithm on white defendants and Black defendants, we have filtered the data to only include individuals whose race is listed as Caucasian or African-American. Our data therefore has 5,723 rows (Figure \ref{fig:table snip}), with the below distributions of race (Figure \ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two year recidivism rate (Figures \ref{fig:recid plot} & \ref{fig:recid race plot}).
 
-```{r table snip, fig.align='center', fig.cap= 'This table is a snippet the data set we will be using.'}
-knitr::include_graphics("/Users/elisabethnesmith/womenatthetable/images/table_snippet.png")
+```{r table snip, echo = FALSE, fig.align='center', fig.cap= 'This table is a snippet the data set we will be using.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/table_snippet.png")
 ```
 
-```{r race plot, fig.align='center', fig.cap= 'This plot shows the distribution of defendant races.'}
-knitr::include_graphics("/Users/elisabethnesmith/womenatthetable/images/race_bar_plot.png")
+```{r race plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant races.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/race_bar_plot.png")
 ```
 
-```{r age plot, fig.align='center', fig.cap= 'This plot shows the distribution of defendant ages by race.'}
-knitr::include_graphics("/Users/elisabethnesmith/womenatthetable/images/race_age_plot.png")
+```{r age plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant ages by race.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/race_age_plot.png")
 ```
 
-```{r recid plot, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes.'}
-knitr::include_graphics("/Users/elisabethnesmith/womenatthetable/images/recid_bar_plot.png")
+```{r recid plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/recid_bar_plot.png")
 ```
 
-```{r recid race plot, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes by race.'}
-knitr::include_graphics("/Users/elisabethnesmith/womenatthetable/images/race_recid_plot.png")
+```{r recid race plot,echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes by race.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/race_recid_plot.png")
 ```
+
 
 # Results
 
@@ -108,13 +109,6 @@ Numbered lists can be added as follows:
 1. First item
 2. Second item
 3. Third item
-
-See Figure \ref{fig:random-plot} below.
-
-```{r random-plot, fig.cap="This is a plot.", fig.align='center'}
-plot(rnorm(10), rnorm(10))
-```
-
 
 
 The text continues here.
