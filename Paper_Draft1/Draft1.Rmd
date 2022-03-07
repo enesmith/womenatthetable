@@ -1,5 +1,5 @@
 ---
-title: It’s COMPAS-licated Can We Find Fairness in the COMPAS Risk Assessment Algorithm?
+title: It’s COMPAS-licated -- Can We Find Fairness in the COMPAS Risk Assessment Algorithm?
 author:
   - name: Amrita Acharya
     affil: 1, 2
