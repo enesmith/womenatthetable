@@ -1,32 +1,33 @@
 ---
-title: Full title of the paper (Capitalized)
+title: It’s COMPAS-licated -- Can We Find Fairness in the COMPAS Risk Assessment Algorithm?
 author:
   - name: Amrita Acharya
-    affil: 1,2,\ddagger,*
+    affil: 1, 2
   - name: Dianne Caravela
-    affil: 2, \dagger, \ddagger
+    affil: 1, 3
   - name: Eunice Kim
-    affil: 3
+    affil: 1, 4
   - name: Emma Kornberg
-    affil: 4
+    affil: 1, 5
   - name: Elisabeth Nesmith
-    affil: 5
+    affil: 1, 6
 affiliation:
   - num: 1
     address: |
       Statistical and Data Sciences
       Smith College
       Northampton, MA 01063
-    email: aacharya@smith.edu
   - num: 2
-    address: |
-      Smith College
+    email: aacharya@smith.edu
+  - num: 3
     email: dcaravela@smith.edu
-# firstnote to eighthnote
-firstnote: |
-  Current address: Updated affiliation
-secondnote: |
-  These authors contributed equally to this work.
+  - num: 4
+    email: ekim89@smith.edu
+  - num: 5
+    email: ekornberg@smith.edu
+  - num: 6
+    email: enesmith@smith.edu
+
 correspondence: |
   leutnant@fh-muenster.de; Tel.: +XX-000-00-0000.
 journal: water
@@ -35,56 +36,9 @@ status: submit
 bibliography: mybibfile.bib
 csl: ../resources/chicago-author-date.csl
 appendix: appendix.tex
-simplesummary: |
-  A Simple summary goes here.
+
 abstract: |
-  A single paragraph of about 200 words maximum. For research articles, 
-  abstracts should give a pertinent overview of the work. We strongly encourage
-  authors to use the following style of structured abstracts, but without 
-  headings: 1) Background: Place the question addressed in a broad context and
-  highlight the purpose of the study; 2) Methods: Describe briefly the main
-  methods or treatments applied; 3) Results: Summarize the article's main 
-  findings; and 4) Conclusion: Indicate the main conclusions or interpretations. 
-  The abstract should be an objective representation of the article, it must not 
-  contain results which are not presented and substantiated in the main text and 
-  should not exaggerate the main conclusions.
-keywords: |
-  keyword 1; keyword 2; keyword 3 (list three to ten pertinent keywords specific 
-  to the article, yet reasonably common within the subject discipline.).
-acknowledgement: |
-  All sources of funding of the study should be disclosed. Please clearly 
-  indicate grants that you have received in support of your research work. 
-  Clearly state if you received funds for covering the costs to publish in open 
-  access.
-authorcontributions: |
-  For research articles with several authors, a short paragraph specifying their 
-  individual contributions must be provided. The following statements should be 
-  used ``X.X. and Y.Y. conceive and designed the experiments; X.X. performed the 
-  experiments; X.X. and Y.Y. analyzed the data; W.W. contributed 
-  reagents/materials/analysis tools; Y.Y. wrote the paper.'' Authorship must be
-  limited to those who have contributed substantially to the work reported.
-conflictsofinterest: |
-  Declare conflicts of interest or state 'The authors declare no conflict of 
-  interest.' Authors must identify and declare any personal circumstances or
-  interest that may be perceived as inappropriately influencing the
-  representation or interpretation of reported research results. Any role of the
-  funding sponsors in the design of the study; in the collection, analyses or 
-  interpretation of data in the writing of the manuscript, or in the decision to 
-  publish the results must be declared in this section. If there is no role, 
-  please state 'The founding sponsors had no role in the design of the study; 
-  in the collection, analyses, or interpretation of data; in the writing of the 
-  manuscript, an in the decision to publish the results'.
-sampleavailability: |
-  Samples of the compounds ...... are available from the authors.
-abbreviations:
-  - short: MDPI
-    long: Multidisciplinary Digital Publishing Institute
-  - short: DOAJ
-    long: Directory of open access journals
-  - short: TLA
-    long: Three letter acronym
-  - short: LD 
-    long: linear dichroism
+  A variety of disciplines use risk assessment instruments to help humans make data-driven decisions. Northpointe, a software company, created a risk assessment instrument known as the Correctional Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS uses various behavioral and psychological metrics related to recidivism to assist justice systems in assessing a defendant’s potential recidivism risk. ProPublica published an article which concludes that the biases in the criminal justice system are reflected in the COMPAS software. Using a human rights framework adopted from the organization Women at the Table, we use various debiasing algorithms to analyze both sides of the argument between Northpointe and ProPublica and determine the level and extent of racial bias in the COMPAS algorithm. 
 output: rticles::mdpi_article
 ---
 
@@ -98,11 +52,36 @@ using the most recent .cls, .tex and .bst files
 
 # Introduction
 
-A recidivist is a term to describe criminals who re-offend. 
+Women @ the Table, the sponsor organization for this project, is “a growing, global gender equality & democracy CSO based in Geneva, Switzerland focused on advancing feminist systems change by using the prism of technology, innovation & AI exercising leverage points in technology, the economy, sustainability & democratic governance” [@noauthor_womenthetable_nodate]. We have been asked to collaborate on their AI & Equality [@noauthor_ai_nodate] initiative, tasked with debiasing the COMPAS algorithm [@noauthor_aif360datasetscompasdataset_2018] and producing a corresponding data story that will be added to their library. 
+
+The Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) algorithm was created by the private for-profit company Northpointe, also known by its parent company Equivant [@equivant_faq_nodate], to predict defendants’ risk of recidivism. It generates a score that classifies defendants’ risk of recidivism as either low, medium, or high [@angwin2016machine]. Jurisdictions across the United States use the COMPAS risk assessment instrument. In 2016, ProPublica published a piece that analyzed the methods and algorithms used by Northpointe to uncover racial biases in defendants’ scores [@angwin2016machine]. Their analysis looks at the distribution of decile COMPAS scores among Black and white defendants. ProPublica concludes, after using a statistical parity metric on false positives or false negatives, that the algorithm is racially biased [@larson2016we]. Northpointe denies the allegations of racial bias, conducting their own analyses based on different statistical parity metrics [@equivant_response_2018]. Since then, the two parties have had several exchanges, maintaining their original arguments. Currently, the two parties’ disagreement focuses on pretrial Risk Assessment Instruments (RAIs). ProPublica maintains that there are biases in the outcome values, protected attributes, and covariates during Northpointe’s data processing phase. ProPublica accounts for these biases in their analyses, and Northepointe’s response, highlights how ProPublica did not account for base rates of recidivism in their analysis, which are important to understand initial percentages without the presence of other information. 
+
+Our project builds on Women at the Table’s various debiasing algorithms to conduct our own analyses on the COMPAS dataset. Based on this analysis, we employ a human rights framework to contribute to the ongoing ProPublica and Northpointe debate and investigate whether or to what extent there is racial bias in the COMPAS algorithm. With a solid understanding of the two sides, we aim to pinpoint the shortcomings of both arguments and correct them in our analyses. We will use various machine learning algorithms including logistic regression, cross validation, and lasso and ridge techniques to choose models. We will summarize our results using the JupyterNotebook framework from Women at the Table, to be used by members of the organization to teach in a workshop setting. We hope that our findings will highlight the importance of checking statistical analyses using varied methods and contribute to the ongoing discussion of the effects of machine biases in the justice system.
 
 # Data
 
-The data we are using for this project is the Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) Recidivism Risk Scores dataset from AIF360. Northpointe created COMPAS as a commercial risk assessment tool to score defendants on their potential recidivism and violent recidivism risk. The COMPAS dataset we are using has 6,167 rows and each row represents an arrest charge for a defendant. We also have data on the defendant's age, race, sex, what they were charged with, and whether or not the defendant ultimately recidivated. 
+The data we are using for this project is the COMPAS General Recidivism Risk Scores dataset from ProPublica used in their original analysis [@larson_propublicacompas-analysiscompas-scores-two-yearscsv_2022]. The COMPAS dataset we are using is from AI Fairness 360 (AIF360) toolkit [@noauthor_trusted-ai_360] which does the same initial preprocessing as ProPublica. The raw data has 6,167 rows and each row represents an arrest charge for a defendant. ProPublica’s COMPAS data includes the defendant's age, race, sex, what they were charged with, and whether or not the defendant ultimately recidivated within a two-year period after their arrest. For the purposes of our project, which endeavors to evaluate the differing effects of the COMPAS algorithm on white defendants and Black defendants, we have filtered the data to only include individuals whose race is listed as Caucasian or African-American. Our data therefore has 5,723 rows (Figure \ref{fig:table snip}), with the below distributions of race (Figure \ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two year recidivism rate (Figures \ref{fig:recid plot} & \ref{fig:recid race plot}).
+
+```{r table snip, echo = FALSE, fig.align='center', fig.cap= 'This table is a snippet the data set we will be using.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/table_snippet.png")
+```
+
+```{r race plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant races.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/race_bar_plot.png")
+```
+
+```{r age plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant ages by race.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/race_age_plot.png")
+```
+
+```{r recid plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/recid_bar_plot.png")
+```
+
+```{r recid race plot,echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes by race.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/race_recid_plot.png")
+```
+
 
 # Results
 
@@ -125,13 +104,6 @@ Numbered lists can be added as follows:
 1. First item
 2. Second item
 3. Third item
-
-See Figure \ref{fig:random-plot} below.
-
-```{r random-plot, fig.cap="This is a plot.", fig.align='center'}
-plot(rnorm(10), rnorm(10))
-```
-
 
 
 The text continues here.
@@ -187,8 +159,4 @@ Authors should discuss the results and how they can be interpreted in perspectiv
 This section is not mandatory, but can be added to the manuscript if the discussion is unusually long or complex.
 
 # Bibliography
-Citing book reference @gujer_systems_2008
-Citing reference with parentheses [@leutnant_stormwater_2016]
-
-@hardin2015data advocated for more data science in statistics curricula.
 
