@@ -269,12 +269,18 @@ plt.title('Distribution of Age by Race')
 ```
 
 ```{python}
-# recividism by race
+# recidivism by race
 by_sex = sns.countplot(x="race", hue="two_year_recid", data=df_viz, palette=workshop_palette)
 
 plt.title('Two Year Recidivism by Race')
 plt.show()
 ```
+
+```{python}
+# table of recidivism by race
+pd.crosstab(index = df_viz["race"], columns = df_viz["two_year_recid"])
+```
+
 
 # Baseline Metrics
 
@@ -442,16 +448,16 @@ test_BLD = BinaryLabelDataset(favorable_label='0',
 ```
 
 ```{python}
-meta = MetaFairClassifier(tau=0.8, sensitive_attr='race', type='fdr', seed=1234567)
-
-meta.fit(train_BLD)
-y_pred_META = meta.predict(test_BLD)
-y_pred_META = y_pred_META.labels.flatten()
+# meta = MetaFairClassifier(tau=0.8, sensitive_attr='race', type='fdr', seed=1234567)
+# 
+# meta.fit(train_BLD)
+# y_pred_META = meta.predict(test_BLD)
+# y_pred_META = y_pred_META.labels.flatten()
 ```
 
 ```{python}
-acc_AD = accuracy_score(y_test, y_pred_META)
-print(f'[ Meta-Classification] The test accuracy of the algorithm is: {acc_AD: .2%}')
+# acc_AD = accuracy_score(y_test, y_pred_META)
+# print(f'[ Meta-Classification] The test accuracy of the algorithm is: {acc_AD: .2%}')
 ```
 
 # Post-Processing
