@@ -335,6 +335,19 @@ The ideal value of this metric is 0. Fairness for this metric is between -0.1 an
 stat_par_diff = statistical_parity_difference(y_test, prot_attr='race', pos_label = 0)
 
 print(f'[Baseline] The statistical parity difference is {stat_par_diff: .2}')
+
+disp_impact_ratio = disparate_impact_ratio(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The disparate impact ratio is {disp_impact_ratio: .2}')
+# disparate impact ratio without y_pred attribute was 0.77
+
+avg_odds_error = average_odds_error(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The average odds error is {avg_odds_error: .2}')
+
+avg_odds_diff = average_odds_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The average odds difference is {avg_odds_diff: .2}')
 ```
 
 ### Generalized entropy error 
@@ -359,6 +372,18 @@ Fairness for this metric is between -0.1 and 0.1
 eq_opp_diff = equal_opportunity_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
 
 print(f'[Baseline] The equal opportunity difference is {eq_opp_diff: .2}')
+
+#bt_grp_gen_entr_error = between_group_generalized_entropy_error(y_test, y_pred, alpha=1, pos_label = 0)
+
+#print(f'[Baseline] The between group generalized entropy error is {bt_grp_gen_entr_error: .2}')
+
+#gen_entr_index = generalized_entropy_index(x_test, alpha=0, pos_label = 0)
+
+#print(f'[Baseline] The generalized entropy index is {gen_entr_index: .2}')
+
+#consistency_score = consistency_score(x_test, y_test, n_neighbors=5, pos_label = 0)
+
+#print(f'[Baseline] The consistency score is {consistency_score: .2}')
 ```
 
 ```{python}
