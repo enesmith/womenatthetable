@@ -1,0 +1,162 @@
+---
+title: It’s COMPAS-licated -- Can We Find Fairness in the COMPAS Risk Assessment Algorithm?
+author:
+  - name: Amrita Acharya
+    affil: 1, 2
+  - name: Dianne Caravela
+    affil: 1, 3
+  - name: Eunice Kim
+    affil: 1, 4
+  - name: Emma Kornberg
+    affil: 1, 5
+  - name: Elisabeth Nesmith
+    affil: 1, 6
+affiliation:
+  - num: 1
+    address: |
+      Statistical and Data Sciences
+      Smith College
+      Northampton, MA 01063
+  - num: 2
+    email: aacharya@smith.edu
+  - num: 3
+    email: dcaravela@smith.edu
+  - num: 4
+    email: ekim89@smith.edu
+  - num: 5
+    email: ekornberg@smith.edu
+  - num: 6
+    email: enesmith@smith.edu
+
+correspondence: |
+  leutnant@fh-muenster.de; Tel.: +XX-000-00-0000.
+journal: water
+type: article
+status: submit
+bibliography: mybibfile.bib
+csl: ../resources/chicago-author-date.csl
+appendix: appendix.tex
+
+abstract: |
+  A variety of disciplines use risk assessment instruments to help humans make data-driven decisions. Northpointe, a software company, created a risk assessment instrument known as the Correctional Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS uses various behavioral and psychological metrics related to recidivism to assist justice systems in assessing a defendant’s potential recidivism risk. ProPublica published an article which concludes that the biases in the criminal justice system are reflected in the COMPAS software. Using a human rights framework adopted from the organization Women at the Table, we use various debiasing algorithms to analyze both sides of the argument between Northpointe and ProPublica and determine the level and extent of racial bias in the COMPAS algorithm. 
+output: rticles::mdpi_article
+---
+
+# Version
+
+This Rmd-skeleton uses the mdpi Latex template published 2019/02. 
+However, the official template gets more frequently updated than the 'rticles'
+package. Therefore, please make sure prior to paper submission, that you're 
+using the most recent .cls, .tex and .bst files 
+(available [here](http://www.mdpi.com/authors/latex)).
+
+# Introduction
+
+Women @ the Table, the sponsor organization for this project, is “a growing, global gender equality & democracy CSO based in Geneva, Switzerland focused on advancing feminist systems change by using the prism of technology, innovation & AI exercising leverage points in technology, the economy, sustainability & democratic governance” [@noauthor_womenthetable_nodate]. We have been asked to collaborate on their AI & Equality [@noauthor_ai_nodate] initiative, tasked with debiasing the COMPAS algorithm [@noauthor_aif360datasetscompasdataset_2018] and producing a corresponding data story that will be added to their library. 
+
+The Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) algorithm was created by the private for-profit company Northpointe, also known by its parent company Equivant [@equivant_faq_nodate], to predict defendants’ risk of recidivism. It generates a score that classifies defendants’ risk of recidivism as either low, medium, or high [@angwin2016machine]. Jurisdictions across the United States use the COMPAS risk assessment instrument. In 2016, ProPublica published a piece that analyzed the methods and algorithms used by Northpointe to uncover racial biases in defendants’ scores [@angwin2016machine]. Their analysis looks at the distribution of decile COMPAS scores among Black and white defendants. ProPublica concludes, after using a statistical parity metric on false positives or false negatives, that the algorithm is racially biased [@larson2016we]. Northpointe denies the allegations of racial bias, conducting their own analyses based on different statistical parity metrics [@equivant_response_2018]. Since then, the two parties have had several exchanges, maintaining their original arguments. Currently, the two parties’ disagreement focuses on pretrial Risk Assessment Instruments (RAIs). ProPublica maintains that there are biases in the outcome values, protected attributes, and covariates during Northpointe’s data processing phase. ProPublica accounts for these biases in their analyses, and Northepointe’s response, highlights how ProPublica did not account for base rates of recidivism in their analysis, which are important to understand initial percentages without the presence of other information. 
+
+Our project builds on Women at the Table’s various debiasing algorithms to conduct our own analyses on the COMPAS dataset. Based on this analysis, we employ a human rights framework to contribute to the ongoing ProPublica and Northpointe debate and investigate whether or to what extent there is racial bias in the COMPAS algorithm. With a solid understanding of the two sides, we aim to pinpoint the shortcomings of both arguments and correct them in our analyses. We will use various machine learning algorithms including logistic regression, cross validation, and lasso and ridge techniques to choose models. We will summarize our results using the JupyterNotebook framework from Women at the Table, to be used by members of the organization to teach in a workshop setting. We hope that our findings will highlight the importance of checking statistical analyses using varied methods and contribute to the ongoing discussion of the effects of machine biases in the justice system.
+
+# Data
+
+The data we are using for this project is the COMPAS General Recidivism Risk Scores dataset from ProPublica used in their original analysis [@larson_propublicacompas-analysiscompas-scores-two-yearscsv_2022]. The COMPAS dataset we are using is from AI Fairness 360 (AIF360) toolkit [@noauthor_trusted-ai_360] which does the same initial preprocessing as ProPublica. The raw data has 6,167 rows and each row represents an arrest charge for a defendant. ProPublica’s COMPAS data includes the defendant's age, race, sex, what they were charged with, and whether or not the defendant ultimately recidivated within a two-year period after their arrest. For the purposes of our project, which endeavors to evaluate the differing effects of the COMPAS algorithm on white defendants and Black defendants, we have filtered the data to only include individuals whose race is listed as Caucasian or African-American. Our data therefore has 5,723 rows (Figure \ref{fig:table snip}), with the below distributions of race (Figure \ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two year recidivism rate (Figures \ref{fig:recid plot} & \ref{fig:recid race plot}).
+
+```{r table snip, echo = FALSE, fig.align='center', fig.cap= 'This table is a snippet the data set we will be using.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/table_snippet.png")
+```
+
+```{r race plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant races.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/race_bar_plot.png")
+```
+
+```{r age plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant ages by race.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/race_age_plot.png")
+```
+
+```{r recid plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/recid_bar_plot.png")
+```
+
+```{r recid race plot,echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes by race.', out.width= "400px", out.height= "200px"}
+knitr::include_graphics("../images/race_recid_plot.png")
+```
+
+
+# Results
+
+This section may be divided by subheadings. It should provide a concise and precise description of the experimental results, their interpretation as well as the experimental conclusions that can be drawn.
+
+## Subsection Heading Here
+
+Subsection text here.
+
+### Subsubsection Heading Here
+
+Bulleted lists look like this:
+
+* First bullet
+* Second bullet
+* Third bullet
+
+Numbered lists can be added as follows:
+
+1. First item
+2. Second item
+3. Third item
+
+
+The text continues here.
+
+All figures and tables should be cited in the main text as Figure \ref{fig:mdpi-logo}, Table 1, etc.
+
+```{r mdpi-logo, fig.align='center', echo=FALSE, fig.cap="This is a figure, Schemes follow the same formatting. If there are multiple panels, they should be listed as: (\\textbf{a}) Description of what is contained in the first panel. (\\textbf{b}) Description of what is contained in the second panel. Figures should be placed in the main text near to the first time they are cited. A caption on a single line should be centered."}
+
+# Ben's tutorial on how to include figures with R code chunk
+knitr::include_graphics("logo-mdpi.pdf")
+```
+
+
+Please see Table \ref{tab:mytable}.
+
+```{r}
+x <- tibble::tribble(~`Title 1`, ~`Title 2`, ~`Title 3`,
+"entry 1", "data", "data",
+"entry 2", "data", "data"
+)
+
+knitr::kable(x, caption = "This is a table caption. Tables should be placed in the main text near to the first time they are cited.\\label{tab:mytable}")
+```
+
+
+This is an example of an equation:
+
+\begin{equation}
+\mathbb{S}
+\end{equation}
+<!-- If the documentclass option "submit" is chosen, please insert a blank line before and after any math environment (equation and eqnarray environments). This ensures correct linenumbering. The blank line should be removed when the documentclass option is changed to "accept" because the text following an equation should not be a new paragraph. -->
+
+<!-- Please punctuate equations as regular text. Theorem-type environments (including propositions, lemmas, corollaries etc.) can be formatted as follows: -->
+Example of a theorem:
+\begin{Theorem}
+Example text of a theorem.
+\end{Theorem}
+
+The text continues here. Proofs must be formatted as follows:
+
+Example of a proof:
+\begin{proof}[Proof of Theorem 1]
+Text of the proof. Note that the phrase `of Theorem 1' is optional if it is clear which theorem is being referred to.
+\end{proof}
+The text continues here.
+
+# Discussion
+
+Authors should discuss the results and how they can be interpreted in perspective of previous studies and of the working hypotheses. The findings and their implications should be discussed in the broadest context possible. Future research directions may also be highlighted.
+
+# Conclusion
+
+This section is not mandatory, but can be added to the manuscript if the discussion is unusually long or complex.
+
+# Bibliography
+
