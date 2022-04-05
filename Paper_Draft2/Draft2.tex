@@ -153,11 +153,63 @@ extent of racial bias in the COMPAS algorithm.}
 %\setcounter{secnumdepth}{4}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Pandoc syntax highlighting
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 
 % tightlist command for lists without linebreak
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
+% From pandoc table feature
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 
 
 
@@ -165,6 +217,15 @@ extent of racial bias in the COMPAS algorithm.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\hypertarget{version}{%
+\section{Version}\label{version}}
+
+This Rmd-skeleton uses the mdpi Latex template published 2019/02.
+However, the official template gets more frequently updated than the
+`rticles' package. Therefore, please make sure prior to paper
+submission, that you're using the most recent .cls, .tex and .bst files
+(available \href{http://www.mdpi.com/authors/latex}{here}).
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -288,6 +349,128 @@ recidivism rate (Figures \ref{fig:recid plot} \&
 
 \caption{This plot shows the distribution of two year recidivism outcomes by race.}\label{fig:recid race plot}
 \end{figure}
+
+\hypertarget{results}{%
+\section{Results}\label{results}}
+
+This section may be divided by subheadings. It should provide a concise
+and precise description of the experimental results, their
+interpretation as well as the experimental conclusions that can be
+drawn.
+
+\hypertarget{subsection-heading-here}{%
+\subsection{Subsection Heading Here}\label{subsection-heading-here}}
+
+Subsection text here.
+
+\hypertarget{subsubsection-heading-here}{%
+\subsubsection{Subsubsection Heading
+Here}\label{subsubsection-heading-here}}
+
+Bulleted lists look like this:
+
+\begin{itemize}
+\tightlist
+\item
+  First bullet
+\item
+  Second bullet
+\item
+  Third bullet
+\end{itemize}
+
+Numbered lists can be added as follows:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  First item
+\item
+  Second item
+\item
+  Third item
+\end{enumerate}
+
+The text continues here.
+
+All figures and tables should be cited in the main text as Figure
+\ref{fig:mdpi-logo}, Table 1, etc.
+
+\begin{figure}
+
+{\centering \includegraphics{logo-mdpi} 
+
+}
+
+\caption{This is a figure, Schemes follow the same formatting. If there are multiple panels, they should be listed as: (\textbf{a}) Description of what is contained in the first panel. (\textbf{b}) Description of what is contained in the second panel. Figures should be placed in the main text near to the first time they are cited. A caption on a single line should be centered.}\label{fig:mdpi-logo}
+\end{figure}
+
+Please see Table \ref{tab:mytable}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x }\OtherTok{\textless{}{-}}\NormalTok{ tibble}\SpecialCharTok{::}\FunctionTok{tribble}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\StringTok{\textasciigrave{}}\AttributeTok{Title 1}\StringTok{\textasciigrave{}}\NormalTok{, }\SpecialCharTok{\textasciitilde{}}\StringTok{\textasciigrave{}}\AttributeTok{Title 2}\StringTok{\textasciigrave{}}\NormalTok{, }\SpecialCharTok{\textasciitilde{}}\StringTok{\textasciigrave{}}\AttributeTok{Title 3}\StringTok{\textasciigrave{}}\NormalTok{,}
+\StringTok{"entry 1"}\NormalTok{, }\StringTok{"data"}\NormalTok{, }\StringTok{"data"}\NormalTok{,}
+\StringTok{"entry 2"}\NormalTok{, }\StringTok{"data"}\NormalTok{, }\StringTok{"data"}
+\NormalTok{)}
+
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(x, }\AttributeTok{caption =} \StringTok{"This is a table caption. Tables should be placed in the main text near to the first time they are cited.}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{label\{tab:mytable\}"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lll@{}}
+\caption{This is a table caption. Tables should be placed in the main
+text near to the first time they are
+cited.\label{tab:mytable}}\tabularnewline
+\toprule
+Title 1 & Title 2 & Title 3\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Title 1 & Title 2 & Title 3\tabularnewline
+\midrule
+\endhead
+entry 1 & data & data\tabularnewline
+entry 2 & data & data\tabularnewline
+\bottomrule
+\end{longtable}
+
+This is an example of an equation:
+
+\begin{equation}
+\mathbb{S}
+\end{equation}
+
+Example of a theorem:
+
+\begin{Theorem}
+Example text of a theorem.
+\end{Theorem}
+
+The text continues here. Proofs must be formatted as follows:
+
+Example of a proof:
+
+\begin{proof}[Proof of Theorem 1]
+Text of the proof. Note that the phrase `of Theorem 1' is optional if it is clear which theorem is being referred to.
+\end{proof}
+
+The text continues here.
+
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
+
+Authors should discuss the results and how they can be interpreted in
+perspective of previous studies and of the working hypotheses. The
+findings and their implications should be discussed in the broadest
+context possible. Future research directions may also be highlighted.
+
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
+
+This section is not mandatory, but can be added to the manuscript if the
+discussion is unusually long or complex.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %% optional
