@@ -36,8 +36,9 @@ from aif360.algorithms.inprocessing import MetaFairClassifier
 from aif360.sklearn.preprocessing import ReweighingMeta
 from aif360.sklearn.inprocessing import AdversarialDebiasing
 from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
-from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_error, generalized_fpr, average_odds_difference
-from aif360.sklearn.metrics import generalized_fnr, difference, statistical_parity_difference, equal_opportunity_difference, generalized_entropy_error
+
+from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_difference, statistical_parity_difference, equal_opportunity_difference
+from aif360.sklearn.metrics import generalized_entropy_error, generalized_entropy_index, theil_index, consistency_score
 
 from IPython.display import Markdown, display
 ```
@@ -334,6 +335,8 @@ In the Black population, the model correctly identifies 70% of people who recidi
 
 ## Group Fairness Metrics
 
+**add brief definition of group fairness**
+
 ### Statistical Parity Difference 
 
 Computed as the difference of the rate of favorable outcomes (in this case, did not recidivate) received by the unprivileged group to the privileged group. It essentially equalizes the outcomes across the protected and non-protected groups.
@@ -346,6 +349,12 @@ print(f'[Baseline] The statistical parity difference is {stat_par_diff: .2}')
 ```
 
 ### Disparate Impact Ratio
+
+This metric is the ratio of how often the favorable outcome occurs in one group versus the other. In the case of recidivism, this is the ratio of how many white defendants are predicted to not recidivate compared to how many black defendants are predicted to not recidivate. 
+
+A value of 1 means that the ratio is exactly 1:1. Less than 1 means the privileged group (white defendants) benefits, while a value greater than 1 means the unprivileged group (Black defendants) benefits. According to AI Fairness 360, a ratio between .8 to 1.25 is considered fair.
+
+The disparate impact ratio is calculated with the formula: 
 
 ```{python group fairnesss disparate impact ratio}
 disp_impact_ratio = disparate_impact_ratio(y_test, y_pred, prot_attr='race', pos_label = 0)
@@ -386,10 +395,6 @@ Fairness is indicated by lower scores, higher scores are problematic.
 gen_entr_error = generalized_entropy_error(y_test, y_pred, alpha=1, pos_label = 0)
 
 print(f'[Baseline] The generalized entropy error is {gen_entr_error: .2}')
-
-#bt_grp_gen_entr_error = between_group_generalized_entropy_error(y_test, y_pred, alpha=1, pos_label = 0)
-
-#print(f'[Baseline] The between group generalized entropy error is {bt_grp_gen_entr_error: .2}')
 
 #gen_entr_index = generalized_entropy_index(x_test, alpha=0, pos_label = 0)
 
