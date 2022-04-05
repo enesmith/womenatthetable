@@ -304,7 +304,7 @@ X_test = pd.DataFrame(data_preproc.transform(X_test), index=X_test.index)
 pd.get_dummies(X_new).head()
 ```
 
-```{python baseline set up, warning = FALSE, message = FALSE}
+```{python baseline set up, warning = FALSE, message = FALSE, echo = FALSE}
 from aif360.sklearn.preprocessing import ReweighingMeta, Reweighing
 from sklearn.metrics import accuracy_score, confusion_matrix, plot_roc_curve, recall_score, precision_score
 
@@ -398,7 +398,7 @@ plt.show()
 ```
 
 # Pre-Processing Approach
-```{python pre-processing set up, warning = FALSE, message = FALSE}
+```{python pre-processing set up, warning = FALSE, message = FALSE, echo = FALSE}
 lr = LogisticRegressionCV(solver='lbfgs')
 rew = ReweighingMeta(estimator=lr, reweigher=Reweighing('race'))
 rew.fit(X_train, y_train)
@@ -493,7 +493,7 @@ test_BLD = BinaryLabelDataset(favorable_label='0',
 
 # Post-Processing
 
-```{python post-processing calibrated equal odds set up, warning = FALSE, message = FALSE}
+```{python post-processing calibrated equal odds set up, warning = FALSE, message = FALSE, echo = FALSE}
 from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
 
 pp = CalibratedEqualizedOdds('race', cost_constraint='fnr', random_state=1234567)
