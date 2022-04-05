@@ -1,0 +1,539 @@
+---
+title: "COMPAS Race Analysis"
+author: "Elisabeth Nesmith"
+date: "3/8/2022"
+output: html_document
+---
+
+# Set Up
+
+```{r py setup, include=FALSE}
+library(reticulate)
+```
+
+```{python import, include= FALSE}
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+from sklearn.compose import make_column_transformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegressionCV
+
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.preprocessing import OneHotEncoder
+
+from aif360.datasets import CompasDataset
+from aif360.datasets import BinaryLabelDataset
+from aif360.sklearn.datasets import fetch_compas
+from aif360.algorithms.inprocessing import MetaFairClassifier
+
+from aif360.sklearn.preprocessing import ReweighingMeta
+from aif360.sklearn.inprocessing import AdversarialDebiasing
+from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
+from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_error, generalized_fpr, average_odds_difference
+from aif360.sklearn.metrics import generalized_fnr, difference, statistical_parity_difference, equal_opportunity_difference, generalized_entropy_error
+
+from IPython.display import Markdown, display
+```
+
+# Data
+
+```{python fetch compas}
+## load in data
+## In machine learning tasks, specifically with supervised learning, you have features and labels. 
+## The features are the descriptive attributes (they are defined as X), and the label (y) is what you're attempting to predict or forecast
+
+X, y = fetch_compas()
+print(f'There are {X.shape[0]} entries and {X.shape[1]} features')
+X.head()
+```
+
+## Filter/configure race
+
+```{python filter race}
+## because our analysis is mainly focusing on how the algorithm treats white and Black people differently, we are
+## dropping the rows of data where race != Caucasian or African American
+X_new = X[(X.race == "Caucasian") | (X.race == "African-American")]
+print(f'There are {X_new.shape[0]} entries and {X_new.shape[1]} features')
+X_new.head()
+```
+
+```{python drop other races}
+## drop unused race categories
+# list of categories to be removed
+X_new["race"] = X_new["race"].cat.remove_unused_categories()
+```
+
+```{python configure races}
+y_new = y[(y.index.get_level_values(2) == "Caucasian") | (y.index.get_level_values(2) == "African-American")]
+y_new.head()
+```
+
+```{python initial confusion matrix}
+# Function for visualising the confusion matrix and other statistics
+# https://github.com/DTrimarchi10/confusion_matrix/blob/master/cf_matrix.py
+
+def make_confusion_matrix(cf_matrix, model):
+  group_names = ["True Negative","False Positive","False Negative","True Positive"]
+  group_counts = ["{0:0.0f}".format(value) for value in
+                  cf_matrix.flatten()]
+  group_percentages = ["{0:.2%}".format(value) for value in
+                      cf_matrix.flatten()/np.sum(cf_matrix)]
+
+  group_labels = ["{}\n".format(value) for value in group_names]
+  group_counts = ["{0:0.0f}\n".format(value) for value in cf_matrix.flatten()]
+  group_percentages = ["{0:.2%}".format(value) for value in cf_matrix.flatten()/np.sum(cf_matrix)]
+
+  box_labels = [f"{v1}{v2}{v3}".strip() for v1, v2, v3 in zip(group_labels,group_counts,group_percentages)]
+  box_labels = np.asarray(box_labels).reshape(cf_matrix.shape[0],cf_matrix.shape[1])
+
+
+  # add more statistics
+  accuracy  = np.trace(cf_matrix) / float(np.sum(cf_matrix))
+  precision = cf_matrix[1,1] / sum(cf_matrix[:,1])
+  recall    = cf_matrix[1,1] / sum(cf_matrix[1,:])
+  f1_score  = 2*precision*recall / (precision + recall)
+  stats_text = "\n\nAccuracy={:0.3f}\nPrecision={:0.3f}\nRecall={:0.3f}\nF1 Score={:0.3f}".format(
+      accuracy,precision,recall,f1_score)
+
+
+  categories=["Survived", "Recidivated"]
+  sns.heatmap(cf_matrix,annot=box_labels,fmt="",cmap='Purples',xticklabels=categories,yticklabels=categories)
+
+  plt.ylabel('True label')
+  plt.xlabel('Predicted label' + stats_text)
+  plt.title(f"Confusion matrix and statistics for the {model} model");
+
+## defining function for displaying metrics of training and test data by sex 
+def metrics_per_group(y_test, y_pred):
+	# y true per group
+	y_test_white = y_test.loc[y_test.index.get_level_values(2) == 1]
+	y_test_black = y_test.loc[y_test.index.get_level_values(2) == 0]
+
+	# y_pred per group
+	y_pred_white = y_pred[y_test.index.get_level_values(2) == 1]
+	y_pred_black = y_pred[y_test.index.get_level_values(2) == 0]
+
+	# metrics
+	scores = []
+	scores.append(accuracy_score(y_test, y_pred))
+	scores.append(recall_score(y_test, y_pred))
+	scores.append(precision_score(y_test, y_pred))
+
+	scores.append(accuracy_score(y_test_black, y_pred_black))
+	scores.append(recall_score(y_test_black, y_pred_black))
+	scores.append(precision_score(y_test_black, y_pred_black))
+
+	scores.append(accuracy_score(y_test_white, y_pred_white))
+	scores.append(recall_score(y_test_white, y_pred_white))
+	scores.append(precision_score(y_test_white, y_pred_white))
+
+	attribute = ["all"]*3 + ["black"] *3 + ["white"] *3
+	metric = ["accuracy", "recall", "precision"] * 3
+	  
+	# dictionary of lists 
+	dict = {'race': attribute, 'metrics': metric, 'score': scores} 
+	    
+	df = pd.DataFrame(dict)
+
+	sns.barplot(x = "metrics", y = "score", hue = "race", data = df, palette = ['#dfcd1a', '#9d0677', '#236c48'])
+	plt.title("Performance metrics by groups")
+ 
+
+def plot_fair_metrics(fair_metrics_mitigated, model): 
+  cols = ['statistical_parity_difference', 'equal_opportunity_difference', 'generalized_entropy']
+  obj_fairness = [[0,0,1]]
+
+  # row for objectives    
+  fair_metrics = pd.DataFrame(data=obj_fairness, index=['objective'], columns=cols)
+      
+  # row for baseline model
+  fair_metrics.loc['Baseline Model'] = [stat_par_diff, eq_opp_diff, gen_entr_error]
+
+  # row for mitigated bias
+  fair_metrics.loc[model] = fair_metrics_mitigated
+
+
+  metrics_len = len(cols)
+
+
+  fig, ax = plt.subplots(figsize=(20,4), ncols=metrics_len, nrows=1)
+
+  plt.subplots_adjust(
+      left    =  0.125, 
+      bottom  =  0.1, 
+      right   =  0.9, 
+      top     =  0.9, 
+      wspace  =  .5, 
+      hspace  =  1.1
+  )
+
+  y_title_margin = 1.2
+
+  plt.suptitle("Fairness metrics", y = 1.09, fontsize=20)
+  sns.set(style="dark")
+
+  cols = fair_metrics.columns.values
+  obj = fair_metrics.loc['objective']
+  size_rect = [0.2,0.2,0.2,0.4,0.25]
+  rect = [-0.1,-0.1,-0.1,0.8,0]
+  bottom = [-1,-1,-1,0,0]
+  top = [1,1,1,2,1]
+  bound = [[-0.1,0.1],[-0.1,0.1],[-0.1,0.1],[0.8,1.2],[0,0.25]]
+
+  for i in range(0,metrics_len):
+      plt.subplot(1, metrics_len, i+1)
+      ax = sns.barplot(x=fair_metrics.index[1:len(fair_metrics)], y=fair_metrics.iloc[1:len(fair_metrics)][cols[i]])
+      
+      for j in range(0,len(fair_metrics)-1):
+          a, val = ax.patches[j], fair_metrics.iloc[j+1][cols[i]]
+          marg = -0.2 if val < 0 else 0.1
+          ax.text(a.get_x()+a.get_width()/5, a.get_y()+a.get_height()+marg, round(val, 3), fontsize=15,color='black')
+
+      plt.ylim(bottom[i], top[i])
+      plt.setp(ax.patches, linewidth=0)
+      ax.add_patch(patches.Rectangle((-5,rect[i]), 10, size_rect[i], alpha=0.3, facecolor="green", linewidth=1, linestyle='solid'))
+      plt.axhline(obj[i], color='black', alpha=0.3)
+      plt.title(cols[i])
+      ax.set_ylabel('')    
+      ax.set_xlabel('')
+```
+
+```{python new race index}
+X_new.index = pd.MultiIndex.from_arrays(X_new.index.codes, names=X_new.index.names)
+y_new.index = pd.MultiIndex.from_arrays(y_new.index.codes, names=y_new.index.names)
+# 0 is African American, 2 is Caucasian
+```
+
+```{python re-index race}
+# set caucasian equal to 1 instead of 2
+X_new = X_new.rename(index={2: 1}, level='race')
+X_new
+```
+
+```{python target class}
+# set target class to 0/1 
+y_new = pd.Series(y_new.factorize(sort=True)[0], index=y_new.index)
+# set caucasian equal to 1 instead of 2
+y_new = y_new.rename(index={2: 1}, level='race')
+```
+
+```{python y new race}
+y_new
+```
+
+
+# Exploratory Data Analysis
+```{python exploratory visualization set up}
+df_viz = X_new.copy()
+df_viz['race'] = X_new['race'].replace({1.0: 'Caucasian', 0.0: 'African-American'})
+df_viz['two_year_recid'] = y_new.replace({1:'Recidivated', 0: 'Survived'})
+df_viz.index = df_viz.index.droplevel('race')
+
+purple = '#9d0677'
+green = '#30875c'
+workshop_palette = [purple, green]
+df_viz.head()
+```
+
+```{python exploratory recidivism bar plot}
+# barplot of recividism
+sns.countplot(x='two_year_recid', data=df_viz, palette=workshop_palette)
+plt.title('Two Year Recidivism Rate')
+```
+
+```{python exploratory race bar plot}
+# barplot of race
+sns.countplot(y="race", data=df_viz, palette=["#30875c"])
+plt.title('Race Distribution (White and Black individuals only)')
+```
+
+```{python exploratory age by race plot}
+# age distribution by race
+ax = sns.kdeplot(x="age", hue="race", data=df_viz);
+kdeline = ax.lines[0]
+mean_fem = df_viz.groupby('race').age.median()[0]
+xs = kdeline.get_xdata()
+ys = kdeline.get_ydata()
+height_fem = np.interp(mean_fem, xs, ys)
+ax.vlines(mean_fem, 0, height_fem, color=purple, ls=':')
+
+mean_m = df_viz.groupby('race').age.median()[1]
+height_m = np.interp(mean_m, xs, ys)
+ax.vlines(mean_m, 0, height_m, color=green, ls=':')
+
+
+print(df_viz.groupby('race').age.median())
+
+plt.title('Distribution of Age by Race')
+```
+
+```{python exploratory recidivism by race plot}
+# recidivism by race
+by_sex = sns.countplot(x="race", hue="two_year_recid", data=df_viz, palette=workshop_palette)
+
+plt.title('Two Year Recidivism by Race')
+plt.show()
+```
+
+```{python exploratory recidivism by race table}
+# table of recidivism by race
+pd.crosstab(index = df_viz["race"], columns = df_viz["two_year_recid"])
+```
+
+
+# Baseline Metrics
+
+```{python baseline train and test}
+X_train, X_test, y_train, y_test = train_test_split(X_new, y_new, random_state=1234567)
+
+# one-hoy encode the categorical features
+data_preproc = make_column_transformer(
+        (OneHotEncoder(sparse=False, handle_unknown='ignore'), X_train.dtypes == 'category'))
+
+X_train = pd.DataFrame(data_preproc.fit_transform(X_train), index=X_train.index)
+X_test = pd.DataFrame(data_preproc.transform(X_test), index=X_test.index)
+
+# to save the information for the column names
+pd.get_dummies(X_new).head()
+```
+
+```{python baseline set up, warning = FALSE, message = FALSE}
+from aif360.sklearn.preprocessing import ReweighingMeta, Reweighing
+from sklearn.metrics import accuracy_score, confusion_matrix, plot_roc_curve, recall_score, precision_score
+
+
+lr = LogisticRegressionCV(solver='lbfgs')
+reg = lr.fit(X_train, y_train)
+y_pred = reg.predict(X_test)
+
+acc_base = accuracy_score(y_test, y_pred)
+print(f'[Baseline] The test accuracy of the algorithm is: {acc_base: .2%}')
+```
+
+```{python baseline confusion matrix}
+##Look at 2nd column of matrix for precision 
+##2nd row of matrix for recall 
+cf_matrix = confusion_matrix(y_test, y_pred)
+make_confusion_matrix(cf_matrix, "[Baseline]")
+plt.show()
+```
+
+```{python baseline metrics per group}
+metrics_per_group(y_test, y_pred)
+plt.show()
+```
+
+In the Black population, the model correctly identifies 70% of people who recidivated. In the white population, the model correctly identifies 20% of people who recidivated.
+
+### (Group fairness) Statistical Parity Difference 
+
+Computed as the difference of the rate of favorable outcomes (in this case, did not recidivate) received by the unprivileged group to the privileged group. It essentially equalizes the outcomes across the protected and non-protected groups.
+The ideal value of this metric is 0. Fairness for this metric is between -0.1 and 0.1. A negative value means there is higher benefit for the privileged group (in this case, white defendants).
+
+```{python group fairnesss statistical parity difference}
+stat_par_diff = statistical_parity_difference(y_test, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The statistical parity difference is {stat_par_diff: .2}')
+
+disp_impact_ratio = disparate_impact_ratio(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The disparate impact ratio is {disp_impact_ratio: .2}')
+# disparate impact ratio without y_pred attribute was 0.77
+
+avg_odds_error = average_odds_error(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The average odds error is {avg_odds_error: .2}')
+
+avg_odds_diff = average_odds_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The average odds difference is {avg_odds_diff: .2}')
+```
+
+### Generalized entropy error 
+
+Generalized entropy index is proposed as a unified individual and group fairness measure. It measures the inequality in benefit allocation for individuals.
+A value of 0 implies perfect fairness.
+Fairness is indicated by lower scores, higher scores are problematic.
+
+```{python group fairnesss generalized entropy error}
+gen_entr_error = generalized_entropy_error(y_test, y_pred, alpha=1, pos_label = 0)
+
+print(f'[Baseline] The generalized entropy error is {gen_entr_error: .2}')
+```
+
+### (Group fairness) Equal Opportunity Difference 
+
+This metric is computed as the difference of true positive rates between the unprivileged and the privileged groups. The true positive rate is the ratio of true positives to the total number of actual positives for a given group.
+The ideal value is 0. A value of < 0 implies higher benefit for the privileged group and a value > 0 implies higher benefit for the unprivileged group.
+Fairness for this metric is between -0.1 and 0.1
+
+```{python group fairnesss equal opportunity difference}
+eq_opp_diff = equal_opportunity_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The equal opportunity difference is {eq_opp_diff: .2}')
+
+#bt_grp_gen_entr_error = between_group_generalized_entropy_error(y_test, y_pred, alpha=1, pos_label = 0)
+
+#print(f'[Baseline] The between group generalized entropy error is {bt_grp_gen_entr_error: .2}')
+
+#gen_entr_index = generalized_entropy_index(x_test, alpha=0, pos_label = 0)
+
+#print(f'[Baseline] The generalized entropy index is {gen_entr_index: .2}')
+
+#consistency_score = consistency_score(x_test, y_test, n_neighbors=5, pos_label = 0)
+
+#print(f'[Baseline] The consistency score is {consistency_score: .2}')
+```
+
+```{python group fairness metrics plot}
+plot_fair_metrics([0, 0, 0], '')
+plt.show()
+```
+
+# Pre-Processing Approach
+```{python pre-processing set up, warning = FALSE, message = FALSE}
+lr = LogisticRegressionCV(solver='lbfgs')
+rew = ReweighingMeta(estimator=lr, reweigher=Reweighing('race'))
+rew.fit(X_train, y_train)
+y_pred_REW = rew.predict(X_test)
+```
+
+```{python pre-processing accuracy score} 
+acc_REW = accuracy_score(y_test, y_pred_REW)
+print(f'[Reweighting] The test accuracy of the algorithm is: {acc_REW: .2%}')
+```
+
+```{python pre-processing confusion matrix}
+cf_matrix = confusion_matrix(y_test, y_pred_REW)
+make_confusion_matrix(cf_matrix, "[Reweighting]")
+plt.show()
+```
+
+```{python pre-processing metrics per group}
+metrics_per_group(y_test, y_pred_REW)
+plt.show()
+```
+
+```{python pre-processing statistical parity difference}
+stat_par_diff_RW = statistical_parity_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
+
+print(f'[Reweighting] The statistical parity difference is {stat_par_diff_RW: .2}')
+```
+
+This is a large improvement over our baseline model, which was -0.14. It still implies a slight benefit for white individuals, but it is in the range of -0.1 and 0.1.
+
+```{python pre-processing equal opportunity difference}
+eq_opp_diff_RW = equal_opportunity_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
+
+print(f'[Reweighting] The equal opportunity difference is {eq_opp_diff_RW: .2}')
+```
+
+This is also an improvement from the baseline, as it is now between -0.1 and 0.1. It also now implies a slight benefit for Black defendants.
+
+```{python pre-processing generalized entropy error}
+gen_entr_error_RW = generalized_entropy_error(y_test, y_pred_REW, alpha=1, pos_label = 0)
+
+print(f'[Reweighting] The generalized entropy error is {gen_entr_error_RW: .2}')
+```
+
+This is only a very slight improvement from 0.24 to 0.23.
+
+```{python pre-processing fairness metrics plot}
+plot_fair_metrics([stat_par_diff_RW, eq_opp_diff_RW, gen_entr_error_RW], 'Reweighting')
+plt.show()
+```
+
+# In-Processing
+
+```{python in-processing set up}
+df_train = X_train.copy()
+df_train["two_year_recid"] = y_train
+df_train.rename(columns={6:'race'}, inplace=True)
+df_train = df_train.reset_index(drop=True)
+
+df_test = X_test.copy()
+df_test["two_year_recid"] = y_test
+df_test = df_test.reset_index(drop=True)
+df_test.rename(columns={6:'race'}, inplace=True)
+```
+
+```{python in-processing training}
+train_BLD = BinaryLabelDataset(favorable_label='0',
+                                unfavorable_label='1',
+                                df=df_train,
+                                label_names=['two_year_recid'],
+                                protected_attribute_names=['race'])
+
+test_BLD = BinaryLabelDataset(favorable_label='0',
+                                unfavorable_label='1',
+                                df=df_test,
+                                label_names=['two_year_recid'],
+                                protected_attribute_names=['race'])
+```
+
+```{python in-processing meta}
+# meta = MetaFairClassifier(tau=0.8, sensitive_attr='race', type='fdr', seed=1234567)
+# 
+# meta.fit(train_BLD)
+# y_pred_META = meta.predict(test_BLD)
+# y_pred_META = y_pred_META.labels.flatten()
+```
+
+```{python in-processing accuracy score}
+# acc_AD = accuracy_score(y_test, y_pred_META)
+# print(f'[ Meta-Classification] The test accuracy of the algorithm is: {acc_AD: .2%}')
+```
+
+# Post-Processing
+
+```{python post-processing calibrated equal odds set up, warning = FALSE, message = FALSE}
+from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
+
+pp = CalibratedEqualizedOdds('race', cost_constraint='fnr', random_state=1234567)
+ceo = PostProcessingMeta(estimator=lr, postprocessor=pp, random_state=1234567)
+ceo.fit(X_train, y_train)
+y_pred_CEO = ceo.predict(X_test)
+y_proba_CEO = ceo.predict_proba(X_test)
+```
+
+```{python post-processing accuracy score}
+acc_CEO = accuracy_score(y_test, y_pred_CEO)
+print(f'[Calibrated Equalized Odds] The test accuracy of the algorithm is: {acc_CEO: .2%}')
+```
+
+```{python post-processing calibrated equal odds}
+cf_matrix = confusion_matrix(y_test, y_pred_CEO)
+make_confusion_matrix(cf_matrix, "[Calibrated Equalized Odds]")
+plt.show()
+```
+
+```{python post-processing stat parity difference}
+stat_par_diff_CEO = statistical_parity_difference(y_test, y_pred_CEO, prot_attr='race', pos_label = 0)
+
+print(f'[Calibrated Equalized Odds] The statistical parity difference is {stat_par_diff_CEO: .2}')
+```
+
+```{python post-processing equal opportunity diff}
+eq_opp_diff_CEO = equal_opportunity_difference(y_test, y_pred_CEO, prot_attr='race', pos_label = 0)
+
+print(f'[Calibrated Equalized Odds] The equal opportunity difference is {eq_opp_diff_CEO: .2}')
+```
+
+```{python post-processing generalized entropy error}
+gen_entr_error_CEO = generalized_entropy_error(y_test, y_pred_CEO, alpha=1, pos_label = 0)
+
+print(f'[Calibrated Equalized Odds] The generalized entropy error is {gen_entr_error_CEO: .2}')
+```
+
+```{python post-processing fairness metrics plot}
+plot_fair_metrics([stat_par_diff_CEO, eq_opp_diff_CEO, gen_entr_error_CEO], 'Calibrated Equalized Odds')
+plt.show()
+```
+
