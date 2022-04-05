@@ -1,5 +1,5 @@
 ---
-title: "COMPAS Race Analysis"
+title: "COMPAS Race Analysis and Fairness Metrics"
 author: "Elisabeth Nesmith"
 date: "3/8/2022"
 output: html_document
