@@ -1,6 +1,6 @@
 ---
-title: "COMPAS Race Analysis"
-author: "Elisabeth Nesmith"
+title: "Analyzing Fairness: Race, Recidivism, and the COMPAS Algorithm"
+author: "Elisabeth Nesmith, Eunice Kim, Emma Kornberg, Amrita Acharya, Dianne Caravela"
 date: "3/8/2022"
 output: html_document
 ---
@@ -39,6 +39,9 @@ from aif360.sklearn.inprocessing import AdversarialDebiasing
 from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
 from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_error, generalized_fpr, average_odds_difference
 from aif360.sklearn.metrics import generalized_fnr, difference, statistical_parity_difference, equal_opportunity_difference, generalized_entropy_error
+
+from aif360.algorithms.preprocessing import DisparateImpactRemover
+from BlackBoxAuditing.repairers.GeneralRepairer import Repairer
 
 from IPython.display import Markdown, display
 ```
@@ -449,6 +452,25 @@ This is only a very slight improvement from 0.24 to 0.23.
 ```{python pre-processing fairness metrics plot}
 plot_fair_metrics([stat_par_diff_RW, eq_opp_diff_RW, gen_entr_error_RW], 'Reweighting')
 plt.show()
+```
+
+```{python pre-processing disparate impact remover}
+#lr = LogisticRegressionCV(solver='lbfgs')
+#rew = ReweighingMeta(estimator=lr, reweigher=Reweighing('race'))
+#rew.fit(X_train, y_train)
+#y_pred_REW = rew.predict(X_test)
+
+diremover = DisparateImpactRemover(repair_level=1.0, sensitive_attribute="race")
+#diremover.fit(X_train, y_train)
+#y_pred_diremover = diremover.predict(X_test)
+
+diremover_rp = diremover.fit_transform(X_test)
+# AttributeError: 'DataFrame' object has no attribute 'features' (probem with .fit_transform function)
+# .fit_transform() angry because of X_test... 
+
+
+
+
 ```
 
 # In-Processing
