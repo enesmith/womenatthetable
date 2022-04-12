@@ -9,6 +9,7 @@ output: html_document
 
 ```{r py setup, include=FALSE}
 library(reticulate)
+use_condaenv("anaconda3")
 ```
 
 ```{python import, include= FALSE}
@@ -36,12 +37,11 @@ from aif360.algorithms.inprocessing import MetaFairClassifier
 from aif360.sklearn.preprocessing import ReweighingMeta
 from aif360.sklearn.inprocessing import AdversarialDebiasing
 from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
-
-from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_difference, statistical_parity_difference, equal_opportunity_difference
-from aif360.sklearn.metrics import generalized_entropy_error, generalized_entropy_index, theil_index, consistency_score
+from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_error, generalized_fpr, average_odds_difference
+from aif360.sklearn.metrics import generalized_fnr, difference, statistical_parity_difference, equal_opportunity_difference, generalized_entropy_error
 
 from aif360.algorithms.preprocessing import DisparateImpactRemover
-from BlackBoxAuditing.repairers.GeneralRepairer import Repairer
+#from BlackBoxAuditing.repairers.GeneralRepairer import Repairer
 
 from IPython.display import Markdown, display
 ```
@@ -308,7 +308,7 @@ X_test = pd.DataFrame(data_preproc.transform(X_test), index=X_test.index)
 pd.get_dummies(X_new).head()
 ```
 
-```{python baseline set up, include = FALSE}
+```{python baseline set up, warning = FALSE, message = FALSE}
 from aif360.sklearn.preprocessing import ReweighingMeta, Reweighing
 from sklearn.metrics import accuracy_score, confusion_matrix, plot_roc_curve, recall_score, precision_score
 
@@ -336,86 +336,29 @@ plt.show()
 
 In the Black population, the model correctly identifies 70% of people who recidivated. In the white population, the model correctly identifies 20% of people who recidivated.
 
-## Group Fairness Metrics
+### (Group fairness) Statistical Parity Difference 
 
-With group fairness metrics, different groups should receive similar treatments or outcomes.  In this case of recidivism and race, this means that Black defendants should have similar rates of predicted recidivism as white defendants.
-
-### Statistical Parity Difference 
-
-Statistical Parity difference is computed as the difference in the rate of favorable outcomes (in this case, did not recidivate) received by the unprivileged group to the privileged group. It essentially equalizes the outcomes across the privileged and non-privileged groups.
+Computed as the difference of the rate of favorable outcomes (in this case, did not recidivate) received by the unprivileged group to the privileged group. It essentially equalizes the outcomes across the protected and non-protected groups.
 The ideal value of this metric is 0. Fairness for this metric is between -0.1 and 0.1. A negative value means there is higher benefit for the privileged group (in this case, white defendants).
-
-$P(\hat{Y}=1|D=Unprivileged) - P(\hat{Y}=1|D=Privileged)$
 
 ```{python group fairnesss statistical parity difference}
 stat_par_diff = statistical_parity_difference(y_test, prot_attr='race', pos_label = 0)
 
 print(f'[Baseline] The statistical parity difference is {stat_par_diff: .2}')
-```
 
-Because the statistical parity difference is negative and not within -0.1 and 0.1, the algorithm unfairly benefits white defendants.
-
-### Disparate Impact Ratio
-
-This metric is the ratio of how often the favorable outcome occurs in one group versus the other. In the case of recidivism, this is the ratio of how many white defendants are predicted to not recidivate compared to how many black defendants are predicted to not recidivate. 
-
-A value of 1 means that the ratio is exactly 1:1. Less than 1 means the privileged group (white defendants) benefits, while a value greater than 1 means the unprivileged group (Black defendants) benefits. According to AI Fairness 360, a ratio between .8 to 1.25 is considered fair.
-
-The disparate impact ratio is calculated with the formula: 
-
-$\frac{P(\hat{Y}=1|D=Unprivileged)}{P(\hat{Y}=1|D=Privileged)}$ 
-
-where Y is the favorable outcome of a defendant's predicted two year recidivism and D is the race of the defendant. In our case, the favorable outcome is survived, or not recidivated, which is Y = 0. In terms of race, 0 = Black and 1 = White. So to calculate the disparate impact ratio on this data, the formula is: 
-
-$\frac{P(\hat{Y}=0|D=0)}{P(\hat{Y}=0|D=1)}$ 
-
-Say we have a data test set of 200 defendants, 125 Black and 75 white. Of the 125 Black defendants, 44% (55) were predicted to not recidivate. Of the 75 white defendants, 66% (50) were predicted to not recidivate.
-
-The disparate impact ratio would therefore be 
-
-$\frac{0.44}{0.66} = 0.667$
-
-Because this value is less than 1, it benefits white defendants. Additionally, because it is below 0.8, it is considered "unfair."
-
-```{python group fairnesss disparate impact ratio}
-disp_impact_ratio = disparate_impact_ratio(y_test, y_pred, prot_attr='race', priv_group = 1, pos_label = 0)
+disp_impact_ratio = disparate_impact_ratio(y_test, y_pred, prot_attr='race', pos_label = 0)
 
 print(f'[Baseline] The disparate impact ratio is {disp_impact_ratio: .2}')
-```
+# disparate impact ratio without y_pred attribute was 0.77
 
-Since the actual disparate impact ratio for our test data is 0.47 and below 0.8, the algorithm unfairly benefits white defendants i.e. disproportionately predicts them to not recidivate.
+avg_odds_error = average_odds_error(y_test, y_pred, prot_attr='race', pos_label = 0)
 
-### Average Odds Difference
+print(f'[Baseline] The average odds error is {avg_odds_error: .2}')
 
-This metric returns the average difference in false positive rate and true positive rate for the privileged and unprivileged groups. A value of 0 is considered fair, and a value below 0 implies benefit for the privileged group. Equality of odds is achieved in the case of recidivism when the proportion of people who were predicted to recidivate and did recidivate is equal (true positive rate) for both black and white defendants AND the proportion of people who were predicted to recidivate and did not recidivate (false positive rate) is equal for both black and white defendants. 
-
-$\frac{(FPR_{D = unprivileged} - FPR_{D = privileged}) + (TPR_{D = unprivileged} - TPR_{D = privileged})}{2}$
-
-```{python group fairnesss average odds difference}
 avg_odds_diff = average_odds_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
 
 print(f'[Baseline] The average odds difference is {avg_odds_diff: .2}')
 ```
-
-Since the average odds difference is below 0 by a substantial amount, white defendants are unfairly benefitted by the algorithm.
-
-### Equal Opportunity Difference 
-
-This metric is computed as the difference of true positive rates between the unprivileged and the privileged groups. The true positive rate is the ratio of true positives to the total number of actual positives for a given group.
-The ideal value is 0. A value of < 0 implies higher benefit for the privileged group and a value > 0 implies higher benefit for the unprivileged group.
-Fairness for this metric is between -0.1 and 0.1.
-
-$TPR_{D = Unprivileged} - TPR_{D = Privileged}$
-
-```{python group fairnesss equal opportunity difference}
-eq_opp_diff = equal_opportunity_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
-
-print(f'[Baseline] The equal opportunity difference is {eq_opp_diff: .2}')
-```
-
-Since the equal opportunity difference is below 0 and beyond -0.1, the algorithm unfairly benefits white defendants.
-
-## Individual Fairness Metrics
 
 ### Generalized entropy error 
 
@@ -427,6 +370,22 @@ Fairness is indicated by lower scores, higher scores are problematic.
 gen_entr_error = generalized_entropy_error(y_test, y_pred, alpha=1, pos_label = 0)
 
 print(f'[Baseline] The generalized entropy error is {gen_entr_error: .2}')
+```
+
+### (Group fairness) Equal Opportunity Difference 
+
+This metric is computed as the difference of true positive rates between the unprivileged and the privileged groups. The true positive rate is the ratio of true positives to the total number of actual positives for a given group.
+The ideal value is 0. A value of < 0 implies higher benefit for the privileged group and a value > 0 implies higher benefit for the unprivileged group.
+Fairness for this metric is between -0.1 and 0.1
+
+```{python group fairnesss equal opportunity difference}
+eq_opp_diff = equal_opportunity_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The equal opportunity difference is {eq_opp_diff: .2}')
+
+#bt_grp_gen_entr_error = between_group_generalized_entropy_error(y_test, y_pred, alpha=1, pos_label = 0)
+
+#print(f'[Baseline] The between group generalized entropy error is {bt_grp_gen_entr_error: .2}')
 
 #gen_entr_index = generalized_entropy_index(x_test, alpha=0, pos_label = 0)
 
@@ -443,7 +402,7 @@ plt.show()
 ```
 
 # Pre-Processing Approach
-```{python pre-processing set up, include = FALSE}
+```{python pre-processing set up, warning = FALSE, message = FALSE}
 lr = LogisticRegressionCV(solver='lbfgs')
 rew = ReweighingMeta(estimator=lr, reweigher=Reweighing('race'))
 rew.fit(X_train, y_train)
@@ -557,7 +516,7 @@ test_BLD = BinaryLabelDataset(favorable_label='0',
 
 # Post-Processing
 
-```{python post-processing calibrated equal odds set up, include = FALSE}
+```{python post-processing calibrated equal odds set up, warning = FALSE, message = FALSE}
 from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
 
 pp = CalibratedEqualizedOdds('race', cost_constraint='fnr', random_state=1234567)

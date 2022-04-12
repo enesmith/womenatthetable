@@ -478,7 +478,11 @@ test_BLD = BinaryLabelDataset(favorable_label='0',
                                 protected_attribute_names=['race'])
 ```
 
+<<<<<<< HEAD
+```{python}
+=======
 ```{python in-processing meta}
+>>>>>>> upstream/main
 # meta = MetaFairClassifier(tau=0.8, sensitive_attr='race', type='fdr', seed=1234567)
 # 
 # meta.fit(train_BLD)
@@ -486,7 +490,11 @@ test_BLD = BinaryLabelDataset(favorable_label='0',
 # y_pred_META = y_pred_META.labels.flatten()
 ```
 
+<<<<<<< HEAD
+```{python}
+=======
 ```{python in-processing accuracy score}
+>>>>>>> upstream/main
 # acc_AD = accuracy_score(y_test, y_pred_META)
 # print(f'[ Meta-Classification] The test accuracy of the algorithm is: {acc_AD: .2%}')
 ```
