@@ -9,6 +9,7 @@ output: html_document
 
 ```{r py setup, include=FALSE}
 library(reticulate)
+use_condaenv("anaconda3")
 ```
 
 ```{python import, include= FALSE}
