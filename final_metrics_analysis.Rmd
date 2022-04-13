@@ -9,6 +9,7 @@ output: html_document
 
 ```{r py setup, include=FALSE}
 library(reticulate)
+use_condaenv("base")
 ```
 
 ```{python import, include= FALSE}
@@ -41,7 +42,7 @@ from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_differen
 from aif360.sklearn.metrics import generalized_entropy_error, generalized_entropy_index, theil_index, consistency_score
 
 from aif360.algorithms.preprocessing import DisparateImpactRemover
-from BlackBoxAuditing.repairers.GeneralRepairer import Repairer
+#from BlackBoxAuditing.repairers.GeneralRepairer import Repairer
 
 from IPython.display import Markdown, display
 ```
