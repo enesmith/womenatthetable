@@ -39,8 +39,8 @@ from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessin
 
 from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_difference, statistical_parity_difference, equal_opportunity_difference
 
-from aif360.algorithms.preprocessing import DisparateImpactRemover
-from BlackBoxAuditing.repairers.GeneralRepairer import Repairer
+# from aif360.algorithms.preprocessing import DisparateImpactRemover
+# from BlackBoxAuditing.repairers.GeneralRepairer import Repairer
 
 from IPython.display import Markdown, display
 ```
@@ -184,10 +184,10 @@ def plot_fair_metrics(fair_metrics_mitigated, model):
 
   cols = fair_metrics.columns.values
   obj = fair_metrics.loc['objective']
-  size_rect = [0.2,0.2,0.2,0.4,0.25]
-  rect = [-0.1,-0.1,-0.1,0.8,0]
-  bottom = [-1,-1,-1,0,0]
-  top = [1,1,1,2,1]
+  size_rect = [0.2,0.2,0.2,0.4]
+  rect = [-0.1,-0.1,-0.1,0.8]
+  bottom = [-1,-1,-1,0]
+  top = [1,1,1,2]
   bound = [[-0.1,0.1],[-0.1,0.1],[-0.1,0.1],[0.8,1.25]]
 
   for i in range(0,metrics_len):
@@ -414,6 +414,8 @@ print(f'[Baseline] The equal opportunity difference is {eq_opp_diff: .2}')
 
 Since the equal opportunity difference is below 0 and beyond -0.1, the algorithm unfairly benefits white defendants.
 
+### Plot Fairness Metrics (Baseline)
+
 ```{python group fairness metrics plot}
 plot_fair_metrics([0, 0, 0, 0], '')
 plt.show()
@@ -485,6 +487,8 @@ print(f'[Reweighting] The disparate impact ratio is {disp_impact_ratio_RW: .2}')
 
 The reweighting approach also improves the disparate impact ratio, bringing the value almost to 1, which conveys absolute fairness.
 
+### Plot Fairness Metrics (Reweighting)
+
 ```{python pre-processing fairness metrics plot}
 plot_fair_metrics([stat_par_diff_RW, eq_opp_diff_RW, avg_odds_diff_RW, disp_impact_ratio_RW], 'Reweighting')
 plt.show()
@@ -503,10 +507,6 @@ plt.show()
 # diremover_rp = diremover.fit_transform(X_test)
 # AttributeError: 'DataFrame' object has no attribute 'features' (probem with .fit_transform function)
 # .fit_transform() angry because of X_test... 
-
-
-
-
 ```
 
 # In-Processing
@@ -573,11 +573,15 @@ make_confusion_matrix(cf_matrix, "[Calibrated Equalized Odds]")
 plt.show()
 ```
 
+### Statistical Parity Difference
+
 ```{python post-processing stat parity difference}
 stat_par_diff_CEO = statistical_parity_difference(y_test, y_pred_CEO, prot_attr='race', pos_label = 0)
 
 print(f'[Calibrated Equalized Odds] The statistical parity difference is {stat_par_diff_CEO: .2}')
 ```
+
+### Equal Opportunity Difference
 
 ```{python post-processing equal opportunity diff}
 eq_opp_diff_CEO = equal_opportunity_difference(y_test, y_pred_CEO, prot_attr='race', pos_label = 0)
@@ -585,14 +589,26 @@ eq_opp_diff_CEO = equal_opportunity_difference(y_test, y_pred_CEO, prot_attr='ra
 print(f'[Calibrated Equalized Odds] The equal opportunity difference is {eq_opp_diff_CEO: .2}')
 ```
 
-```{python post-processing generalized entropy error}
-gen_entr_error_CEO = generalized_entropy_error(y_test, y_pred_CEO, alpha=1, pos_label = 0)
+### Average Odds Difference
 
-print(f'[Calibrated Equalized Odds] The generalized entropy error is {gen_entr_error_CEO: .2}')
+```{python post-processing average odds difference}
+avg_odds_diff_CEO = average_odds_difference(y_test, y_pred_CEO, prot_attr='race', pos_label = 0)
+
+print(f'[Calibrated Equalized Odds] The average odds difference is {avg_odds_diff_CEO: .2}')
 ```
 
+### Disparate Impact Ratio
+
+```{python post_processing disparate impact ratio}
+disp_impact_ratio_CEO = disparate_impact_ratio(y_test, y_pred_CEO, prot_attr='race', priv_group = 1, pos_label = 0)
+
+print(f'[Calibrated Equalized Odds] The disparate impact ratio is {disp_impact_ratio_CEO: .2}')
+```
+
+### Plot Fairness Metrics (Calibrated Equalized Odds)
+
 ```{python post-processing fairness metrics plot}
-plot_fair_metrics([stat_par_diff_CEO, eq_opp_diff_CEO, gen_entr_error_CEO], 'Calibrated Equalized Odds')
+plot_fair_metrics([stat_par_diff_CEO, eq_opp_diff_CEO, avg_odds_diff_CEO, disp_impact_ratio_CEO], 'Calibrated Equalized Odds')
 plt.show()
 ```
 
