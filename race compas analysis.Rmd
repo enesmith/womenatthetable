@@ -9,10 +9,14 @@ output: html_document
 
 ```{r py setup, include=FALSE}
 library(reticulate)
+use_condaenv("base")
+#if (grepl("dcaravela", Sys.getenv("HOME"))) {
+ # use_condaenv("base")
+#}
 ```
 
 ```{python import, include= FALSE}
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
 import pandas as pd
@@ -39,7 +43,7 @@ from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessin
 from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_error, generalized_fpr, average_odds_difference
 from aif360.sklearn.metrics import generalized_fnr, difference, statistical_parity_difference, equal_opportunity_difference, generalized_entropy_error
 
-from IPython.display import Markdown, display
+#from IPython.display import Markdown, display
 ```
 
 # Data
