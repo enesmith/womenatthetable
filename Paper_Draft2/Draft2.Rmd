@@ -54,26 +54,40 @@ Our project builds on Women at the Table’s various de-biasing algorithms used 
 
 # Data
 
-The data we are using for this project is the COMPAS General Recidivism Risk Scores data set from the AI Fairness 360 (AIF360) toolkit [@aif360-oct-2018], which does the same initial pre-processing as ProPublica. The raw data has 6,167 rows and each row represents an arrest charge for a defendant. AIF360’s COMPAS data includes the defendant's age, race, sex, what they were charged with, and whether or not the defendant ultimately recidivated within a two-year period after their arrest. For the purposes of our project, which endeavors to evaluate the differing effects of the COMPAS algorithm on white defendants versus Black defendants, we have filtered the data to only include individuals whose race is listed as Caucasian or African-American. Our data therefore has 5,723 rows (Figure \ref{fig:table snip}), with the below distributions of race (Figure \ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two year recidivism rate (Figures \ref{fig:recid plot} & \ref{fig:recid race plot}).
+The data we are using for this project is the COMPAS General Recidivism Risk Scores data set from the AI Fairness 360 (AIF360) toolkit [@aif360-oct-2018], which does the same initial pre-processing as ProPublica. The raw data has 6,167 rows and each row represents an arrest charge for a defendant. AIF360’s COMPAS data includes the defendant's age, race, sex, what they were charged with, and whether or not the defendant ultimately recidivated within a two-year period after their arrest. For the purposes of our project, which endeavors to evaluate the differing effects of the COMPAS algorithm on white defendants versus Black defendants, we have filtered the data to only include individuals whose race is listed as Caucasian or African-American. Our data therefore has 5,723 rows (Figure \ref{fig:table snip}), with the below distributions of race (Figure \ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two year recidivism rate (Figures \ref{fig:recid plot} & \ref{fig:recid race plot} and Table \ref{tab:recid table}).
 
-```{r table snip, echo = FALSE, fig.align='center', fig.cap= 'This table is a snippet of the data set we will be using.', out.width= "500px", out.height= "300px"}
-knitr::include_graphics("../images/table_snippet_new.png")
+```{r table snip, echo = FALSE, fig.align='center', fig.cap= 'This table is a snippet of the data set we will be using.', out.width= "100%"}
+knitr::include_graphics("../images/table_snippet.png")
 ```
 
-```{r race plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant races.', out.width= "500px", out.height= "300px"}
-knitr::include_graphics("../images/race_bar_plot.png")
+```{r race plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant races.', out.width= "100%"}
+knitr::include_graphics("../images/race_bar_plot_new.png")
 ```
 
-```{r age plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant ages by race.', out.width= "500px", out.height= "300px"}
-knitr::include_graphics("../images/race_age_plot.png")
+```{r age plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant ages by race.', out.width= "100%"}
+knitr::include_graphics("../images/age_race_plot_new.png")
 ```
 
-```{r recid plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes.', out.width= "500px", out.height= "300px"}
-knitr::include_graphics("../images/recid_bar_plot.png")
+```{r recid plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes.', out.width= "100%"}
+knitr::include_graphics("../images/recid_bar_plot_new.png")
 ```
 
-```{r recid race plot,echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes by race.', out.width= "500px", out.height= "300px"}
-knitr::include_graphics("../images/race_recid_plot.png")
+```{r recid race plot,echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes by race.', out.width= "100%"}
+knitr::include_graphics("../images/race_recid_bar_plot_new.png")
+```
+
+```{r, include = FALSE}
+library(tidyverse)
+```
+
+```{r, include = FALSE}
+x <- tribble(~`Two Year Recidivism by Race`, ~`Recidivated`, ~`Survived`,
+             "African American", "1661", "1512",
+             "Caucasian", "822", "1278")
+```
+
+```{r, echo = FALSE}
+knitr::kable(x, caption = "This table shows the distribution of recidivism by race \\label{tab:recid table}")
 ```
 
 # Methods
