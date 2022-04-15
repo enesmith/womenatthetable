@@ -9,12 +9,6 @@ output: html_document
 
 ```{r py setup, include=FALSE}
 library(reticulate)
-
-# for Dianne
-# use_condaenv("base")
-
-# for Amrita
-# use_condaenv("anaconda3")
 ```
 
 ```{python import, include= FALSE}
@@ -248,6 +242,8 @@ df_viz.index = df_viz.index.droplevel('race')
 
 purple = '#9d0677'
 green = '#30875c'
+orange = '#E7881E'
+blue = '#20A4CF'
 workshop_palette = [purple, green]
 df_viz.head()
 ```
@@ -260,28 +256,28 @@ plt.title('Two Year Recidivism Rate')
 
 ```{python exploratory race bar plot}
 # barplot of race
-sns.countplot(y="race", data=df_viz, palette=["#30875c"])
+sns.countplot(x="race", data=df_viz, palette=workshop_palette)
 plt.title('Race Distribution (White and Black individuals only)')
 ```
 
 ```{python exploratory age by race plot}
 # age distribution by race
-#ax = sns.kdeplot(x="age", hue="race", data=df_viz);
-#kdeline = ax.lines[0]
-#mean_fem = df_viz.groupby('race').age.median()[0]
-#xs = kdeline.get_xdata()
-#ys = kdeline.get_ydata()
-#height_fem = np.interp(mean_fem, xs, ys)
-#ax.vlines(mean_fem, 0, height_fem, color=purple, ls=':')
+ax = sns.kdeplot(x="age", hue="race", data=df_viz, palette=workshop_palette);
+kdeline = ax.lines[0]
+mean_black = df_viz.groupby('race').age.median()[0]
+xs = kdeline.get_xdata()
+ys = kdeline.get_ydata()
+height_black = np.interp(mean_black, xs, ys)
+ax.vlines(mean_black, 0, height_black, color=purple, ls=':')
 
-#mean_m = df_viz.groupby('race').age.median()[1]
-#height_m = np.interp(mean_m, xs, ys)
-#ax.vlines(mean_m, 0, height_m, color=green, ls=':')
+mean_white = df_viz.groupby('race').age.median()[1]
+height_white = np.interp(mean_white, xs, ys)
+ax.vlines(mean_white, 0, height_white, color=green, ls=':')
 
 
-#print(df_viz.groupby('race').age.median())
+print(df_viz.groupby('race').age.median())
 
-#plt.title('Distribution of Age by Race')
+plt.title('Distribution of Age by Race')
 ```
 
 ```{python exploratory recidivism by race plot}
