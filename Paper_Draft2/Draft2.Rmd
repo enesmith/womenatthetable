@@ -54,25 +54,25 @@ Our project builds on Women at the Table’s various de-biasing algorithms used 
 
 # Data
 
-The data we are using for this project is the COMPAS General Recidivism Risk Scores data set from the AI Fairness 360 (AIF360) toolkit [@aif360-oct-2018], which does the same initial pre-processing as ProPublica. The raw data has 6,167 rows and each row represents an arrest charge for a defendant. AIF360’s COMPAS data includes the defendant's age, race, sex, what they were charged with, and whether or not the defendant ultimately recidivated within a two-year period after their arrest. For the purposes of our project, which endeavors to evaluate the differing effects of the COMPAS algorithm on white defendants versus Black defendants, we have filtered the data to only include individuals whose race is listed as Caucasian or African-American. Our data therefore has 5,723 rows (Figure \ref{fig:table snip}), with the below distributions of race (Figure \ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two year recidivism rate (Figures \ref{fig:recid plot} & \ref{fig:recid race plot} and Table \ref{tab:recid table}).
+The data we are using for this project is the COMPAS General Recidivism Risk Scores data set from the AI Fairness 360 (AIF360) toolkit [@aif360-oct-2018], which does the same initial pre-processing as ProPublica. The raw data has 6,167 rows and each row represents an arrest charge for a defendant. AIF360’s COMPAS data includes the defendant's age, race, sex, prior charges, what they were charged with, and whether or not the defendant ultimately recidivated within a two-year period after their arrest. For the purposes of our project, which endeavors to evaluate the differing effects of the COMPAS algorithm on white defendants versus Black defendants, we have filtered the data to only include individuals whose race is listed as Caucasian or African-American. Our data therefore has 5,723 rows (Figure \ref{fig:table snip}), with the below distributions of race (Figure \ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two year recidivism rate (Figures \ref{fig:recid plot} & \ref{fig:recid race plot} and Table \ref{tab:recid table}).
 
-```{r table snip, echo = FALSE, fig.align='center', fig.cap= 'This table is a snippet of the data set we will be using.', out.width= "100%"}
+```{r table snip, echo = FALSE, fig.align='center', fig.cap= "This table is a snippet of the data set we will be using, containing information on a defendant's age, sex, race, criminal history, charge degree, charge description, and two year recidivism outcome.", out.width= "100%"}
 knitr::include_graphics("../images/table_snippet.png")
 ```
 
-```{r race plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant races.', out.width= "100%"}
+```{r race plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant races. The dataset contains about 3200 Black defendants and 2100 white defendants. Therefore, there are more Black people represented in the dataset than white people.', out.width= "100%"}
 knitr::include_graphics("../images/race_bar_plot_new.png")
 ```
 
-```{r age plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant ages by race.', out.width= "100%"}
+```{r age plot, echo=FALSE, fig.align='center', fig.cap= "This plot shows the distribution of defendant ages by race. The purple curve shows the distribution of the ages of Black defendants, and the green curve shows the distribution of the ages of white defendants. The probability of a defendant's age being between two points on the x-axis is the total shaded area of the curve under the two points. The purple dotted line represents the median age of Black defendants (29 years) and the green dotted line represents the median age of white defendants (35 years). For both groups, the majority of defendants are relatively young, but this is especially noticeable for Black defendants.", out.width= "100%"}
 knitr::include_graphics("../images/age_race_plot_new.png")
 ```
 
-```{r recid plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes.', out.width= "100%"}
+```{r recid plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes. Out of all defendants, there is a higher proportion of people who did not recidivate than who did. About 2500 people recidivated, whereas approximately 2600 did not.', out.width= "100%"}
 knitr::include_graphics("../images/recid_bar_plot_new.png")
 ```
 
-```{r recid race plot,echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes by race.', out.width= "100%"}
+```{r recid race plot,echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes by race. When we divide the data into Black and white defendants, we can see that BLack defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. We can also see that there are more Black defendants in the dataset overall.', out.width= "100%"}
 knitr::include_graphics("../images/race_recid_bar_plot_new.png")
 ```
 
@@ -87,7 +87,7 @@ x <- tribble(~`Two Year Recidivism by Race`, ~`Recidivated`, ~`Survived`,
 ```
 
 ```{r, echo = FALSE}
-knitr::kable(x, caption = "This table shows the distribution of recidivism by race \\label{tab:recid table}")
+knitr::kable(x, caption = "This table shows the counts of recidivism by race, illustrating how a much greater proportion (> 50%) of Black defendants recidivated than their white counterparts. \\label{tab:recid table}")
 ```
 
 # Methods
