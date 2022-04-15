@@ -31,10 +31,11 @@ from sklearn.preprocessing import OneHotEncoder
 from aif360.datasets import CompasDataset
 from aif360.datasets import BinaryLabelDataset
 from aif360.sklearn.datasets import fetch_compas
-from aif360.algorithms.inprocessing import MetaFairClassifier
+from aif360.algorithms.inprocessing import MetaFairClassifier, PrejudiceRemover, ARTClassifier
+
 
 from aif360.sklearn.preprocessing import ReweighingMeta
-from aif360.sklearn.inprocessing import AdversarialDebiasing
+#from aif360.sklearn.inprocessing import 
 from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
 
 from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_difference, statistical_parity_difference, equal_opportunity_difference
@@ -489,6 +490,8 @@ print(f'[Reweighting] The disparate impact ratio is {disp_impact_ratio_RW: .2}')
 
 The reweighting approach also improves the disparate impact ratio, bringing the value almost to 1, which conveys absolute fairness.
 
+
+
 ### Plot Fairness Metrics (Reweighting)
 
 ```{python pre-processing fairness metrics plot}
@@ -539,13 +542,22 @@ test_BLD = BinaryLabelDataset(favorable_label='0',
                                 protected_attribute_names=['race'])
 ```
 
-```{python in-processing meta}
-# meta = MetaFairClassifier(tau=0.8, sensitive_attr='race', type='fdr', seed=1234567)
-# 
-# meta.fit(train_BLD)
-# y_pred_META = meta.predict(test_BLD)
-# y_pred_META = y_pred_META.labels.flatten()
+## Prejudice Remover
+```{r}
+#prej = PrejudiceRemover(eta=1.0, sensitive_attr='race', class_attr='two_year_recid', seed=1234567)
+#prej.fit(train_BLD)
+#y_pred_PREJ = meta.predict(test_BLD)
+#y_pred_PREJ = y_pred_PREJ.labels.flatten()
 ```
+
+## Meta Fair Classifier 
+```{python in-processing meta}
+#meta = MetaFairClassifier(tau=0.8, sensitive_attr='race', type='sr', seed=1234567)
+#meta.fit(train_BLD)
+#y_pred_META = meta.predict(test_BLD)
+#y_pred_META = y_pred_META.labels.flatten()
+```
+
 
 ```{python in-processing accuracy score}
 # acc_AD = accuracy_score(y_test, y_pred_META)

@@ -823,13 +823,22 @@ test_BLD = BinaryLabelDataset(favorable_label='0',
                                 df=df_test,
                                 label_names=['two_year_recid'],
                                 protected_attribute_names=['race'])</code></pre>
-<pre class="python"><code># meta = MetaFairClassifier(tau=0.8, sensitive_attr='race', type='fdr', seed=1234567)
-# 
-# meta.fit(train_BLD)
-# y_pred_META = meta.predict(test_BLD)
-# y_pred_META = y_pred_META.labels.flatten()</code></pre>
+<div id="prejudice-remover" class="section level2">
+<h2>Prejudice Remover</h2>
+<pre class="r"><code>#prej = PrejudiceRemover(eta=1.0, sensitive_attr='race', class_attr='two_year_recid', seed=1234567)
+#prej.fit(train_BLD)
+#y_pred_PREJ = meta.predict(test_BLD)
+#y_pred_PREJ = y_pred_PREJ.labels.flatten()</code></pre>
+</div>
+<div id="meta-fair-classifier" class="section level2">
+<h2>Meta Fair Classifier</h2>
+<pre class="python"><code>#meta = MetaFairClassifier(tau=0.8, sensitive_attr='race', type='sr', seed=1234567)
+#meta.fit(train_BLD)
+#y_pred_META = meta.predict(test_BLD)
+#y_pred_META = y_pred_META.labels.flatten()</code></pre>
 <pre class="python"><code># acc_AD = accuracy_score(y_test, y_pred_META)
 # print(f'[ Meta-Classification] The test accuracy of the algorithm is: {acc_AD: .2%}')</code></pre>
+</div>
 </div>
 <div id="post-processing" class="section level1">
 <h1>Post-Processing</h1>
