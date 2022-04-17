@@ -92,6 +92,7 @@ X_new_index.groupby(["def_race", "c_charge_degree"]).size()
 X_new_index.groupby(["def_race"])["priors_count"].median()
 #X_new_index.groupby(["def_race"])["juv_fel_count"].median()
 #X_new_index.groupby(["def_race"])["juv_misd_count"].median()
+# above two lines commented out since medians for everyone = 0
 
 ```
 
