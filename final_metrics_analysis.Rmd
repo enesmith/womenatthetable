@@ -3,6 +3,8 @@ title: "Analyzing Fairness: Race, Recidivism, and the COMPAS Algorithm"
 author: "Elisabeth Nesmith, Eunice Kim, Emma Kornberg, Amrita Acharya, Dianne Caravela"
 date: "3/8/2022"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Set Up
@@ -77,6 +79,20 @@ X_new["race"] = X_new["race"].cat.remove_unused_categories()
 ```{python configure races}
 y_new = y[(y.index.get_level_values(2) == "Caucasian") | (y.index.get_level_values(2) == "African-American")]
 y_new.head()
+```
+
+```{python EDA}
+X_new_index = X_new.rename(columns={"race": "def_race"})
+X_new_index = X_new_index.rename(columns={"sex": "def_sex"})
+# renaming dataframe columns to avoid the ValueError of variables being a column AND index label (which is ambiguous)
+
+X_new_index.groupby(["def_race"])["age"].median()
+X_new_index.groupby(["def_race", "sex"]).size()
+X_new_index.groupby(["def_race", "c_charge_degree"]).size()
+X_new_index.groupby(["def_race"])["priors_count"].median()
+#X_new_index.groupby(["def_race"])["juv_fel_count"].median()
+#X_new_index.groupby(["def_race"])["juv_misd_count"].median()
+
 ```
 
 ```{python initial confusion matrix}
