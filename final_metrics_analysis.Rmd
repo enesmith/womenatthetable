@@ -11,7 +11,7 @@ output: html_document
 library(reticulate)
 
 # for Dianne
-# use_condaenv("base")
+use_condaenv("base")
 
 # for Amrita
 # use_condaenv("anaconda3")
@@ -249,6 +249,10 @@ purple = '#9d0677'
 green = '#30875c'
 workshop_palette = [purple, green]
 df_viz.head()
+```
+
+```{python average white and black defendant}
+#av_defendant = (df_viz.groupby(['race'],as_index=False).age.mean()
 ```
 
 ```{python exploratory recidivism bar plot}
