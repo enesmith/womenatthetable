@@ -293,6 +293,12 @@ plt.show()
 pd.crosstab(index = df_viz["race"], columns = df_viz["two_year_recid"])
 ```
 
+```{python exploratory priors by race}
+priors_by_race = sns.countplot(x="race", hue="priors_count", data=df_viz, palette=workshop_palette)
+
+plt.title('Priors Count by Race')
+plt.show()
+```
 
 # Baseline Metrics
 
