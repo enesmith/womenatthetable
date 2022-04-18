@@ -11,7 +11,7 @@ editor_options:
 
 ```{r py setup, include=FALSE}
 library(reticulate)
-use_condaenv("anaconda3")
+#use_condaenv("anaconda3")
 ```
 
 ```{python import, include= FALSE}
@@ -81,20 +81,6 @@ y_new = y[(y.index.get_level_values(2) == "Caucasian") | (y.index.get_level_valu
 y_new.head()
 ```
 
-```{python EDA}
-X_new_index = X_new.rename(columns={"race": "def_race"})
-X_new_index = X_new_index.rename(columns={"sex": "def_sex"})
-# renaming dataframe columns to avoid the ValueError of variables being a column AND index label (which is ambiguous)
-
-X_new_index.groupby(["def_race"])["age"].median()
-X_new_index.groupby(["def_race", "sex"]).size()
-X_new_index.groupby(["def_race", "c_charge_degree"]).size()
-X_new_index.groupby(["def_race"])["priors_count"].median()
-#X_new_index.groupby(["def_race"])["juv_fel_count"].median()
-#X_new_index.groupby(["def_race"])["juv_misd_count"].median()
-# above two lines commented out since medians for everyone = 0
-
-```
 
 ```{python initial confusion matrix}
 # Function for visualising the confusion matrix and other statistics
@@ -251,6 +237,22 @@ y_new
 
 
 # Exploratory Data Analysis
+
+```{python EDA}
+X_new_index = X_new.rename(columns={"race": "def_race"})
+X_new_index = X_new_index.rename(columns={"sex": "def_sex"})
+# renaming dataframe columns to avoid the ValueError of variables being a column AND index label (which is ambiguous)
+
+X_new_index.groupby(["def_race"])["age"].median()
+X_new_index.groupby(["def_race", "sex"]).size()
+X_new_index.groupby(["def_race", "c_charge_degree"]).size()
+X_new_index.groupby(["def_race"])["priors_count"].median()
+#X_new_index.groupby(["def_race"])["juv_fel_count"].median()
+#X_new_index.groupby(["def_race"])["juv_misd_count"].median()
+# above two lines commented out since medians for everyone = 0
+
+```
+
 ```{python exploratory visualization set up}
 df_viz = X_new.copy()
 df_viz['race'] = X_new['race'].replace({1.0: 'Caucasian', 0.0: 'African-American'})
@@ -658,10 +660,10 @@ plt.show()
 ```
 
 ```{python} 
-ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
-eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
-eo.fit(train_BLD, test_BLD)
-y_pred_EO = eo.predict(test_BLD)
+#ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
+#eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
+#eo.fit(train_BLD, test_BLD)
+#y_pred_EO = eo.predict(test_BLD)
 #y_proba_EO = eo.predict_(test_BLD)
 
 ```
