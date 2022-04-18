@@ -11,6 +11,7 @@ editor_options:
 
 ```{r py setup, include=FALSE}
 library(reticulate)
+use_condaenv("anaconda3")
 ```
 
 ```{python import, include= FALSE}
@@ -279,22 +280,22 @@ plt.title('Race Distribution (White and Black individuals only)')
 
 ```{python exploratory age by race plot}
 # age distribution by race
-ax = sns.kdeplot(x="age", hue="race", data=df_viz, palette=workshop_palette);
-kdeline = ax.lines[0]
-mean_black = df_viz.groupby('race').age.median()[0]
-xs = kdeline.get_xdata()
-ys = kdeline.get_ydata()
-height_black = np.interp(mean_black, xs, ys)
-ax.vlines(mean_black, 0, height_black, color=purple, ls=':')
+#ax = sns.kdeplot(x="age", hue="race", data=df_viz, palette=workshop_palette);
+#kdeline = ax.lines[0]
+#mean_black = df_viz.groupby('race').age.median()[0]
+#xs = kdeline.get_xdata()
+#ys = kdeline.get_ydata()
+#height_black = np.interp(mean_black, xs, ys)
+#ax.vlines(mean_black, 0, height_black, color=purple, ls=':')
 
-mean_white = df_viz.groupby('race').age.median()[1]
-height_white = np.interp(mean_white, xs, ys)
-ax.vlines(mean_white, 0, height_white, color=green, ls=':')
+#mean_white = df_viz.groupby('race').age.median()[1]
+#height_white = np.interp(mean_white, xs, ys)
+#ax.vlines(mean_white, 0, height_white, color=green, ls=':')
 
 
-print(df_viz.groupby('race').age.median())
+#print(df_viz.groupby('race').age.median())
 
-plt.title('Distribution of Age by Race')
+#plt.title('Distribution of Age by Race')
 ```
 
 ```{python exploratory recidivism by race plot}
@@ -584,6 +585,7 @@ test_BLD = BinaryLabelDataset(favorable_label='0',
 # Post-Processing
 
 ```{python post-processing calibrated equal odds set up, include = FALSE}
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
 from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
 
 pp = CalibratedEqualizedOdds('race', cost_constraint='fnr', random_state=1234567)
@@ -602,6 +604,15 @@ print(f'[Calibrated Equalized Odds] The test accuracy of the algorithm is: {acc_
 cf_matrix = confusion_matrix(y_test, y_pred_CEO)
 make_confusion_matrix(cf_matrix, "[Calibrated Equalized Odds]")
 plt.show()
+```
+
+```{python} 
+ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
+eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
+eo.fit(train_BLD, test_BLD)
+y_pred_EO = eo.predict(test_BLD)
+#y_proba_EO = eo.predict_(test_BLD)
+
 ```
 
 ### Statistical Parity Difference
