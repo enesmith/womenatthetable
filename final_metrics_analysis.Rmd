@@ -38,7 +38,6 @@ from aif360.algorithms.inprocessing import MetaFairClassifier, PrejudiceRemover,
 
 
 from aif360.sklearn.preprocessing import ReweighingMeta
-#from aif360.sklearn.inprocessing import 
 from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
 
 from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_difference, statistical_parity_difference, equal_opportunity_difference
@@ -508,8 +507,6 @@ print(f'[Reweighting] The disparate impact ratio is {disp_impact_ratio_RW: .2}')
 
 The reweighting approach also improves the disparate impact ratio, bringing the value almost to 1, which conveys absolute fairness.
 
-
-
 ### Plot Fairness Metrics (Reweighting)
 
 ```{python pre-processing fairness metrics plot}
@@ -532,7 +529,7 @@ plt.show()
 # .fit_transform() angry because of X_test... 
 ```
 
-# In-Processing
+# In-Processing Approaches
 
 ```{python in-processing set up}
 df_train = X_train.copy()
@@ -560,26 +557,80 @@ test_BLD = BinaryLabelDataset(favorable_label='0',
                                 protected_attribute_names=['race'])
 ```
 
+## Adversarial Debiasing
+```{python adversarial debiasing}
+# from aif360.algorithms.inprocessing import AdversarialDebiasing
+# import tensorflow as tf
+# 
+# adv_deb = AdversarialDebiasing(unpr)
+# #adv_deb.fit(X_train, y_train)
+# #y_pred_AD = adv_deb.predict(X_test)
+# #adv_deb.sess_.close()
+```
+
+
 ## Prejudice Remover
-```{r}
-#prej = PrejudiceRemover(eta=1.0, sensitive_attr='race', class_attr='two_year_recid', seed=1234567)
-#prej.fit(train_BLD)
-#y_pred_PREJ = meta.predict(test_BLD)
-#y_pred_PREJ = y_pred_PREJ.labels.flatten()
+```{python prejudice remover}
+from aif360.algorithms.inprocessing import PrejudiceRemover
+
+prej = PrejudiceRemover(eta = 1.0, sensitive_attr='race', class_attr='two_year_recid')
+prej.fit(train_BLD)
+y_pred_PREJ = prej.predict(test_BLD)
+y_pred_PREJ = y_pred_PREJ.labels.flatten()
 ```
 
-## Meta Fair Classifier 
-```{python in-processing meta}
-#meta = MetaFairClassifier(tau=0.8, sensitive_attr='race', type='sr', seed=1234567)
-#meta.fit(train_BLD)
-#y_pred_META = meta.predict(test_BLD)
-#y_pred_META = y_pred_META.labels.flatten()
+```{python prejudice accuracy score}
+acc_PREJ = accuracy_score(y_test, y_pred_PREJ)
+print(f'[Prejudice Remover] The test accuracy of the algorithm is: {acc_PREJ: .2%}')
 ```
 
+```{python prejudice remover confusion matrix}
+cf_matrix = confusion_matrix(y_test, y_pred_PREJ)
+make_confusion_matrix(cf_matrix, "[Prejudice Remover]")
+plt.show()
+```
 
-```{python in-processing accuracy score}
-# acc_AD = accuracy_score(y_test, y_pred_META)
-# print(f'[ Meta-Classification] The test accuracy of the algorithm is: {acc_AD: .2%}')
+```{python prejudice remover metrics per group}
+metrics_per_group(y_test, y_pred_PREJ)
+plt.show()
+```
+
+### Statistical Parity Difference
+
+```{python prejudice remover statistical parity difference}
+stat_par_diff_PREJ = statistical_parity_difference(y_test, y_pred_PREJ, prot_attr='race', pos_label = 0)
+
+print(f'[Prejudice Remover] The statistical parity difference is {stat_par_diff_PREJ: .2}')
+```
+
+### Equal Opportunity Difference
+
+```{python prejudice remover equal opportunity difference}
+eq_opp_diff_PREJ = equal_opportunity_difference(y_test, y_pred_PREJ, prot_attr='race', pos_label = 0)
+
+print(f'[Prejudice Remover] The equal opportunity difference is {eq_opp_diff_PREJ: .2}')
+```
+
+### Average Odds Difference
+
+```{python prejudice remover average odds difference}
+avg_odds_diff_PREJ = average_odds_difference(y_test, y_pred_PREJ, prot_attr='race', pos_label = 0)
+
+print(f'[Prejudice Remover] The average odds difference is {avg_odds_diff_PREJ: .2}')
+```
+
+### Disparate Impact Ratio
+```{python prejudice remover disparate impact ratio}
+disp_impact_ratio_PREJ = disparate_impact_ratio(y_test, y_pred_PREJ, prot_attr='race', priv_group = 1, pos_label = 0)
+
+print(f'[Prejudice Remover] The disparate impact ratio is {disp_impact_ratio_PREJ: .2}')
+```
+
+### Plot Fairness Metrics (Prejudice Remover)
+
+```{python prejudice remover fairness metrics plot}
+plot_fair_metrics([stat_par_diff_PREJ, eq_opp_diff_PREJ, avg_odds_diff_PREJ, disp_impact_ratio_PREJ], 'Prejudice Remover')
+plt.show()
 ```
 
 # Post-Processing
