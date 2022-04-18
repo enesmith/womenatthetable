@@ -254,8 +254,13 @@ workshop_palette = [purple, green]
 df_viz.head()
 ```
 
-```{python average white and black defendant}
+```{python make degree numeric}
 #av_defendant = (df_viz.groupby(['race'],as_index=False).age.mean()
+#display(df_viz)
+#list_vars = list(df_viz)
+#list_vars
+#df_numeric_charges = df_viz['c_charge_degree'].replace(['M', 'F'], [0, 1], inplace=True)
+#plt.bar('c_charge_degree', 1, data = df_viz)
 ```
 
 ```{python exploratory recidivism bar plot}
