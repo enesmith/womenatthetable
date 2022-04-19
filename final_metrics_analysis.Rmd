@@ -11,7 +11,7 @@ editor_options:
 
 ```{r py setup, include=FALSE}
 library(reticulate)
-use_condaenv("anaconda3")
+#use_condaenv("anaconda3")
 ```
 
 ```{python import, include= FALSE}
@@ -131,7 +131,7 @@ def make_confusion_matrix(cf_matrix, model):
   plt.xlabel('Predicted label' + stats_text)
   plt.title(f"Confusion matrix and statistics for the {model} model");
 
-## defining function for displaying metrics of training and test data by sex 
+## defining function for displaying metrics of training and test data by race
 def metrics_per_group(y_test, y_pred):
 	# y true per group
 	y_test_white = y_test.loc[y_test.index.get_level_values(2) == 1]
@@ -271,11 +271,15 @@ sns.countplot(x='two_year_recid', data=df_viz, palette=workshop_palette)
 plt.title('Two Year Recidivism Rate')
 ```
 
+This plot shows the distribution of two year recidivism outcomes. Out of all defendants, there is a higher proportion of people who did not recidivate than who did. About 2500 people recidivated, whereas approximately 2700 did not.
+
 ```{python exploratory race bar plot}
 # barplot of race
 sns.countplot(x="race", data=df_viz, palette=workshop_palette)
 plt.title('Race Distribution (White and Black individuals only)')
 ```
+
+This plot shows the distribution of defendant races. The dataset contains about 3200 Black defendants and 2100 white defendants. Therefore, there are more Black people represented in the dataset than white people, showing the disproportionate policing and criminalization of Black communities.
 
 ```{python exploratory age by race plot}
 # age distribution by race
@@ -297,6 +301,8 @@ plt.title('Race Distribution (White and Black individuals only)')
 #plt.title('Distribution of Age by Race')
 ```
 
+This plot shows the distribution of defendant ages by race. The purple curve shows the distribution of the ages of Black defendants, and the green curve shows the distribution of the ages of white defendants. The probability of a defendant's age being between two points on the x-axis is the total shaded area of the curve under the two points. The purple dotted line represents the median age of Black defendants (29 years) and the green dotted line represents the median age of white defendants (35 years). For both groups, the majority of defendants are relatively young, but this is especially noticeable for Black defendants.
+
 ```{python exploratory recidivism by race plot}
 # recidivism by race
 by_sex = sns.countplot(x="race", hue="two_year_recid", data=df_viz, palette=workshop_palette)
@@ -305,11 +311,14 @@ plt.title('Two Year Recidivism by Race')
 plt.show()
 ```
 
+This plot shows the distribution of two year recidivism outcomes by race. When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. Again, this trend points to disproportionate rates of criminalization of Black people. 
+
 ```{python exploratory recidivism by race table}
 # table of recidivism by race
 pd.crosstab(index = df_viz["race"], columns = df_viz["two_year_recid"])
 ```
 
+This table shows the counts of recidivism by race. 
 
 # Baseline Metrics
 
@@ -348,16 +357,33 @@ make_confusion_matrix(cf_matrix, "[Baseline]")
 plt.show()
 ```
 
+The highest percentage in this confusion matrix is for true negatives, defendants who the model predicted to not recidivate and actually did not, at 35.41%. The number of true positives, defendants who the model predicted to recidivate and actually recidivated, is slightly lower at 25.85%. The percentages of false negatives and false positives, which represent incorrect model predictions, are somewhat high for this baseline model. This indicates that the model might need bias mitigation or improvements in accuracy. 
+
 ```{python baseline metrics per group}
 metrics_per_group(y_test, y_pred)
 plt.show()
 ```
 
-In the Black population, the model correctly identifies 70% of people who recidivated. In the white population, the model correctly identifies 20% of people who recidivated.
+This graphs shows three different metrics of model quality and how they differ by race. Accuracy is calculated by summing the total number of true positives and true negatives and dividing by the total number of predictions:
+
+$$\frac{TP + TN}{TP + FP + TN + FN} $$
+
+Accuracy, as the name suggests, quantifies how accurately the model makes predictions. Looking at the graph, we can see that accuracy is fairly similar for Black, white, and all defendants, but the model is slightly less accurate in the case of Black defendants. The model makes accurate predictions for all defendants about 61% of the time, for Black defendants about 59% of the time, and for white defendants about 63% of the time. 
+
+The value of recall represents the proportion of actual positives which were predicted correctly. In other words, recall is the number of people who were predicted to recidivate and did recidivate out of the total number of people actually recidivated:
+
+$$\frac{TP}{TP + FN}$$
+
+In the case of our baseline mode, recall is highest for Black defendants at nearly 0.7, while recall for white defendants is much lower at just above 0.2. The model correctly identifies defendants who recidivate about 54% of the time, Black defendants who recidivate about 70% of the time, and white defendants who recidivate about 20% of the time. This means that the model frequently predicts white defendants to not recidivate (the more favorable outcome) when they actually do. This points to potential bias in the model, as the recall score for white defendants is so much lower than that for Black defendants.
+
+Slightly different from recall, precision is the proportion of predicted positives which were actually correct. Precision is therefore the number of people who were predicted to recidivate and did recidivate out of the total number of people who were predicted to recidivate:
+
+$$\frac{TP}{TP + FP} $$ 
+We can see that precision is very similar across groups, all approximately 0.6. This means that the model's predictions of a defendant, either Black or white, who recidivates are accurate about 60% of the time.
 
 ## Group Fairness Metrics
 
-With group fairness metrics, different groups should receive similar treatments or outcomes.  In this case of recidivism and race, this means that Black defendants should have similar rates of predicted recidivism as white defendants.
+With group fairness metrics, different groups should receive similar treatments or outcomes. In this case of recidivism and race, this means that Black defendants should have similar rates of predicted recidivism as white defendants.
 
 ### Statistical Parity Difference 
 
@@ -367,7 +393,7 @@ The ideal value of this metric is 0. Fairness for this metric is between -0.1 an
 $P(\hat{Y}=1|D=Unprivileged) - P(\hat{Y}=1|D=Privileged)$
 
 ```{python group fairnesss statistical parity difference}
-stat_par_diff = statistical_parity_difference(y_test, prot_attr='race', pos_label = 0)
+stat_par_diff = statistical_parity_difference(y_test, prot_attr='race', priv_group = 1, pos_label = 0)
 
 print(f'[Baseline] The statistical parity difference is {stat_par_diff: .2}')
 ```
@@ -382,17 +408,17 @@ A value of 1 means that the ratio is exactly 1:1. Less than 1 means the privileg
 
 The disparate impact ratio is calculated with the formula: 
 
-$\frac{P(\hat{Y}=1|D=Unprivileged)}{P(\hat{Y}=1|D=Privileged)}$ 
+$$\frac{P(\hat{Y}=1|D=Unprivileged)}{P(\hat{Y}=1|D=Privileged)}$$ 
 
 where Y is the favorable outcome of a defendant's predicted two year recidivism and D is the race of the defendant. In our case, the favorable outcome is survived, or not recidivated, which is Y = 0. In terms of race, 0 = Black and 1 = White. So to calculate the disparate impact ratio on this data, the formula is: 
 
-$\frac{P(\hat{Y}=0|D=0)}{P(\hat{Y}=0|D=1)}$ 
+$$\frac{P(\hat{Y}=0|D=0)}{P(\hat{Y}=0|D=1)}$$ 
 
 Say we have a data test set of 200 defendants, 125 Black and 75 white. Of the 125 Black defendants, 44% (55) were predicted to not recidivate. Of the 75 white defendants, 66% (50) were predicted to not recidivate.
 
 The disparate impact ratio would therefore be 
 
-$\frac{0.44}{0.66} = 0.667$
+$$\frac{0.44}{0.66} = 0.667$$
 
 Because this value is less than 1, it benefits white defendants. Additionally, because it is below 0.8, it is considered "unfair."
 
@@ -408,7 +434,7 @@ Since the actual disparate impact ratio for our test data is 0.47 and below 0.8,
 
 This metric returns the average difference in false positive rate and true positive rate for the privileged and unprivileged groups. A value of 0 is considered fair, and a value below 0 implies benefit for the privileged group. Equality of odds is achieved in the case of recidivism when the proportion of people who were predicted to recidivate and did recidivate is equal (true positive rate) for both black and white defendants AND the proportion of people who were predicted to recidivate and did not recidivate (false positive rate) is equal for both black and white defendants. 
 
-$\frac{(FPR_{D = unprivileged} - FPR_{D = privileged}) + (TPR_{D = unprivileged} - TPR_{D = privileged})}{2}$
+$$\frac{(FPR_{D = unprivileged} - FPR_{D = privileged}) + (TPR_{D = unprivileged} - TPR_{D = privileged})}{2}$$
 
 ```{python group fairnesss average odds difference}
 avg_odds_diff = average_odds_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
@@ -424,7 +450,7 @@ This metric is computed as the difference of true positive rates between the unp
 The ideal value is 0. A value of < 0 implies higher benefit for the privileged group and a value > 0 implies higher benefit for the unprivileged group.
 Fairness for this metric is between -0.1 and 0.1.
 
-$TPR_{D = Unprivileged} - TPR_{D = Privileged}$
+$$TPR_{D = Unprivileged} - TPR_{D = Privileged}$$
 
 ```{python group fairnesss equal opportunity difference}
 eq_opp_diff = equal_opportunity_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
@@ -658,10 +684,10 @@ plt.show()
 ```
 
 ```{python} 
-ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
-eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
-eo.fit(train_BLD, test_BLD)
-y_pred_EO = eo.predict(test_BLD)
+# ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
+# eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
+# eo.fit(train_BLD, test_BLD)
+# y_pred_EO = eo.predict(test_BLD)
 #y_proba_EO = eo.predict_(test_BLD)
 
 ```
