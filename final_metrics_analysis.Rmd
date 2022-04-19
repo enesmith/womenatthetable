@@ -705,13 +705,31 @@ make_confusion_matrix(cf_matrix, "[Calibrated Equalized Odds]")
 plt.show()
 ```
 
+```{python}
+def get_attributes(data, selected_attr=None):
+    unprivileged_groups = []
+    privileged_groups = []
+    if selected_attr == None:
+        selected_attr = data.protected_attribute_names
+    
+    for attr in selected_attr:
+            idx = data.protected_attribute_names.index(attr)
+            privileged_groups.append({attr:data.privileged_protected_attributes[idx]}) 
+            unprivileged_groups.append({attr:data.unprivileged_protected_attributes[idx]}) 
+
+    return privileged_groups, unprivileged_groups
+```
+
 
 ```{python post-processing equal odds needs fix} 
-#ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
+privileged_groups, unprivileged_groups = get_attributes(train_BLD, selected_attr= 'race')
+ep = EqOddsPostprocessing(unprivileged_groups= unprivileged_groups, privileged_groups= privileged_groups, seed = 42)
 #eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
-#eo.fit(train_BLD, test_BLD)
-#y_pred_EO = eo.predict(test_BLD)
-#y_proba_EO = eo.predict_(test_BLD)
+EOPP = ep.fit(train_BLD, test_BLD)
+y_pred_EO = ep.predict(test_BLD)
+#y_proba_EO = ep.predict_(test_BLD)
+
+acc_EO = accuracy_score(y_test, y_pred_EO)
 ```
 
 ### Statistical Parity Difference
