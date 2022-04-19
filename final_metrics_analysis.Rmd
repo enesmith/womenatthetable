@@ -29,6 +29,8 @@ import seaborn as sns
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from statsmodels.graphics.mosaicplot import mosaic
+from itertools import product
 
 from sklearn.compose import make_column_transformer
 from sklearn.linear_model import LogisticRegression
@@ -272,14 +274,24 @@ workshop_palette = [purple, green]
 df_viz.head()
 ```
 
-```{python make degree numeric}
-#av_defendant = (df_viz.groupby(['race'],as_index=False).age.mean()
-#display(df_viz)
-#list_vars = list(df_viz)
-#list_vars
-#df_numeric_charges = df_viz['c_charge_degree'].replace(['M', 'F'], [0, 1], inplace=True)
-#plt.bar('c_charge_degree', 1, data = df_viz)
+```{python crosstable of charge degrees by race}
+crosstable=pd.crosstab(df_viz['race'],df_viz['c_charge_degree'])
+crosstable
 ```
+
+```{python mosiac of charge degrees by race}
+props={}
+props[('Caucasian','F')]={'facecolor':'red', 'edgecolor':'white'}
+props[('Caucasian','M')]={'facecolor':'red', 'edgecolor':'white'}
+props[('African-American','F')]={'facecolor':'xkcd:aqua','edgecolor':'white'}
+props[('African-American','M')]=        {'facecolor':'xkcd:aqua','edgecolor':'white'}
+labelizer=lambda k:{('Caucasian','F'):1242,('African-American','F'):2194,('Caucasian','M'):858,('African-American','M'):979}[k]
+mosaic(df_viz,['race','c_charge_degree'],labelizer=labelizer,properties=props)
+plt.show()
+```
+
+59.14% of white defendants were charged with felonies versus 69.15% of black defendants. Likewise, a higher percentage of white defendants (40.86%) were charged with a misdemeanor than black defendants (30.85%).
+
 
 ```{python exploratory recidivism bar plot}
 # barplot of recividism
@@ -720,22 +732,7 @@ make_confusion_matrix(cf_matrix, "[Calibrated Equalized Odds]")
 plt.show()
 ```
 
-<<<<<<< HEAD
-```{python} 
-#ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
-#eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
-#eo.fit(train_BLD, test_BLD)
-#y_pred_EO = eo.predict(test_BLD)
-#y_proba_EO = eo.predict_(test_BLD)
-||||||| merged common ancestors
-```{python} 
-ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
-eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
-eo.fit(train_BLD, test_BLD)
-y_pred_EO = eo.predict(test_BLD)
-#y_proba_EO = eo.predict_(test_BLD)
-=======
->>>>>>> cbe711918fbe5ff21a86d924ac5e5d8b15897c9d
+
 
 ```{python post-processing equal odds needs fix} 
 #ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
