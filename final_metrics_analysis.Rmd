@@ -11,7 +11,7 @@ editor_options:
 
 ```{r py setup, include=FALSE}
 library(reticulate)
-use_condaenv("anaconda3")
+#use_condaenv("anaconda3")
 ```
 
 ```{python import, include= FALSE}
@@ -311,12 +311,11 @@ pd.crosstab(index = df_viz["race"], columns = df_viz["two_year_recid"])
 ```
 
 ```{python exploratory priors by race}
-#priors_by_race = sns.countplot(x="race", hue="priors_count", data=df_viz, palette=workshop_palette)
+priors_by_race = sns.countplot(x="race", color="priors_count", data=df_viz, palette=workshop_palette)
 
-#plt.title('Priors Count by Race')
-#plt.show()
+plt.title('Priors Count by Race')
+plt.show()
 ```
-
 
 
 # Baseline Metrics
@@ -666,10 +665,10 @@ plt.show()
 ```
 
 ```{python} 
-ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
-eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
-eo.fit(train_BLD, test_BLD)
-y_pred_EO = eo.predict(test_BLD)
+#ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
+#eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
+#eo.fit(train_BLD, test_BLD)
+#y_pred_EO = eo.predict(test_BLD)
 #y_proba_EO = eo.predict_(test_BLD)
 
 ```
