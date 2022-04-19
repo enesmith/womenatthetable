@@ -72,26 +72,28 @@
 
 %=================================================================
 % Full title of the paper (Capitalized)
-\Title{Does the COMPAS Needle Always Point Towards Equity? Finding Fairness in
-the COMPAS Risk Assessment Algorithm: A Case Study}
+\Title{Does the COMPAS Needle Always Point Towards Equity? Finding
+Fairness in the COMPAS Risk Assessment Algorithm: A Case Study}
 
 % Authors, for the paper (add full first names)
-\Author{Amrita Acharya$^{}$, Dianne Caravela$^{}$, Eunice Kim$^{}$, Emma Kornberg$^{}$, Elisabeth Nesmith$^{}$}
+\Author{Amrita Acharya$^{1}$, Dianne Caravela$^{1}$, Eunice
+Kim$^{1}$, Emma Kornberg$^{1}$, Elisabeth Nesmith$^{1}$}
 
 % Authors, for metadata in PDF
-\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma Kornberg, Elisabeth Nesmith}
+\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma
+Kornberg, Elisabeth Nesmith}
 
 % Affiliations / Addresses (Add [1] after \address if there is only one affiliation.)
 \address{%
-$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA 01063; \\
-$^{2}$ \quad ; \href{mailto:aacharya@smith.edu}{\nolinkurl{aacharya@smith.edu}}\\
-$^{3}$ \quad ; \href{mailto:dcaravela@smith.edu}{\nolinkurl{dcaravela@smith.edu}}\\
-$^{4}$ \quad ; \href{mailto:ekim89@smith.edu}{\nolinkurl{ekim89@smith.edu}}\\
-$^{5}$ \quad ; \href{mailto:ekornberg@smith.edu}{\nolinkurl{ekornberg@smith.edu}}\\
-$^{6}$ \quad ; \href{mailto:enesmith@smith.edu}{\nolinkurl{enesmith@smith.edu}}\\
+$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA
+01063; \href{mailto:aarcharya@smith.edu}{\nolinkurl{aarcharya@smith.edu}},
+\href{mailto:dcaravela@smith.edu}{\nolinkurl{dcaravela@smith.edu}},
+\href{mailto:ekim89@smith.edu}{\nolinkurl{ekim89@smith.edu}},
+\href{mailto:ekornberg@smith.edu}{\nolinkurl{ekornberg@smith.edu}},
+\href{mailto:enesmith@smith.edu}{\nolinkurl{enesmith@smith.edu}}\\
 }
 % Contact information of the corresponding author
-\corres{Correspondence: }
+\corres{Correspondence: \href{mailto:bbaumer@smith.edu}{\nolinkurl{bbaumer@smith.edu}}}
 
 % Current address and/or shared authorship
 
@@ -107,22 +109,22 @@ $^{6}$ \quad ; \href{mailto:enesmith@smith.edu}{\nolinkurl{enesmith@smith.edu}}\
 % Simple summary
 
 % Abstract (Do not insert blank lines, i.e. \\)
-\abstract{A variety of disciplines use risk assessment instruments to help humans
-make data-driven decisions. Northpointe, a software company, created an
-algorithmic risk assessment instrument known as the Correctional
-Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS
-uses various behavioral and psychological metrics related to recidivism
-to assist justice systems in assessing a defendant's potential
-recidivism risk. Angwin et al.~published a ProPublica article in which
-they conclude that the racial biases in the criminal justice system are
-reflected in the COMPAS recidivism risk scores. In response, Dieterich
-et al.~published a rebuttal on behalf of Northpointe defending the
-COMPAS algorithm and refuting Angwin et al.'s allegation of racial bias.
-Using a human rights framework adopted from the organizations Women at
-the Table and AI Fairness 360, we use debiasing algorithms and fairness
-metrics to analyze the argument between Northpointe and ProPublica and
-determine whether and to what extent there is racial bias in the COMPAS
-algorithm.}
+\abstract{A variety of disciplines use risk assessment instruments to
+help humans make data-driven decisions. Northpointe, a software company,
+created an algorithmic risk assessment instrument known as the
+Correctional Offender Management Profiling for Alternative Sanctions
+(COMPAS). COMPAS uses various behavioral and psychological metrics
+related to recidivism to assist justice systems in assessing a
+defendant's potential recidivism risk. Angwin et al.~published a
+ProPublica article in which they conclude that the racial biases in the
+criminal justice system are reflected in the COMPAS recidivism risk
+scores. In response, Dieterich et al.~published a rebuttal on behalf of
+Northpointe defending the COMPAS algorithm and refuting Angwin et al.'s
+allegation of racial bias. Using a human rights framework adopted from
+the organizations Women at the Table and AI Fairness 360, we use
+debiasing algorithms and fairness metrics to analyze the argument
+between Northpointe and ProPublica and determine whether and to what
+extent there is racial bias in the COMPAS algorithm.}
 
 % Keywords
 
@@ -327,15 +329,15 @@ how a much greater proportion (\textgreater{} 50\%) of Black defendants
 recidivated than their white counterparts.
 \label{tab:recid table}}\tabularnewline
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived\tabularnewline
+Two Year Recidivism by Race & Recidivated & Survived \\
 \midrule
 \endfirsthead
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived\tabularnewline
+Two Year Recidivism by Race & Recidivated & Survived \\
 \midrule
 \endhead
-African American & 1661 & 1512\tabularnewline
-Caucasian & 822 & 1278\tabularnewline
+African American & 1661 & 1512 \\
+Caucasian & 822 & 1278 \\
 \bottomrule
 \end{longtable}
 
@@ -498,21 +500,17 @@ value.
 \caption{Results of Baseline Fairness Metric Analysis
 \label{tab:baseline metrics table}}\tabularnewline
 \toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited
-Group\tabularnewline
+Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
 \midrule
 \endfirsthead
 \toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited
-Group\tabularnewline
+Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
 \midrule
 \endhead
-Statistical Parity Difference & 0 & -0.14 & White
-Defendants\tabularnewline
-Disparate Impact Ratio & 1 & 0.47 & White Defendants\tabularnewline
-Average Odds Difference & 0 & -0.44 & White Defendants\tabularnewline
-Equal Opportunity Difference & 0 & -0.41 & White
-Defendants\tabularnewline
+Statistical Parity Difference & 0 & -0.14 & White Defendants \\
+Disparate Impact Ratio & 1 & 0.47 & White Defendants \\
+Average Odds Difference & 0 & -0.44 & White Defendants \\
+Equal Opportunity Difference & 0 & -0.41 & White Defendants \\
 \bottomrule
 \end{longtable}
 
@@ -577,4 +575,3 @@ Defendants\tabularnewline
 
 
 \end{document}
-
