@@ -332,6 +332,7 @@ plt.title('Priors Count by Sex')
 plt.show()
 ```
 
+The two Priors Count bar charts show the differences in the distribution of priors by race and sex. If a defendant has a higher number of prior offenses, the individual is more likely to be rated with a higher risk of recidivism. In the former plot, one can see that Black defendants have a higher number of priors than do white defendants. This again likely reflects the over-policing of Black neighborhoods. In the latter plot, one can see that male defendants have a higher number of priors than do female defendants. This is worth noting because the COMPAS risk assessment algorithm has been found to express a discrepancy in prediction between sexes. When the recidivsim predictions are compared with the true recividism outcomes, female defendants have a notable false positive rate that predicts their recidivism risk as higher than their true outcomes.
 
 # Baseline Metrics
 
