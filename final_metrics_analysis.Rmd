@@ -673,10 +673,10 @@ plt.show()
 ```
 
 ```{python} 
-ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
-eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
-eo.fit(train_BLD, test_BLD)
-y_pred_EO = eo.predict(test_BLD)
+#ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
+#eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
+#eo.fit(train_BLD, test_BLD)
+#y_pred_EO = eo.predict(test_BLD)
 #y_proba_EO = eo.predict_(test_BLD)
 
 ```
