@@ -81,6 +81,20 @@ y_new = y[(y.index.get_level_values(2) == "Caucasian") | (y.index.get_level_valu
 y_new.head()
 ```
 
+```{python EDA}
+X_new_index = X_new.rename(columns={"race": "def_race"})
+X_new_index = X_new_index.rename(columns={"sex": "def_sex"})
+# renaming dataframe columns to avoid the ValueError of variables being a column AND index label (which is ambiguous)
+
+X_new_index.groupby(["def_race"])["age"].median()
+X_new_index.groupby(["def_race", "sex"]).size()
+X_new_index.groupby(["def_race", "c_charge_degree"]).size()
+X_new_index.groupby(["def_race"])["priors_count"].median()
+#X_new_index.groupby(["def_race"])["juv_fel_count"].median()
+#X_new_index.groupby(["def_race"])["juv_misd_count"].median()
+# above two lines commented out since medians for everyone = 0
+
+```
 
 ```{python initial confusion matrix}
 # Function for visualising the confusion matrix and other statistics
@@ -237,22 +251,6 @@ y_new
 
 
 # Exploratory Data Analysis
-
-```{python EDA}
-X_new_index = X_new.rename(columns={"race": "def_race"})
-X_new_index = X_new_index.rename(columns={"sex": "def_sex"})
-# renaming dataframe columns to avoid the ValueError of variables being a column AND index label (which is ambiguous)
-
-X_new_index.groupby(["def_race"])["age"].median()
-X_new_index.groupby(["def_race", "sex"]).size()
-X_new_index.groupby(["def_race", "c_charge_degree"]).size()
-X_new_index.groupby(["def_race"])["priors_count"].median()
-#X_new_index.groupby(["def_race"])["juv_fel_count"].median()
-#X_new_index.groupby(["def_race"])["juv_misd_count"].median()
-# above two lines commented out since medians for everyone = 0
-
-```
-
 ```{python exploratory visualization set up}
 df_viz = X_new.copy()
 df_viz['race'] = X_new['race'].replace({1.0: 'Caucasian', 0.0: 'African-American'})
@@ -273,11 +271,15 @@ sns.countplot(x='two_year_recid', data=df_viz, palette=workshop_palette)
 plt.title('Two Year Recidivism Rate')
 ```
 
+Of both Black and white people, there is a higher percentage of people who did not recidivate than who did. 2500 people recidivated, whereas approximately 2600 did not.
+
 ```{python exploratory race bar plot}
 # barplot of race
 sns.countplot(x="race", data=df_viz, palette=workshop_palette)
 plt.title('Race Distribution (White and Black individuals only)')
 ```
+
+The race distribution for black people is 3000 and the distribution for white people is 2100. Therefore, there are more black people in the dataset than white people.
 
 ```{python exploratory age by race plot}
 # age distribution by race
@@ -312,6 +314,25 @@ plt.show()
 pd.crosstab(index = df_viz["race"], columns = df_viz["two_year_recid"])
 ```
 
+When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants recidivate more than not recidivate. However, we can also see that there are more Black defendants in the data set in general.
+
+Black defendants are more likely to recidivate than not recidivate. This increased likelihood of recidivating may be attributed to the systemic racism in policing (e.g., predominantly Black neighborhoods tend to be overpoliced in comparison to predominantly white neighborhoods").
+
+```{python exploratory priors by race}
+priors_by_race = sns.countplot(x="race", color="priors_count", data=df_viz, palette=workshop_palette)
+
+plt.title('Priors Count by Race')
+plt.show()
+```
+
+```{python exploratory priors by sex}
+priors_by_race = sns.countplot(x="sex", color="priors_count", data=df_viz, palette=workshop_palette)
+
+plt.title('Priors Count by Sex')
+plt.show()
+```
+
+The two Priors Count bar charts show the differences in the distribution of priors by race and sex. If a defendant has a higher number of prior offenses, the individual is more likely to be rated with a higher risk of recidivism. In the former plot, one can see that Black defendants have a higher number of priors than do white defendants. This again likely reflects the over-policing of Black neighborhoods. In the latter plot, one can see that male defendants have a higher number of priors than do female defendants. This is worth noting because the COMPAS risk assessment algorithm has been found to express a discrepancy in prediction between sexes. When the recidivsim predictions are compared with the true recividism outcomes, female defendants have a notable false positive rate that predicts their recidivism risk as higher than their true outcomes.
 
 # Baseline Metrics
 
@@ -350,12 +371,16 @@ make_confusion_matrix(cf_matrix, "[Baseline]")
 plt.show()
 ```
 
+The highest percentage is for true negatives, those guessed to not recidivate and actually did not, at 35.41%. Similarly, the true positive rate is 25.85%. Our false negative and positive rates, incorrect guesses, is high for this baseline model, indicating that debiasing intervention may be necessary to lower these rates.
+
 ```{python baseline metrics per group}
 metrics_per_group(y_test, y_pred)
 plt.show()
 ```
 
 In the Black population, the model correctly identifies 70% of people who recidivated. In the white population, the model correctly identifies 20% of people who recidivated.
+
+White people have a lower recall rate, meaning that there is a low true positive rate. Whereas for black people the true positive rate is much higher: there's a high percentage of recidivated guesses that were correct.
 
 ## Group Fairness Metrics
 
@@ -464,6 +489,9 @@ cf_matrix = confusion_matrix(y_test, y_pred_REW)
 make_confusion_matrix(cf_matrix, "[Reweighting]")
 plt.show()
 ```
+
+The highest percentage in this confusion matrix is for the true negative rate, those guessed to not recidivate and actually did not, at 36.24%, 0.83% higher than the true negatives in the baseline model. This means that the re-weighing model marginally improved the baseline model accuracy. The true positive rate, or those who were predicted to recidivate and did recidivate, is 24.72%, 1.13% lower than that of the baseline model. This means that the re-weighing model slightly lowered the accuracy of the baseline model. The false negative and false positive rates, or the predictions that proved to be incorrect, are 23.20% and 15.85%, respectively. The re-weighing model lowered the accuracy of the false negative rate by 1.14% and improved the accuracy of the false positive rate by 0.83%. We are most concerned about the false positivesthat mean that defendants who are predicted to recidivate and do not actually recidivate. While there is a slight accuracy improvement in the false positive rate, it is still relatively high at 15.85%, indicating that we should further precede with additional bias mitigation techniques.
+
 
 ```{python pre-processing metrics per group}
 metrics_per_group(y_test, y_pred_REW)
@@ -659,7 +687,7 @@ make_confusion_matrix(cf_matrix, "[Calibrated Equalized Odds]")
 plt.show()
 ```
 
-```{python} 
+```{python post-processing equal odds needs fix} 
 #ep = EqOddsPostprocessing(unprivileged_groups=0, privileged_groups= 1, seed =1234567)
 #eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
 #eo.fit(train_BLD, test_BLD)
