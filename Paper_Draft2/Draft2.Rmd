@@ -3,31 +3,23 @@ title: "Does the COMPAS Needle Always Point Towards Equity? Finding Fairness in 
 
 author:
   - name: Amrita Acharya
-    affiliation: 1, 2
+    affil: 1
   - name: Dianne Caravela
-    affiliation: 1, 3
+    affil: 1
   - name: Eunice Kim
-    affiliation: 1, 4
+    affil: 1
   - name: Emma Kornberg
-    affiliation: 1, 5
+    affil: 1
   - name: Elisabeth Nesmith
-    affiliation: 1, 6
+    affil: 1
 affiliation:
   - num: 1
     address: |
       Statistical and Data Sciences
       Smith College
       Northampton, MA 01063
-  - num: 2
-    email: aacharya@smith.edu
-  - num: 3
-    email: dcaravela@smith.edu
-  - num: 4
-    email: ekim89@smith.edu
-  - num: 5
-    email: ekornberg@smith.edu
-  - num: 6
-    email: enesmith@smith.edu
+    email: aarcharya@smith.edu, dcaravela@smith.edu, ekim89@smith.edu, ekornberg@smith.edu, enesmith@smith.edu
+
 journal: water
 type: article
 status: submit
@@ -35,6 +27,8 @@ bibliography: mybibfile.bib
 csl: ../resources/chicago-author-date.csl
 #appendix: appendix.tex
 classoption: fleqn
+correspondence: |
+  bbaumer@smith.edu
 
 abstract: |
  A variety of disciplines use risk assessment instruments to help humans make data-driven decisions. Northpointe, a software company, created an algorithmic risk assessment instrument known as the Correctional Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS uses various behavioral and psychological metrics related to recidivism to assist justice systems in assessing a defendant’s potential recidivism risk. Angwin et al. published a ProPublica article in which they conclude that the racial biases in the criminal justice system are reflected in the COMPAS recidivism risk scores. In response, Dieterich et al. published a rebuttal on behalf of Northpointe defending the COMPAS algorithm and refuting Angwin et al.’s allegation of racial bias. Using a human rights framework adopted from the organizations Women at the Table and AI Fairness 360, we use debiasing algorithms and fairness metrics to analyze the argument between Northpointe and ProPublica and determine whether and to what extent there is racial bias in the COMPAS algorithm. 
