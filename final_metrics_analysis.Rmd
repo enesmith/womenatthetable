@@ -14,7 +14,7 @@ library(reticulate)
 
 
 # for Dianne
-use_condaenv("base")
+#use_condaenv("base")
 
 # for Amrita
 #use_condaenv("anaconda3")
@@ -366,7 +366,7 @@ plt.title('Prior Charges Count by Sex')
 plt.show()
 ```
 
-If a defendant has a higher number of prior offenses, the individual is more likely to be rated with a higher risk of recidivism **do we know this for sure?**. In the former plot, we can see that Black defendants have a higher number of prior charges than do white defendants. This again likely reflects the over-policing of Black people and communities. In the latter plot, we can see that male defendants have a higher number of prior charges than do female defendants. This is worth noting because the COMPAS risk assessment algorithm has been found to express a discrepancy in prediction between sexes **who found this?**. When the recidivsim predictions are compared with the true recividism outcomes, female defendants have a notable false positive rate that predicts their recidivism risk as higher than their true outcomes**where does this come from?**.
+In the former plot, we can see that Black defendants have a higher number of prior charges than do white defendants. This again likely reflects the over-policing of Black people and communities. In the latter plot, we can see that male defendants have a higher number of prior charges than do female defendants. This is worth noting as @larson2016we found that there is discrepancy in COMPAS risk assessment algorithm's prediction between sexes. When the recidivsim predictions are compared with the true recividism outcomes, female defendants have a notable false positive rate that predicts their recidivism risk as higher than their true outcomes [@larson2016we].
 
 # Baseline Metrics
 
