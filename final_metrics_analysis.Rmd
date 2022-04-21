@@ -310,7 +310,7 @@ props[('Caucasian','Recidivated')]={'facecolor':'red', 'edgecolor':'white'}
 props[('Caucasian','Survived')]={'facecolor':'red', 'edgecolor':'white'}
 props[('African-American','Recidivated')]={'facecolor':'xkcd:aqua','edgecolor':'white'}
 props[('African-American','Survived')]=        {'facecolor':'xkcd:aqua','edgecolor':'white'}
-labelizer=lambda k:{('Caucasian','Recidivated'):1242,('African-American','Recidivated'):1661,('Caucasian','Survived'):858,('African-American','Survived'):1512}[k]
+labelizer=lambda k:{('Caucasian','Recidivated'):1278,('African-American','Recidivated'):1661,('Caucasian','Survived'):1278,('African-American','Survived'):1512}[k]
 mosaic(df_viz,['race','two_year_recid'],labelizer=labelizer,properties=props)
 plt.show()
 ```
