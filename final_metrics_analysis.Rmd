@@ -11,6 +11,12 @@ editor_options:
 
 ```{r py setup, include=FALSE}
 library(reticulate)
+
+
+# for Dianne
+use_condaenv("base")
+
+# for Amrita
 #use_condaenv("anaconda3")
 ```
 
@@ -23,6 +29,8 @@ import seaborn as sns
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from statsmodels.graphics.mosaicplot import mosaic
+from itertools import product
 
 from sklearn.compose import make_column_transformer
 from sklearn.linear_model import LogisticRegression
@@ -256,6 +264,25 @@ workshop_palette = [purple, green]
 df_viz.head()
 ```
 
+```{python crosstable of charge degrees by race}
+crosstable=pd.crosstab(df_viz['race'],df_viz['c_charge_degree'])
+crosstable
+```
+
+```{python mosiac of charge degrees by race}
+props={}
+props[('Caucasian','F')]={'facecolor':'red', 'edgecolor':'white'}
+props[('Caucasian','M')]={'facecolor':'red', 'edgecolor':'white'}
+props[('African-American','F')]={'facecolor':'xkcd:aqua','edgecolor':'white'}
+props[('African-American','M')]=        {'facecolor':'xkcd:aqua','edgecolor':'white'}
+labelizer=lambda k:{('Caucasian','F'):1242,('African-American','F'):2194,('Caucasian','M'):858,('African-American','M'):979}[k]
+mosaic(df_viz,['race','c_charge_degree'],labelizer=labelizer,properties=props)
+plt.show()
+```
+
+59.14% of white defendants were charged with felonies versus 69.15% of black defendants. Likewise, a higher percentage of white defendants (40.86%) were charged with a misdemeanor than black defendants (30.85%).
+
+
 ```{python exploratory recidivism bar plot}
 # barplot of recividism
 sns.countplot(x='two_year_recid', data=df_viz, palette=workshop_palette)
@@ -264,10 +291,29 @@ plt.title('Two Year Recidivism Rate')
 
 Out of all defendants, there is a higher proportion of people who did not recidivate than who did. About 2500 people recidivated, whereas approximately 2700 did not.
 
+```{python crosstable of recitivism by race}
+crosstable=pd.crosstab(df_viz['race'],df_viz['two_year_recid'])
+crosstable
+```
+
+```{python exploratory recidivism mosaic plot}
+props={}
+props[('Caucasian','Recidivated')]={'facecolor':'red', 'edgecolor':'white'}
+props[('Caucasian','Survived')]={'facecolor':'red', 'edgecolor':'white'}
+props[('African-American','Recidivated')]={'facecolor':'xkcd:aqua','edgecolor':'white'}
+props[('African-American','Survived')]=        {'facecolor':'xkcd:aqua','edgecolor':'white'}
+labelizer=lambda k:{('Caucasian','Recidivated'):822,('African-American','Recidivated'):1661,('Caucasian','Survived'):1278,('African-American','Survived'):1512}[k]
+mosaic(df_viz,['race','two_year_recid'],labelizer=labelizer,properties=props)
+plt.show()
+```
+
+A higher percentage of white defendants (60.86%) than black defendants (47.65%) did not commit another crime within two years. This means that 39.14% of white defendants did recidivate within two years compared to 52.35% of black defendants.
+
 ```{python exploratory race bar plot}
 # barplot of race
 sns.countplot(x="race", data=df_viz, palette=workshop_palette)
 plt.title('Race Distribution (White and Black individuals only)')
+plt.show()
 ```
 
 The dataset we are using contains about 3200 Black defendants and 2100 white defendants. Therefore, there are more Black people represented in the dataset than white people, showing the disproportionate policing and criminalization of Black communities.
@@ -709,15 +755,16 @@ def get_attributes(data, selected_attr=None):
 ```
 
 
+
 ```{python post-processing equal odds needs fix} 
-privileged_groups, unprivileged_groups = get_attributes(train_BLD, selected_attr= 'race')
-ep = EqOddsPostprocessing(unprivileged_groups= unprivileged_groups, privileged_groups= privileged_groups, seed = 42)
+#privileged_groups, unprivileged_groups = get_attributes(train_BLD, selected_attr= 'race')
+#ep = EqOddsPostprocessing(unprivileged_groups= unprivileged_groups, privileged_groups= privileged_groups, seed = 42)
 #eo = PostProcessingMeta(estimator=lr, postprocessor=ep, random_state=1234567)
-EOPP = ep.fit(train_BLD, test_BLD)
-y_pred_EO = ep.predict(test_BLD)
+#EOPP = ep.fit(train_BLD, test_BLD)
+#y_pred_EO = ep.predict(test_BLD)
 #y_proba_EO = ep.predict_(test_BLD)
 
-acc_EO = accuracy_score(y_test, y_pred_EO)
+#acc_EO = accuracy_score(y_test, y_pred_EO)
 ```
 
 ### Statistical Parity Difference
