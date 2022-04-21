@@ -298,16 +298,35 @@ crosstable
 
 ```{python exploratory recidivism mosaic plot}
 props={}
-props[('Caucasian','Recidivated')]={'facecolor':'red', 'edgecolor':'white'}
-props[('Caucasian','Survived')]={'facecolor':'red', 'edgecolor':'white'}
-props[('African-American','Recidivated')]={'facecolor':'xkcd:aqua','edgecolor':'white'}
-props[('African-American','Survived')]=        {'facecolor':'xkcd:aqua','edgecolor':'white'}
+props[('Caucasian','Recidivated')]={'facecolor':'green', 'edgecolor':'white'}
+props[('Caucasian','Survived')]={'facecolor':'green', 'edgecolor':'white'}
+props[('African-American','Recidivated')]={'facecolor':'xkcd:purple','edgecolor':'white'}
+props[('African-American','Survived')]=        {'facecolor':'xkcd:purple','edgecolor':'white'}
 labelizer=lambda k:{('Caucasian','Recidivated'):822,('African-American','Recidivated'):1661,('Caucasian','Survived'):1278,('African-American','Survived'):1512}[k]
 mosaic(df_viz,['race','two_year_recid'],labelizer=labelizer,properties=props)
 plt.show()
 ```
 
 A higher percentage of white defendants (60.86%) than black defendants (47.65%) did not commit another crime within two years. This means that 39.14% of white defendants did recidivate within two years compared to 52.35% of black defendants.
+
+```{python wordcloud setup}
+from os import path
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+```
+
+```{python wordcloud}
+text = " ".join(charge for charge in df_viz.c_charge_desc)
+stopwords = set(STOPWORDS)
+stopwords.update(["arrest", "case", "charge"])
+wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
+```
+
+```{python wordcloud image}
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+```
 
 ```{python exploratory race bar plot}
 # barplot of race
