@@ -14,7 +14,7 @@ library(reticulate)
 
 
 # for Dianne
-use_condaenv("base")
+# use_condaenv("base")
 
 # for Amrita
 #use_condaenv("anaconda3")
@@ -291,7 +291,7 @@ plt.title('Two Year Recidivism Rate')
 
 Out of all defendants, there is a higher proportion of people who did not recidivate than who did. About 2500 people recidivated, whereas approximately 2700 did not.
 
-```{python crosstable of recitivism by race}
+```{python crosstable of recidivism by race}
 crosstable=pd.crosstab(df_viz['race'],df_viz['two_year_recid'])
 crosstable
 ```
@@ -347,22 +347,10 @@ plt.show()
 
 When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. Again, this trend points to disproportionate rates of criminalization of Black people. This increased likelihood of recidivating may be attributed to the systemic racism in policing (e.g., predominantly Black neighborhoods tend to be overpoliced in comparison to predominantly white neighborhoods). 
 
-```{python exploratory recidivism by race table}
-# table of recidivism by race
-pd.crosstab(index = df_viz["race"], columns = df_viz["two_year_recid"])
-```
-
 ```{python exploratory priors by race}
-priors_by_race = sns.countplot(x="race", color="priors_count", data=df_viz, palette=workshop_palette)
+priors_by_race = sns.displot(x="priors_count", row = "race", col = "sex", hue ="race", data=df_viz, palette=workshop_palette)
 
-plt.title('Prior Charges Count by Race')
-plt.show()
-```
-
-```{python exploratory priors by sex}
-priors_by_race = sns.countplot(x="sex", color="priors_count", data=df_viz, palette=workshop_palette)
-
-plt.title('Prior Charges Count by Sex')
+#plt.title("Prior Charges Count by Race and Sex)
 plt.show()
 ```
 
