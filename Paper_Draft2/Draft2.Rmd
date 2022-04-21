@@ -18,7 +18,7 @@ affiliation:
       Statistical and Data Sciences
       Smith College
       Northampton, MA 01063
-    email: aacharya@smith.edu, dcaravela@smith.edu, ekim89@smith.edu, ekornberg@smith.edu, enesmith@smith.edu
+    email: bbaumer@smith.edu
 
 journal: water
 type: article
@@ -28,7 +28,7 @@ csl: ../resources/chicago-author-date.csl
 #appendix: appendix.tex
 classoption: fleqn
 correspondence: |
-  bbaumer@smith.edu
+  aacharya@smith.edu, dcaravela@smith.edu, ekim89@smith.edu, ekornberg@smith.edu, enesmith@smith.edu
 
 abstract: |
  A variety of disciplines use risk assessment instruments to help humans make data-driven decisions. Northpointe, a software company, created an algorithmic risk assessment instrument known as the Correctional Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS uses various behavioral and psychological metrics related to recidivism to assist justice systems in assessing a defendant’s potential recidivism risk. @angwin2016machine published a ProPublica article in which they conclude that the racial biases in the criminal justice system are reflected in the COMPAS recidivism risk scores. In response, @equivant_response_2016 published a rebuttal on behalf of Northpointe defending the COMPAS algorithm and refuting @angwin2016machine’s allegation of racial bias. Using a human rights framework adopted from the organizations Women at the Table and AI Fairness 360, we use debiasing algorithms and fairness metrics to analyze the argument between Northpointe and ProPublica and determine whether and to what extent there is racial bias in the COMPAS algorithm. 
