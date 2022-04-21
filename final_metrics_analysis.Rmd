@@ -14,7 +14,7 @@ library(reticulate)
 
 
 # for Dianne
-use_condaenv("base")
+# use_condaenv("base")
 
 # for Amrita
 use_condaenv("anaconda3")
@@ -291,23 +291,42 @@ plt.title('Two Year Recidivism Rate')
 
 Out of all defendants, there is a higher proportion of people who did not recidivate than who did. About 2500 people recidivated, whereas approximately 2700 did not.
 
-```{python crosstable of recitivism by race}
+```{python crosstable of recidivism by race}
 crosstable=pd.crosstab(df_viz['race'],df_viz['two_year_recid'])
 crosstable
 ```
 
 ```{python exploratory recidivism mosaic plot}
 props={}
-props[('Caucasian','Recidivated')]={'facecolor':'red', 'edgecolor':'white'}
-props[('Caucasian','Survived')]={'facecolor':'red', 'edgecolor':'white'}
-props[('African-American','Recidivated')]={'facecolor':'xkcd:aqua','edgecolor':'white'}
-props[('African-American','Survived')]=        {'facecolor':'xkcd:aqua','edgecolor':'white'}
+props[('Caucasian','Recidivated')]={'facecolor':'green', 'edgecolor':'white'}
+props[('Caucasian','Survived')]={'facecolor':'green', 'edgecolor':'white'}
+props[('African-American','Recidivated')]={'facecolor':'xkcd:purple','edgecolor':'white'}
+props[('African-American','Survived')]=        {'facecolor':'xkcd:purple','edgecolor':'white'}
 labelizer=lambda k:{('Caucasian','Recidivated'):822,('African-American','Recidivated'):1661,('Caucasian','Survived'):1278,('African-American','Survived'):1512}[k]
 mosaic(df_viz,['race','two_year_recid'],labelizer=labelizer,properties=props)
 plt.show()
 ```
 
 A higher percentage of white defendants (60.86%) than black defendants (47.65%) did not commit another crime within two years. This means that 39.14% of white defendants did recidivate within two years compared to 52.35% of black defendants.
+
+```{python wordcloud setup}
+from os import path
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+```
+
+```{python wordcloud}
+text = " ".join(charge for charge in df_viz.c_charge_desc)
+stopwords = set(STOPWORDS)
+stopwords.update(["arrest", "case", "charge"])
+wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
+```
+
+```{python wordcloud image}
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+```
 
 ```{python exploratory race bar plot}
 # barplot of race
@@ -347,26 +366,14 @@ plt.show()
 
 When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. Again, this trend points to disproportionate rates of criminalization of Black people. This increased likelihood of recidivating may be attributed to the systemic racism in policing (e.g., predominantly Black neighborhoods tend to be overpoliced in comparison to predominantly white neighborhoods). 
 
-```{python exploratory recidivism by race table}
-# table of recidivism by race
-pd.crosstab(index = df_viz["race"], columns = df_viz["two_year_recid"])
-```
-
 ```{python exploratory priors by race}
-priors_by_race = sns.countplot(x="race", color="priors_count", data=df_viz, palette=workshop_palette)
+priors_by_race = sns.displot(x="priors_count", row = "race", col = "sex", hue ="race", data=df_viz, palette=workshop_palette)
 
-plt.title('Prior Charges Count by Race')
+#plt.title("Prior Charges Count by Race and Sex)
 plt.show()
 ```
 
-```{python exploratory priors by sex}
-priors_by_race = sns.countplot(x="sex", color="priors_count", data=df_viz, palette=workshop_palette)
-
-plt.title('Prior Charges Count by Sex')
-plt.show()
-```
-
-If a defendant has a higher number of prior offenses, the individual is more likely to be rated with a higher risk of recidivism **do we know this for sure?**. In the former plot, we can see that Black defendants have a higher number of prior charges than do white defendants. This again likely reflects the over-policing of Black people and communities. In the latter plot, we can see that male defendants have a higher number of prior charges than do female defendants. This is worth noting because the COMPAS risk assessment algorithm has been found to express a discrepancy in prediction between sexes **who found this?**. When the recidivsim predictions are compared with the true recividism outcomes, female defendants have a notable false positive rate that predicts their recidivism risk as higher than their true outcomes**where does this come from?**.
+In the former plot, we can see that Black defendants have a higher number of prior charges than do white defendants. This again likely reflects the over-policing of Black people and communities. In the latter plot, we can see that male defendants have a higher number of prior charges than do female defendants. This is worth noting as @larson2016we found that there is discrepancy in COMPAS risk assessment algorithm's prediction between sexes. When the recidivsim predictions are compared with the true recividism outcomes, female defendants have a notable false positive rate that predicts their recidivism risk as higher than their true outcomes [@larson2016we].
 
 # Baseline Metrics
 
