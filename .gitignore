@@ -106,10 +106,6 @@ dmypy.json
 .Rproj.user
 Acharya_Sprint1.ipynb
 .Rhistory
-<<<<<<< HEAD
-.Rhistory
 .DS_Store
-=======
-.DS_Store
+.Rhistory.orig
 
->>>>>>> upstream/main
