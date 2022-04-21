@@ -18,17 +18,17 @@ affiliation:
       Statistical and Data Sciences
       Smith College
       Northampton, MA 01063
-    email: aacharya@smith.edu, dcaravela@smith.edu, ekim89@smith.edu, ekornberg@smith.edu, enesmith@smith.edu
+    email: bbaumer@smith.edu
 
 journal: water
 type: article
 status: submit
-bibliography: ["mybibfile.bib", "pkgs.bib"]
+bibliography: mybibfile.bib
 csl: ../resources/chicago-author-date.csl
 #appendix: appendix.tex
 classoption: fleqn
 correspondence: |
-  bbaumer@smith.edu
+  aacharya@smith.edu, dcaravela@smith.edu, ekim89@smith.edu, ekornberg@smith.edu, enesmith@smith.edu
 
 abstract: |
  A variety of disciplines use risk assessment instruments to help humans make data-driven decisions. Northpointe, a software company, created an algorithmic risk assessment instrument known as the Correctional Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS uses various behavioral and psychological metrics related to recidivism to assist justice systems in assessing a defendant’s potential recidivism risk. @angwin2016machine published a ProPublica article in which they conclude that the racial biases in the criminal justice system are reflected in the COMPAS recidivism risk scores. In response, @equivant_response_2016 published a rebuttal on behalf of Northpointe defending the COMPAS algorithm and refuting @angwin2016machine’s allegation of racial bias. Using a human rights framework adopted from the organizations Women at the Table and AI Fairness 360, we use debiasing algorithms and fairness metrics to analyze the argument between Northpointe and ProPublica and determine whether and to what extent there is racial bias in the COMPAS algorithm. 
@@ -38,14 +38,15 @@ output: rticles::mdpi_article
 
 # Introduction
 
-The Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) algorithm was created by the private, for-profit company Northpointe (now known by its parent company [Equivant](https://www.equivant.com/faq/)), to predict defendants’ risk of recidivism. It generates a decile score that classifies defendants’ risk of recidivism as either low, medium, or high [@angwin2016machine]. Jurisdictions across the United States use the COMPAS risk assessment instrument, including but not limited to the New York [@NYDOCCS2019], Massachusetts, Michigan, California [@Jackson2020Setting], and Wisconsin [@WisconsinDOC] Departments of Corrections. 
+The Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) algorithm was created by the private, for-profit company Northpointe (now known by its parent company [equivant](https://www.equivant.com/faq/)), to predict defendants’ risk of recidivism. It generates a decile score that classifies defendants’ risk of recidivism as either low, medium, or high [@angwin2016machine]. Jurisdictions across the United States use the COMPAS risk assessment instrument, including but not limited to the [New York](https://doccs.ny.gov/system/files/documents/2020/11/8500.pdf), [Massachusetts](https://hdsr.mitpress.mit.edu/pub/hzwo7ax4/release/4), [Michigan](https://hdsr.mitpress.mit.edu/pub/hzwo7ax4/release/4), [California](https://hdsr.mitpress.mit.edu/pub/hzwo7ax4/release/4), and [Wisconsin](https://doc.wi.gov/Pages/AboutDOC/COMPAS.aspx) Departments of Corrections. 
 
-Due to the proprietary nature of the COMPAS algorithm, it is unknown how exactly these recidivism risk scores are calculated; however, a sample COMPAS Risk Assessment Survey has been made publicly available, revealing the algorithm’s input information. This survey has been widely critiqued for using proxy variables for race that do not explicitly factor in a defendant’s race but heavily imply it, allowing Northpointe to claim that their algorithm is free of racial bias. For example, the COMPAS risk assessment survey asks screeners to speculate if a defendant might be affiliated with a gang. It also asks if a defendant has any friends or family members who have been crime victims [@Angwin2016Sample]. Although these questions do not directly ask about race, they do not take into account the pervasive nature of systemic racism that infiltrates every aspect of the lives of marginalized people, thereby indirectly asking about race. 
+Due to the proprietary nature of the COMPAS algorithm, it is unknown how exactly these recidivism risk scores are calculated; however, a [sample COMPAS Risk Assessment Survey](https://www.documentcloud.org/documents/2702103-Sample-Risk-Assessment-COMPAS-CORE#document/p5/a296598) has been made publicly available, revealing the algorithm’s input information. This survey has been widely critiqued for using proxy variables for race that do not explicitly factor in a defendant’s race but heavily imply it, allowing Northpointe to claim that their algorithm is free of racial bias. For example, the COMPAS risk assessment survey asks screeners to speculate if a defendant might be affiliated with a gang. It also asks if a defendant has any friends or family members who have been crime victims [@Angwin2016Sample]. Although these questions do not directly ask about race, they do not take into account the pervasive nature of systemic racism that infiltrates every aspect of the lives of marginalized people, thereby indirectly asking about race. 
 @angwin2016machine. published a 2016 piece in the news publication ProPublica that analyzes the methods and algorithms used by Northpointe in their COMPAS risk score assessment algorithm and uncovers the racial biases in defendants’ scores [@angwin2016machine]. Their research finds that “the algorithm [is] somewhat more accurate than a coin flip,” a worrisome level of accuracy given the potential impact its determinations may have on real people’s lives. @angwin2016machine specifically investigate the distribution of COMPAS scores by decile among Black and white defendants. They write: “The analysis also [shows] that even when controlling for prior crimes, future recidivism, age, and gender, Black defendants [are] 45 percent more likely to be assigned higher risk scores than white defendants” [@larson2016we]. After examining the fairness metric statistical parity difference, @angwin2016machine conclude that the algorithm is racially biased [@larson2016we]. 
 
 @equivant_response_2016, on the behalf of Northpointe, deny the allegations of racial bias and offer their own analyses based on different fairness metrics in rebuttal [@equivant_response_2016]. @angwin2016machine maintain that there are biases in the outcome values, protected attributes, and covariates during @equivant_response_2016’s data processing phase. ProPublica collaborators @larson2016we account for these biases in their analyses. In their response, @equivant_response_2016 highlight that @angwin2016machine did not account for base rates of recidivism in their analysis, which are important to understand initial percentages without the presence of other information. 
 
 [Women at the Table](https://www.womenatthetable.net/), the sponsor organization for this project, is “a growing, global gender equality & democracy CSO based in Geneva, Switzerland focused on advancing feminist systems change by using the prism of technology, innovation & AI exercising leverage points in technology, the economy, sustainability & democratic governance.” We are collaborating with the organization on its AI & Equality [@noauthor_ai_nodate] initiative, tasked with de-biasing the COMPAS algorithm [@aif360-oct-2018] and producing a corresponding data story that will be added to its library. 
+
 Our project builds on Women at the Table’s various de-biasing algorithms used in its AI & Equality Human Rights Toolbox to conduct our own analyses on the COMPAS data set. Based on this analysis, we employ a human rights framework to contribute to the ProPublica and Northpointe debate and investigate whether or to what extent there is racial bias in the COMPAS algorithm. With a solid understanding of the two sides, we aim to pinpoint the shortcomings of both arguments and correct them in our analyses. We will use various de-biasing techniques and fairness metrics to evaluate the level of bias present in the COMPAS data and our algorithm. We will summarize our results using the JupyterNotebook framework from Women at the Table, to be used by members of the organization to teach in a workshop setting. We hope that our findings will highlight the importance of checking statistical analyses using varied methods and contribute to the ongoing discussion of the effects of machine biases in the justice system. 
 
 # Data
@@ -56,16 +57,8 @@ The data we are using for this project is the COMPAS General Recidivism Risk Sco
 knitr::include_graphics("../images/table_snippet.png")
 ```
 
-```{r race plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of defendant races. The dataset contains about 3200 Black defendants and 2100 white defendants. Therefore, there are more Black people represented in the dataset than white people.', out.width= "100%"}
-knitr::include_graphics("../images/race_bar_plot_new.png")
-```
-
 ```{r age plot, echo=FALSE, fig.align='center', fig.cap= "This plot shows the distribution of defendant ages by race. The purple curve shows the distribution of the ages of Black defendants, and the green curve shows the distribution of the ages of white defendants. The probability of a defendant's age being between two points on the x-axis is the total shaded area of the curve under the two points. The purple dotted line represents the median age of Black defendants (29 years) and the green dotted line represents the median age of white defendants (35 years). For both groups, the majority of defendants are relatively young, but this is especially noticeable for Black defendants.", out.width= "100%"}
 knitr::include_graphics("../images/age_race_plot_new.png")
-```
-
-```{r recid plot, echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes. Out of all defendants, there is a higher proportion of people who did not recidivate than who did. About 2500 people recidivated, whereas approximately 2700 did not.', out.width= "100%"}
-knitr::include_graphics("../images/recid_bar_plot_new.png")
 ```
 
 ```{r recid race plot,echo=FALSE, fig.align='center', fig.cap= 'This plot shows the distribution of two year recidivism outcomes by race. When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. We can also see that there are more Black defendants in the dataset overall.', out.width= "100%"}
@@ -88,7 +81,7 @@ knitr::kable(x, caption = "This table shows the counts of recidivism by race, il
 
 # Methods
 
-AI Fairness 360 (AIF360) is an open-source Python toolkit that seeks to "to help facilitate the transition of fairness research algorithms to use in an industrial setting and to provide a common framework for fairness researchers to share and evaluate algorithms" [@aif360-oct-2018]. It contains multiple data sets, including the COMPAS data set that accompanied the @angwin2016machine piece. Using the @reticulate package, we conduct our analysis in an RMarkdown document with Python code. 
+AI Fairness 360 (AIF360) is an open-source Python toolkit that seeks to "to help facilitate the transition of fairness research algorithms to use in an industrial setting and to provide a common framework for fairness researchers to share and evaluate algorithms" [@aif360-oct-2018]. It contains multiple data sets, including the COMPAS data set that accompanied the @angwin2016machine piece.
 
 The AIF360 toolkit contains various group and individual fairness metrics as well as pre-processing, in-processing, and post-processing algorithms that we used for our experiments [@aif360-oct-2018]. We researched the definitions and applications of different fairness metrics [@ashokan2021fairness] to determine which metric would be most appropriate for our project. We chose to look at four group fairness metrics instead of individual fairness metrics. Group fairness takes into account the attributes of a whole group as opposed to just one individual in the group, allowing us to represent more of the systemic issues happening. In general, group fairness metrics require that the unprivileged group is treated similarly to the privileged group, whereas individual fairness metrics require individuals to be treated consistently [@kypraiou_what_2021]. Group and individual metrics work in opposition of one another, meaning that when group fairness improves, individual fairness gets worse.
 
