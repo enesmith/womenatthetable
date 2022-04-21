@@ -318,7 +318,7 @@ from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 ```{python wordcloud}
 text = " ".join(charge for charge in df_viz.c_charge_desc)
 stopwords = set(STOPWORDS)
-stopwords.update(["arrest", "case"])
+stopwords.update(["arrest", "case", "charge"])
 wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
 ```
 
