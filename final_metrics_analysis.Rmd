@@ -12,7 +12,6 @@ editor_options:
 ```{r py setup, include=FALSE}
 library(reticulate)
 
-
 # for Dianne
 # use_condaenv("base")
 
@@ -271,16 +270,16 @@ crosstable
 
 ```{python mosiac of charge degrees by race}
 props={}
-props[('Caucasian','F')]={'facecolor':'red', 'edgecolor':'white'}
-props[('Caucasian','M')]={'facecolor':'red', 'edgecolor':'white'}
-props[('African-American','F')]={'facecolor':'xkcd:aqua','edgecolor':'white'}
-props[('African-American','M')]=        {'facecolor':'xkcd:aqua','edgecolor':'white'}
+props[('Caucasian','F')]={'facecolor': green, 'edgecolor':'white'}
+props[('Caucasian','M')]={'facecolor':green, 'edgecolor':'white'}
+props[('African-American','F')]={'facecolor':purple,'edgecolor':'white'}
+props[('African-American','M')]=        {'facecolor':purple,'edgecolor':'white'}
 labelizer=lambda k:{('Caucasian','F'):1242,('African-American','F'):2194,('Caucasian','M'):858,('African-American','M'):979}[k]
 mosaic(df_viz,['race','c_charge_degree'],labelizer=labelizer,properties=props)
 plt.show()
 ```
 
-59.14% of white defendants were charged with felonies versus 69.15% of black defendants. Likewise, a higher percentage of white defendants (40.86%) were charged with a misdemeanor than black defendants (30.85%).
+1242 (59.14%) of white defendants were charged with felonies versus 2194 (69.15%) of Black defendants. Additionally, a higher percentage of white defendants (40.86%) were charged with a misdemeanor than black defendants (30.85%).
 
 
 ```{python exploratory recidivism bar plot}
@@ -290,24 +289,6 @@ plt.title('Two Year Recidivism Rate')
 ```
 
 Out of all defendants, there is a higher proportion of people who did not recidivate than who did. About 2500 people recidivated, whereas approximately 2700 did not.
-
-```{python crosstable of recidivism by race}
-crosstable=pd.crosstab(df_viz['race'],df_viz['two_year_recid'])
-crosstable
-```
-
-```{python exploratory recidivism mosaic plot}
-props={}
-props[('Caucasian','Recidivated')]={'facecolor':'green', 'edgecolor':'white'}
-props[('Caucasian','Survived')]={'facecolor':'green', 'edgecolor':'white'}
-props[('African-American','Recidivated')]={'facecolor':'xkcd:purple','edgecolor':'white'}
-props[('African-American','Survived')]=        {'facecolor':'xkcd:purple','edgecolor':'white'}
-labelizer=lambda k:{('Caucasian','Recidivated'):822,('African-American','Recidivated'):1661,('Caucasian','Survived'):1278,('African-American','Survived'):1512}[k]
-mosaic(df_viz,['race','two_year_recid'],labelizer=labelizer,properties=props)
-plt.show()
-```
-
-A higher percentage of white defendants (60.86%) than black defendants (47.65%) did not commit another crime within two years. This means that 39.14% of white defendants did recidivate within two years compared to 52.35% of black defendants.
 
 ```{python wordcloud setup}
 from os import path
@@ -366,6 +347,24 @@ plt.show()
 
 When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. Again, this trend points to disproportionate rates of criminalization of Black people. This increased likelihood of recidivating may be attributed to the systemic racism in policing (e.g., predominantly Black neighborhoods tend to be overpoliced in comparison to predominantly white neighborhoods). 
 
+```{python crosstable of recidivism by race}
+crosstable=pd.crosstab(df_viz['race'],df_viz['two_year_recid'])
+crosstable
+```
+
+```{python exploratory recidivism mosaic plot}
+props={}
+props[('Caucasian','Recidivated')]={'facecolor':green, 'edgecolor':'white'}
+props[('Caucasian','Survived')]={'facecolor':green, 'edgecolor':'white'}
+props[('African-American','Recidivated')]={'facecolor':purple,'edgecolor':'white'}
+props[('African-American','Survived')]=        {'facecolor':purple,'edgecolor':'white'}
+labelizer=lambda k:{('Caucasian','Recidivated'):822,('African-American','Recidivated'):1661,('Caucasian','Survived'):1278,('African-American','Survived'):1512}[k]
+mosaic(df_viz,['race','two_year_recid'],labelizer=labelizer,properties=props)
+plt.show()
+```
+
+A higher percentage of white defendants (60.86%) than black defendants (47.65%) did not commit another crime within two years. This means that 39.14% of white defendants did recidivate within two years compared to 52.35% of black defendants.
+
 ```{python exploratory priors by race}
 priors_by_race = sns.displot(x="priors_count", row = "race", col = "sex", hue ="race", data=df_viz, palette=workshop_palette)
 
@@ -373,7 +372,7 @@ priors_by_race = sns.displot(x="priors_count", row = "race", col = "sex", hue ="
 plt.show()
 ```
 
-In the former plot, we can see that Black defendants have a higher number of prior charges than do white defendants. This again likely reflects the over-policing of Black people and communities. In the latter plot, we can see that male defendants have a higher number of prior charges than do female defendants. This is worth noting as @larson2016we found that there is discrepancy in COMPAS risk assessment algorithm's prediction between sexes. When the recidivsim predictions are compared with the true recividism outcomes, female defendants have a notable false positive rate that predicts their recidivism risk as higher than their true outcomes [@larson2016we].
+In the above plot, we can see that Black defendants, particularly men, are more likely to have a greater count of prior charges than white defendants. This again likely reflects the over-policing of Black people and communities. Additionally, we can see that male defendants have a higher number of prior charges than do female defendants. This is worth noting as ProPublica found that there is discrepancy in COMPAS risk assessment algorithm's prediction between sexes. When the recidivsim predictions are compared with the true recividism outcomes, female defendants have a notable false positive rate that predicts their recidivism risk as higher than their true outcomes (ProPublica). Though we do not know for sure which information goes into the COMPAS algorithm, it is likely that a defendant with prior charges will be coded as a having a higher risk of recidivism. Thus, by looking at the racial discrepancies in prior charges we can already see potential bias in the algorithm.
 
 # Baseline Metrics
 
