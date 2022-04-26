@@ -71,9 +71,10 @@ library(tidyverse)
 ```
 
 ```{r, include = FALSE}
-x <- tribble(~`Two Year Recidivism by Race`, ~`Recidivated`, ~`Survived`,
-             "African American", "1661", "1512",
-             "Caucasian", "822", "1278")
+x <- tribble(~`Two Year Recidivism by Race`, ~`Recidivated`, ~`Survived`, ~`Total`,
+             "African American", 1661, 1512, 3173,
+             "Caucasian", 822, 1278, 2100,
+             "Total", 2483, 2790, 5273)
 ```
 
 ```{r, echo = FALSE}
