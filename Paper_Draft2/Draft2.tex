@@ -72,25 +72,36 @@
 
 %=================================================================
 % Full title of the paper (Capitalized)
-\Title{Does the COMPAS Needle Always Point Towards Equity? Finding Fairness in
-the COMPAS Risk Assessment Algorithm: A Case Study}
+\Title{Does the COMPAS Needle Always Point Towards Equity? Finding
+Fairness in the COMPAS Risk Assessment Algorithm: A Case Study}
 
 % Authors, for the paper (add full first names)
-\Author{Amrita Acharya$^{1}$, Dianne Caravela$^{1}$, Eunice Kim$^{1}$, Emma Kornberg$^{1}$, Elisabeth Nesmith$^{1}$}
+\Author{Amrita Acharya$^{1}$, Dianne Caravela$^{1}$, Eunice
+Kim$^{1}$, Emma Kornberg$^{1}$, Elisabeth Nesmith$^{1}$}
 
 % Authors, for metadata in PDF
-\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma Kornberg, Elisabeth Nesmith}
+\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma
+Kornberg, Elisabeth Nesmith}
 
 % Affiliations / Addresses (Add [1] after \address if there is only one affiliation.)
 \address{%
+<<<<<<< HEAD
 $^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA 01063; \href{mailto:aacharya@smith.edu}{\nolinkurl{aacharya@smith.edu}},
+||||||| merged common ancestors
+
+$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA
+01063; \href{mailto:aacharya@smith.edu}{\nolinkurl{aacharya@smith.edu}},
+=======
+$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA
+01063; \href{mailto:bbaumer@smith.edu}{\nolinkurl{bbaumer@smith.edu}}\\
+}
+% Contact information of the corresponding author
+\corres{Correspondence: \href{mailto:aacharya@smith.edu}{\nolinkurl{aacharya@smith.edu}},
+>>>>>>> 37342046db856e29a8ac64d2e0e6d4478713354b
 \href{mailto:dcaravela@smith.edu}{\nolinkurl{dcaravela@smith.edu}},
 \href{mailto:ekim89@smith.edu}{\nolinkurl{ekim89@smith.edu}},
 \href{mailto:ekornberg@smith.edu}{\nolinkurl{ekornberg@smith.edu}},
-\href{mailto:enesmith@smith.edu}{\nolinkurl{enesmith@smith.edu}}\\
-}
-% Contact information of the corresponding author
-\corres{Correspondence: \href{mailto:bbaumer@smith.edu}{\nolinkurl{bbaumer@smith.edu}}}
+\href{mailto:enesmith@smith.edu}{\nolinkurl{enesmith@smith.edu}}}
 
 % Current address and/or shared authorship
 
@@ -182,20 +193,25 @@ whether and to what extent there is racial bias in the COMPAS algorithm.}
 The Correctional Offender Management Profiling for Alternative Sanctions
 (COMPAS) algorithm was created by the private, for-profit company
 Northpointe (now known by its parent company
-\href{https://www.equivant.com/faq/}{Equivant}), to predict defendants'
+\href{https://www.equivant.com/faq/}{equivant}), to predict defendants'
 risk of recidivism. It generates a decile score that classifies
 defendants' risk of recidivism as either low, medium, or high
 \citep{angwin2016machine}. Jurisdictions across the United States use
 the COMPAS risk assessment instrument, including but not limited to the
-New York \citep{NYDOCCS2019}, Massachusetts, Michigan, California
-\citep{Jackson2020Setting}, and Wisconsin \citep{WisconsinDOC}
+\href{https://doccs.ny.gov/system/files/documents/2020/11/8500.pdf}{New
+York},
+\href{https://hdsr.mitpress.mit.edu/pub/hzwo7ax4/release/4}{Massachusetts},
+\href{https://hdsr.mitpress.mit.edu/pub/hzwo7ax4/release/4}{Michigan},
+\href{https://hdsr.mitpress.mit.edu/pub/hzwo7ax4/release/4}{California},
+and \href{https://doc.wi.gov/Pages/AboutDOC/COMPAS.aspx}{Wisconsin}
 Departments of Corrections.
 
 Due to the proprietary nature of the COMPAS algorithm, it is unknown how
-exactly these recidivism risk scores are calculated; however, a sample
-COMPAS Risk Assessment Survey has been made publicly available,
-revealing the algorithm's input information. This survey has been widely
-critiqued for using proxy variables for race that do not explicitly
+exactly these recidivism risk scores are calculated. However, a
+\href{https://www.documentcloud.org/documents/2702103-Sample-Risk-Assessment-COMPAS-CORE\#document/p5/a296598}{sample
+COMPAS Risk Assessment Survey} has been made publicly available,
+revealing the algorithm's input information. \citet{angwin2016machine}
+has critiqued for using proxy variables for race that do not explicitly
 factor in a defendant's race but heavily imply it, allowing Northpointe
 to claim that their algorithm is free of racial bias. For example, the
 COMPAS risk assessment survey asks screeners to speculate if a defendant
@@ -205,13 +221,12 @@ friends or family members who have been crime victims
 about race, they do not take into account the pervasive nature of
 systemic racism that infiltrates every aspect of the lives of
 marginalized people, thereby indirectly asking about race.
-\citet{angwin2016machine}. published a 2016 piece in the news
-publication ProPublica that analyzes the methods and algorithms used by
+\citet{angwin2016machine}. analyzes the methods and algorithms used by
 Northpointe in their COMPAS risk score assessment algorithm and uncovers
-the racial biases in defendants' scores \citep{angwin2016machine}. Their
-research finds that ``the algorithm {[}is{]} somewhat more accurate than
-a coin flip,'' a worrisome level of accuracy given the potential impact
-its determinations may have on real people's lives.
+racial biases in defendants' scores \citep{angwin2016machine}. They find
+that ``the algorithm {[}is{]} somewhat more accurate than a coin flip,''
+a worrisome level of accuracy given the potential impact its
+determinations may have on real people's lives.
 \citet{angwin2016machine} specifically investigate the distribution of
 COMPAS scores by decile among Black and white defendants. They write:
 ``The analysis also {[}shows{]} that even when controlling for prior
@@ -221,7 +236,7 @@ defendants'' \citep{larson2016we}. After examining the fairness metric
 statistical parity difference, \citet{angwin2016machine} conclude that
 the algorithm is racially biased \citep{larson2016we}.
 
-\citet{equivant_response_2016}, on the behalf of Northpointe, deny the
+\citet{equivant_response_2016}, on behalf of Northpointe, deny the
 allegations of racial bias and offer their own analyses based on
 different fairness metrics in rebuttal \citep{equivant_response_2016}.
 \citet{angwin2016machine} maintain that there are biases in the outcome
@@ -230,8 +245,8 @@ values, protected attributes, and covariates during
 collaborators \citet{larson2016we} account for these biases in their
 analyses. In their response, \citet{equivant_response_2016} highlight
 that \citet{angwin2016machine} did not account for base rates of
-recidivism in their analysis, which are important to understand initial
-percentages without the presence of other information.
+recidivism in their analysis, which are important initial percentages
+without the presence of other information.
 
 \href{https://www.womenatthetable.net/}{Women at the Table}, the sponsor
 organization for this project, is ``a growing, global gender equality \&
@@ -241,16 +256,17 @@ exercising leverage points in technology, the economy, sustainability \&
 democratic governance.'' We are collaborating with the organization on
 its AI \& Equality \citep{noauthor_ai_nodate} initiative, tasked with
 de-biasing the COMPAS algorithm \citep{aif360-oct-2018} and producing a
-corresponding data story that will be added to its library. Our project
-builds on Women at the Table's various de-biasing algorithms used in its
-AI \& Equality Human Rights Toolbox to conduct our own analyses on the
-COMPAS data set. Based on this analysis, we employ a human rights
-framework to contribute to the ProPublica and Northpointe debate and
-investigate whether or to what extent there is racial bias in the COMPAS
-algorithm. With a solid understanding of the two sides, we aim to
-pinpoint the shortcomings of both arguments and correct them in our
-analyses. We will use various de-biasing techniques and fairness metrics
-to evaluate the level of bias present in the COMPAS data and our
+corresponding data story that will be added to its library.
+
+Our project builds on Women at the Table's various de-biasing algorithms
+used in its AI \& Equality Human Rights Toolbox to conduct our own
+analyses on the COMPAS data set. Based on this analysis, we employ a
+human rights framework to contribute to the ProPublica and Northpointe
+debate and investigate whether or to what extent there is racial bias in
+the COMPAS algorithm. With a solid understanding of the two sides, we
+aim to pinpoint the shortcomings of both arguments and correct them in
+our analyses. We will use various de-biasing techniques and fairness
+metrics to evaluate the level of bias present in the COMPAS data and our
 algorithm. We will summarize our results using the JupyterNotebook
 framework from Women at the Table, to be used by members of the
 organization to teach in a workshop setting. We hope that our findings
@@ -272,10 +288,11 @@ two-year period after their arrest. For the purposes of our project,
 which endeavors to evaluate the differing effects of the COMPAS
 algorithm on white defendants versus Black defendants, we have filtered
 the data to only include individuals whose race is listed as Caucasian
-or African-American. Our data therefore has 5,723 rows (Figure
-\ref{fig:table snip}), with the below distributions of race (Figure
-\ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two year
+or African-American. Our data therefore has 5,273 rows (Figure
+\ref{fig:table snip}), with the distributions of race (Figure
+\ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two-year
 recidivism rate (Figures \ref{fig:recid plot} \&
+<<<<<<< HEAD
 \ref{fig:recid race plot} and Table \ref{tab:recid table}).
 
 \begin{figure}
@@ -295,23 +312,58 @@ recidivism rate (Figures \ref{fig:recid plot} \&
 
 \caption{This plot shows the distribution of defendant races. The dataset contains about 3200 Black defendants and 2100 white defendants. Therefore, there are more Black people represented in the dataset than white people.}\label{fig:race plot}
 \end{figure}
+||||||| merged common ancestors
+\ref{fig:recid race plot} and Table \ref{tab:recid table}).
 
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{../images/age_race_plot_new} 
+{\centering \includegraphics[width=1\linewidth]{../images/table_snippet}
 
 }
 
-\caption{This plot shows the distribution of defendant ages by race. The purple curve shows the distribution of the ages of Black defendants, and the green curve shows the distribution of the ages of white defendants. The probability of a defendant's age being between two points on the x-axis is the total shaded area of the curve under the two points. The purple dotted line represents the median age of Black defendants (29 years) and the green dotted line represents the median age of white defendants (35 years). For both groups, the majority of defendants are relatively young, but this is especially noticeable for Black defendants.}\label{fig:age plot}
+\caption{This table is a snippet of the data set we will be using, containing information on a defendant's age, sex, race, criminal history, charge degree, charge description, and two year recidivism outcome.}\label{fig:table snip}
 \end{figure}
 
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{../images/recid_bar_plot_new} 
+{\centering \includegraphics[width=1\linewidth]{../images/race_bar_plot_new}
 
 }
 
-\caption{This plot shows the distribution of two year recidivism outcomes. Out of all defendants, there is a higher proportion of people who did not recidivate than who did. About 2500 people recidivated, whereas approximately 2700 did not.}\label{fig:recid plot}
+\caption{This plot shows the distribution of defendant races. The dataset contains about 3200 Black defendants and 2100 white defendants. Therefore, there are more Black people represented in the dataset than white people.}\label{fig:race plot}
+\end{figure}
+=======
+\ref{fig:recid race plot} and Table \ref{tab:recid table}) shown below.
+>>>>>>> 37342046db856e29a8ac64d2e0e6d4478713354b
+
+\begin{figure}
+
+<<<<<<< HEAD
+{\centering \includegraphics[width=1\linewidth]{../images/age_race_plot_new} 
+||||||| merged common ancestors
+{\centering \includegraphics[width=1\linewidth]{../images/age_race_plot_new}
+=======
+{\centering \includegraphics[width=1\linewidth]{../images/table_snippet} 
+>>>>>>> 37342046db856e29a8ac64d2e0e6d4478713354b
+
+}
+
+\caption{A snippet of the data set we will be using, containing information on a defendant's age, sex, race, criminal history, charge degree, charge description, and two-year recidivism outcome.}\label{fig:table snip}
+\end{figure}
+
+\begin{figure}
+
+<<<<<<< HEAD
+{\centering \includegraphics[width=1\linewidth]{../images/recid_bar_plot_new} 
+||||||| merged common ancestors
+{\centering \includegraphics[width=1\linewidth]{../images/recid_bar_plot_new}
+=======
+{\centering \includegraphics[width=1\linewidth]{../images/age_race_plot_new} 
+>>>>>>> 37342046db856e29a8ac64d2e0e6d4478713354b
+
+}
+
+\caption{Distribution of defendant ages by race. The purple curve shows the distribution of the ages of Black defendants, and the green curve shows the distribution of the ages of white defendants. The probability of a defendant's age being between two points on the x-axis is the total shaded area of the curve under the two points. The purple dotted line represents the median age of Black defendants (29 years) and the green dotted line represents the median age of white defendants (35 years). For both groups, the majority of defendants are relatively young, but this is especially noticeable for Black defendants.}\label{fig:age plot}
 \end{figure}
 
 \begin{figure}
@@ -320,24 +372,23 @@ recidivism rate (Figures \ref{fig:recid plot} \&
 
 }
 
-\caption{This plot shows the distribution of two year recidivism outcomes by race. When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. We can also see that there are more Black defendants in the dataset overall.}\label{fig:recid race plot}
+\caption{This plot shows the distribution of two-year recidivism outcomes by race. When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. We can also see that there are more Black defendants in the dataset overall.}\label{fig:recid race plot}
 \end{figure}
 
 \begin{longtable}[]{@{}lll@{}}
-\caption{This table shows the counts of recidivism by race, illustrating
-how a much greater proportion (\textgreater{} 50\%) of Black defendants
-recidivated than their white counterparts.
-\label{tab:recid table}}\tabularnewline
+\caption{Incidence of recidivism by race, illustrating how a much
+greater proportion (\textgreater{} 50\%) of Black defendants recidivated
+than their white counterparts. \label{tab:recid table}}\tabularnewline
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived\tabularnewline
+Two Year Recidivism by Race & Recidivated & Survived \\
 \midrule
 \endfirsthead
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived\tabularnewline
+Two Year Recidivism by Race & Recidivated & Survived \\
 \midrule
 \endhead
-African American & 1661 & 1512\tabularnewline
-Caucasian & 822 & 1278\tabularnewline
+African American & 1661 & 1512 \\
+Caucasian & 822 & 1278 \\
 \bottomrule
 \end{longtable}
 
@@ -501,21 +552,17 @@ value.
 \caption{Results of Baseline Fairness Metric Analysis
 \label{tab:baseline metrics table}}\tabularnewline
 \toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited
-Group\tabularnewline
+Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
 \midrule
 \endfirsthead
 \toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited
-Group\tabularnewline
+Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
 \midrule
 \endhead
-Statistical Parity Difference & 0 & -0.14 & White
-Defendants\tabularnewline
-Disparate Impact Ratio & 1 & 0.47 & White Defendants\tabularnewline
-Average Odds Difference & 0 & -0.44 & White Defendants\tabularnewline
-Equal Opportunity Difference & 0 & -0.41 & White
-Defendants\tabularnewline
+Statistical Parity Difference & 0 & -0.14 & White Defendants \\
+Disparate Impact Ratio & 1 & 0.47 & White Defendants \\
+Average Odds Difference & 0 & -0.44 & White Defendants \\
+Equal Opportunity Difference & 0 & -0.41 & White Defendants \\
 \bottomrule
 \end{longtable}
 
@@ -580,4 +627,3 @@ Defendants\tabularnewline
 
 
 \end{document}
-
