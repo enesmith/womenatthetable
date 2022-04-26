@@ -315,9 +315,12 @@ props={}
 props[('Caucasian','F')]={'facecolor': green, 'edgecolor':'white'}
 props[('Caucasian','M')]={'facecolor':green, 'edgecolor':'white'}
 props[('African-American','F')]={'facecolor':purple,'edgecolor':'white'}
-props[('African-American','M')]=        {'facecolor':purple,'edgecolor':'white'}
+props[('African-American','M')]={'facecolor':purple,'edgecolor':'white'}
 labelizer=lambda k:{('Caucasian','F'):1242,('African-American','F'):2194,('Caucasian','M'):858,('African-American','M'):979}[k]
 mosaic(df_viz,['race','c_charge_degree'],labelizer=labelizer,properties=props)
+
+plt.title("Charge Degree by Race: Misdemeanors and Felonies")
+plt.rcParams["figure.figsize"]=(7,7)
 plt.show()
 ```
 
@@ -369,6 +372,9 @@ props[('African-American','Recidivated')]={'facecolor':purple,'edgecolor':'white
 props[('African-American','Survived')]=        {'facecolor':purple,'edgecolor':'white'}
 labelizer=lambda k:{('Caucasian','Recidivated'):822,('African-American','Recidivated'):1661,('Caucasian','Survived'):1278,('African-American','Survived'):1512}[k]
 mosaic(df_viz,['race','two_year_recid'],labelizer=labelizer,properties=props)
+
+plt.title("Recidivism Outcomes by Race")
+plt.rcParams["figure.figsize"]=(7,7)
 plt.show()
 ```
 
@@ -379,7 +385,6 @@ A higher percentage of white defendants (60.86%) than black defendants (47.65%) 
 ```{python exploratory priors by race}
 priors_by_race = sns.displot(x="priors_count", row = "race", col = "sex", hue ="race", data=df_viz, palette=workshop_palette)
 
-#plt.title("Prior Charges Count by Race and Sex)
 plt.show()
 ```
 
