@@ -359,32 +359,40 @@ consistently \citep{kypraiou_what_2021}. Group and individual metrics
 work in opposition of one another, meaning that when group fairness
 improves, individual fairness gets worse \citep{kypraiou_what_2021}.
 
-\textbf{Statistical Parity Difference} - This metric measures the
-difference between privileged and marginalized groups' likelihood to get
-a particular outcome. The ideal value of this metric is 0. Fairness for
-this metric is between -0.1 and 0.1. A negative value means there is
-higher benefit for the privileged group (in this case, white
-defendants).
+\hypertarget{statistical-parity-difference}{%
+\subsection{Statistical Parity
+Difference}\label{statistical-parity-difference}}
+
+This metric measures the difference between privileged and marginalized
+groups' likelihood to get a particular outcome. The ideal value of this
+metric is 0. Fairness for this metric is between -0.1 and 0.1. A
+negative value means there is higher benefit for the privileged group
+(in this case, white defendants).
 
 \[P(\hat{Y}=1|D=Unprivileged) - P(\hat{Y}=1|D=Privileged)\]
 
-\textbf{Disparate Impact Ratio} - This metric is the ratio of how often
-the favorable outcome occurs in one group versus the other. In the case
-of recidivism, this is the ratio of how many white defendants are
-predicted to not recidivate compared to how many black defendants are
-predicted to not recidivate. A value of 1 means that the ratio is
-exactly 1:1. Less than 1 means the privileged group (white defendants)
-benefits, while a value greater than 1 means the unprivileged group
-(Black defendants) benefits. According to AIF360, a ratio between 0.8 to
-1.25 is considered fair \citep{Ronaghan2019AI}.
+\hypertarget{disparate-impact-ratio}{%
+\subsection{Disparate Impact Ratio}\label{disparate-impact-ratio}}
+
+This metric is the ratio of how often the favorable outcome occurs in
+one group versus the other. In the case of recidivism, this is the ratio
+of how many white defendants are predicted to not recidivate compared to
+how many black defendants are predicted to not recidivate. A value of 1
+means that the ratio is exactly 1:1. Less than 1 means the privileged
+group (white defendants) benefits, while a value greater than 1 means
+the unprivileged group (Black defendants) benefits. According to AIF360,
+a ratio between 0.8 to 1.25 is considered fair \citep{Ronaghan2019AI}.
 
 \[\frac{P(\hat{Y}=1|D=Unprivileged)}{P(\hat{Y}=1|D=Privileged)}\]
 
-\textbf{Equal Opportunity Difference} - This metric is computed as the
-difference of true positive rates between the unprivileged and the
-privileged groups. The true positive rate is the ratio of true positives
-to the total number of actual positives for a given group
-\citep{GoogleDev}.
+\hypertarget{equal-opportunity-difference}{%
+\subsection{Equal Opportunity
+Difference}\label{equal-opportunity-difference}}
+
+This metric is computed as the difference of true positive rates between
+the unprivileged and the privileged groups. The true positive rate is
+the ratio of true positives to the total number of actual positives for
+a given group \citep{GoogleDev}.
 
 The ideal value is 0. A value less than 0 implies higher benefit for the
 privileged group and a value greater than 0 implies higher benefit for
@@ -399,16 +407,18 @@ re-offend.
 
 \[TPR_{D = Unprivileged} - TPR_{D = Privileged}\]
 
-\textbf{Average Odds Difference} - This metric returns the average
-difference in false positive rate and true positive rate for the
-privileged and unprivileged groups. A value of 0 indicates equality of
-odds, and a value below 0 implies benefit for the privileged group.
-Equality of odds is achieved in the case of recidivism when the
-proportion of people who were predicted to recidivate and did recidivate
-is equal (true positive rate) for both Black and white defendants AND
-the proportion of people who were predicted to recidivate and did not
-recidivate (false positive rate) is equal for both Black and white
-defendants \citep{aif360-oct-2018}.
+\hypertarget{average-odds-difference}{%
+\subsection{Average Odds Difference}\label{average-odds-difference}}
+
+This metric returns the average difference in false positive rate and
+true positive rate for the privileged and unprivileged groups. A value
+of 0 indicates equality of odds, and a value below 0 implies benefit for
+the privileged group. Equality of odds is achieved in the case of
+recidivism when the proportion of people who were predicted to
+recidivate and did recidivate is equal (true positive rate) for both
+Black and white defendants AND the proportion of people who were
+predicted to recidivate and did not recidivate (false positive rate) is
+equal for both Black and white defendants \citep{aif360-oct-2018}.
 
 \[\frac{1}{2}\left[(FPR_{D = Unprivileged} - FPR_{D = Privileged}) + \underbrace{(TPR_{D = Unprivileged} - TPR_{D = Privileged})}_\textrm{Equal Opportunity Difference}\right]\]
 
