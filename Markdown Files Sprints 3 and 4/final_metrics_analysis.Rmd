@@ -1,0 +1,813 @@
+---
+title: "Analyzing Fairness: Race, Recidivism, and the COMPAS Algorithm"
+author: "Elisabeth Nesmith, Eunice Kim, Emma Kornberg, Amrita Acharya, Dianne Caravela"
+date: "3/8/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Set Up
+
+```{r py setup, include=FALSE}
+library(reticulate)
+
+
+# for Dianne
+use_condaenv("base")
+
+# for Amrita
+# use_condaenv("anaconda3")
+```
+
+```{python import, include= FALSE}
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+from statsmodels.graphics.mosaicplot import mosaic
+from itertools import product
+
+from sklearn.compose import make_column_transformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegressionCV
+
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.preprocessing import OneHotEncoder
+
+from aif360.datasets import CompasDataset
+from aif360.datasets import BinaryLabelDataset
+from aif360.sklearn.datasets import fetch_compas
+from aif360.algorithms.inprocessing import MetaFairClassifier, PrejudiceRemover, ARTClassifier
+
+
+from aif360.sklearn.preprocessing import ReweighingMeta
+from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
+
+from aif360.sklearn.metrics import disparate_impact_ratio, average_odds_difference, statistical_parity_difference, equal_opportunity_difference
+
+from IPython.display import Markdown, display
+```
+
+# Data
+
+```{python fetch compas}
+## load in data
+## In machine learning tasks, specifically with supervised learning, you have features and labels. 
+## The features are the descriptive attributes (they are defined as X), and the label (y) is what you're attempting to predict or forecast
+
+X, y = fetch_compas()
+print(f'There are {X.shape[0]} entries and {X.shape[1]} features')
+X.head()
+```
+
+## Filter/configure race
+
+```{python filter race}
+## because our analysis is mainly focusing on how the algorithm treats white and Black people differently, we are
+## dropping the rows of data where race != Caucasian or African American
+X_new = X[(X.race == "Caucasian") | (X.race == "African-American")]
+print(f'There are {X_new.shape[0]} entries and {X_new.shape[1]} features')
+X_new.head()
+```
+
+```{python drop other races}
+## drop unused race categories
+# list of categories to be removed
+X_new["race"] = X_new["race"].cat.remove_unused_categories()
+```
+
+```{python configure races}
+y_new = y[(y.index.get_level_values(2) == "Caucasian") | (y.index.get_level_values(2) == "African-American")]
+y_new.head()
+```
+
+```{python initial confusion matrix}
+# Function for visualising the confusion matrix and other statistics
+# https://github.com/DTrimarchi10/confusion_matrix/blob/master/cf_matrix.py
+
+def make_confusion_matrix(cf_matrix, model):
+  group_names = ["True Negative","False Positive","False Negative","True Positive"]
+  group_counts = ["{0:0.0f}".format(value) for value in
+                  cf_matrix.flatten()]
+  group_percentages = ["{0:.2%}".format(value) for value in
+                      cf_matrix.flatten()/np.sum(cf_matrix)]
+
+  group_labels = ["{}\n".format(value) for value in group_names]
+  group_counts = ["{0:0.0f}\n".format(value) for value in cf_matrix.flatten()]
+  group_percentages = ["{0:.2%}".format(value) for value in cf_matrix.flatten()/np.sum(cf_matrix)]
+
+  box_labels = [f"{v1}{v2}{v3}".strip() for v1, v2, v3 in zip(group_labels,group_counts,group_percentages)]
+  box_labels = np.asarray(box_labels).reshape(cf_matrix.shape[0],cf_matrix.shape[1])
+
+
+  # add more statistics
+  accuracy  = np.trace(cf_matrix) / float(np.sum(cf_matrix))
+  precision = cf_matrix[1,1] / sum(cf_matrix[:,1])
+  recall    = cf_matrix[1,1] / sum(cf_matrix[1,:])
+  f1_score  = 2*precision*recall / (precision + recall)
+  stats_text = "\n\nAccuracy={:0.3f}\nPrecision={:0.3f}\nRecall={:0.3f}\nF1 Score={:0.3f}".format(
+      accuracy,precision,recall,f1_score)
+
+
+  categories=["Survived", "Recidivated"]
+  sns.heatmap(cf_matrix,annot=box_labels,fmt="",cmap='Purples',xticklabels=categories,yticklabels=categories)
+
+  plt.ylabel('True label')
+  plt.xlabel('Predicted label' + stats_text)
+  plt.title(f"Confusion matrix and statistics for the {model} model");
+
+## defining function for displaying metrics of training and test data by race
+def metrics_per_group(y_test, y_pred):
+	# y true per group
+	y_test_white = y_test.loc[y_test.index.get_level_values(2) == 1]
+	y_test_black = y_test.loc[y_test.index.get_level_values(2) == 0]
+
+	# y_pred per group
+	y_pred_white = y_pred[y_test.index.get_level_values(2) == 1]
+	y_pred_black = y_pred[y_test.index.get_level_values(2) == 0]
+
+	# metrics
+	scores = []
+	scores.append(accuracy_score(y_test, y_pred))
+	scores.append(recall_score(y_test, y_pred))
+	scores.append(precision_score(y_test, y_pred))
+
+	scores.append(accuracy_score(y_test_black, y_pred_black))
+	scores.append(recall_score(y_test_black, y_pred_black))
+	scores.append(precision_score(y_test_black, y_pred_black))
+
+	scores.append(accuracy_score(y_test_white, y_pred_white))
+	scores.append(recall_score(y_test_white, y_pred_white))
+	scores.append(precision_score(y_test_white, y_pred_white))
+
+	attribute = ["all"]*3 + ["black"] *3 + ["white"] *3
+	metric = ["accuracy", "recall", "precision"] * 3
+	  
+	# dictionary of lists 
+	dict = {'race': attribute, 'metrics': metric, 'score': scores} 
+	    
+	df = pd.DataFrame(dict)
+
+	sns.barplot(x = "metrics", y = "score", hue = "race", data = df, palette = ['#dfcd1a', '#9d0677', '#236c48'])
+	plt.title("Performance metrics by groups")
+ 
+
+def plot_fair_metrics(fair_metrics_mitigated, model): 
+  cols = ['statistical_parity_difference','equal_opportunity_difference','average_odds_difference','disparate_impact_ratio']
+  obj_fairness = [[0,0,0,1]]
+  # row for objectives    
+  fair_metrics = pd.DataFrame(data=obj_fairness, index=['objective'], columns=cols)
+      
+  # row for baseline model
+  fair_metrics.loc['Baseline'] = [stat_par_diff, eq_opp_diff, avg_odds_diff, disp_impact_ratio]
+  # row for mitigated bias
+  fair_metrics.loc[model] = fair_metrics_mitigated
+  metrics_len = len(cols)
+  fig, ax = plt.subplots(figsize=(20,4), ncols=metrics_len, nrows=1)
+  plt.subplots_adjust(
+      left    =  0.125, 
+      bottom  =  0.1, 
+      right   =  0.9, 
+      top     =  0.9, 
+      wspace  =  .5, 
+      hspace  =  1.1
+  )
+  y_title_margin = 1.2
+  plt.suptitle("Fairness metrics", y = 1.09, fontsize=20)
+  sns.set(style="dark")
+  cols = fair_metrics.columns.values
+  obj = fair_metrics.loc['objective']
+  size_rect = [0.2,0.2,0.2,0.4]
+  rect = [-0.1,-0.1,-0.1,0.8]
+  bottom = [-1,-1,-1,0]
+  top = [1,1,1,2]
+  bound = [[-0.1,0.1],[-0.1,0.1],[-0.1,0.1],[0.8,1.25]]
+  for i in range(0,metrics_len):
+      plt.subplot(1, metrics_len, i+1)
+      ax = sns.barplot(x=fair_metrics.index[1:len(fair_metrics)], y=fair_metrics.iloc[1:len(fair_metrics)][cols[i]])
+      
+      for j in range(0,len(fair_metrics)-1):
+          a, val = ax.patches[j], fair_metrics.iloc[j+1][cols[i]]
+          marg = -0.2 if val < 0 else 0.1
+          ax.text(a.get_x()+a.get_width()/5, a.get_y()+a.get_height()+marg, round(val, 3), fontsize=15,color='black')
+      plt.ylim(bottom[i], top[i])
+      plt.setp(ax.patches, linewidth=0)
+      ax.add_patch(patches.Rectangle((-5,rect[i]), 10, size_rect[i], alpha=0.3, facecolor="green", linewidth=1, linestyle='solid'))
+      plt.axhline(obj[i], color='black', alpha=0.3)
+      plt.title(cols[i])
+      ax.set_ylabel('')    
+      ax.set_xlabel('')
+```
+
+
+```{python new race index}
+X_new.index = pd.MultiIndex.from_arrays(X_new.index.codes, names=X_new.index.names)
+y_new.index = pd.MultiIndex.from_arrays(y_new.index.codes, names=y_new.index.names)
+# 0 is African American, 2 is Caucasian
+```
+
+```{python re-index race}
+# set caucasian equal to 1 instead of 2
+X_new = X_new.rename(index={2: 1}, level='race')
+X_new
+```
+
+```{python target class}
+# set target class to 0/1 
+y_new = pd.Series(y_new.factorize(sort=True)[0], index=y_new.index)
+# set caucasian equal to 1 instead of 2
+y_new = y_new.rename(index={2: 1}, level='race')
+```
+
+```{python y new race}
+y_new
+```
+
+# Exploratory Data Analysis
+
+### Descriptions of Average Defendants
+```{python EDA} 
+# needs interpretation
+X_new_index = X_new.rename(columns={"race": "def_race"})
+X_new_index = X_new_index.rename(columns={"sex": "def_sex"})
+# renaming dataframe columns to avoid the ValueError of variables being a column AND index label (which is ambiguous)
+
+X_new_index.groupby(["def_race"])["age"].median()
+X_new_index.groupby(["def_race", "sex"]).size()
+X_new_index.groupby(["def_race", "c_charge_degree"]).size()
+X_new_index.groupby(["def_race"])["priors_count"].median()
+X_new_index.groupby(["def_race"])["juv_fel_count"].median()
+X_new_index.groupby(["def_race"])["juv_misd_count"].median()
+```
+
+The typical Black defendant is 29 years old, male, and has committed two prior crimes. The typical white defendant is 35 years old, male, and has committed one prior crime. The typical defendant for both races does not have any juvenile convictions.
+
+```{python exploratory visualization set up}
+df_viz = X_new.copy()
+df_viz['race'] = X_new['race'].replace({1.0: 'Caucasian', 0.0: 'African-American'})
+df_viz['two_year_recid'] = y_new.replace({1:'Recidivated', 0: 'Survived'})
+df_viz.index = df_viz.index.droplevel('race')
+
+purple = '#9d0677'
+green = '#30875c'
+orange = '#E7881E'
+blue = '#20A4CF'
+workshop_palette = [purple, green]
+df_viz.head()
+```
+
+### Recidivism Distribution
+
+```{python exploratory recidivism bar plot}
+# barplot of recividism
+sns.countplot(x='two_year_recid', data=df_viz, palette=workshop_palette)
+plt.title('Two Year Recidivism Rate')
+```
+
+Out of all defendants, there is a higher proportion of people who did not recidivate than who did. About 2500 people recidivated, whereas approximately 2700 did not.
+
+### Racial Distributions
+
+```{python exploratory race bar plot}
+# barplot of race
+sns.countplot(x="race", data=df_viz, palette=workshop_palette)
+plt.title('Race Distribution (White and Black individuals only)')
+plt.show()
+```
+
+The dataset we are using contains about 3200 Black defendants and 2100 white defendants. Therefore, there are more Black people represented in the dataset than white people, showing the disproportionate policing and criminalization of Black communities.
+
+#### Age
+
+```{python exploratory age by race plot}
+# age distribution by race - hacking solution for purple dotted line for now
+#ax = sns.kdeplot(x="age", hue="race", data=df_viz, palette=workshop_palette);
+#kdeline = ax.lines[0]
+#mean_black = df_viz.groupby('race').age.median()[0]
+#xs = kdeline.get_xdata()
+#ys = kdeline.get_ydata()
+#height_black = 0.027 # np.interp(mean_black, xs, ys)
+#ax.vlines(mean_black, 0, height_black, color=purple, ls=':')
+
+#mean_white = df_viz.groupby('race').age.median()[1]
+#height_white = np.interp(mean_white, xs, ys)
+#ax.vlines(mean_white, 0, height_white, color=green, ls=':')
+
+#plt.title('Distribution of Age by Race')
+```
+
+The purple curve in the plot above shows the distribution of the ages of Black defendants, and the green curve shows the distribution of the ages of white defendants. The probability of a defendant's age being between two points on the x-axis is the total shaded area of the curve under the two points. The purple dotted line represents the median age of Black defendants (29 years) and the green dotted line represents the median age of white defendants (35 years). For both groups, the majority of defendants are relatively young, but this is especially noticeable for Black defendants.
+
+#### Charge Degree
+
+```{python crosstable of charge degrees by race}
+crosstable=pd.crosstab(df_viz['race'],df_viz['c_charge_degree'])
+crosstable
+```
+
+```{python mosiac of charge degrees by race}
+props={}
+props[('Caucasian','F')]={'facecolor': green, 'edgecolor':'white'}
+props[('Caucasian','M')]={'facecolor':green, 'edgecolor':'white'}
+props[('African-American','F')]={'facecolor':purple,'edgecolor':'white'}
+props[('African-American','M')]={'facecolor':purple,'edgecolor':'white'}
+labelizer=lambda k:{('Caucasian','F'):1242,('African-American','F'):2194,('Caucasian','M'):858,('African-American','M'):979}[k]
+mosaic(df_viz,['race','c_charge_degree'],labelizer=labelizer,properties=props)
+
+plt.title("Charge Degree by Race: Misdemeanors and Felonies")
+plt.rcParams["figure.figsize"]=(7,7)
+plt.show()
+```
+
+1242 (59.14%) of white defendants were charged with felonies versus 2194 (69.15%) of black defendants. Likewise, a higher percentage of white defendants (40.86%) were charged with a misdemeanor than black defendants (30.85%).
+
+#### Charge Descriptions
+
+```{python wordcloud setup}
+from os import path
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+```
+
+```{python wordcloud}
+text = " ".join(charge for charge in df_viz.c_charge_desc)
+stopwords = set(STOPWORDS)
+stopwords.update(["arrest", "case", "charge"])
+wordcloud = WordCloud(stopwords=stopwords, background_color="white").generate(text)
+```
+
+```{python wordcloud image}
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.show()
+```
+
+#### Recidivism
+
+```{python exploratory recidivism by race plot}
+# recidivism by race
+by_sex = sns.countplot(x="race", hue="two_year_recid", data=df_viz, palette=workshop_palette)
+
+plt.title('Two Year Recidivism by Race')
+plt.show()
+```
+
+When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. Again, this trend points to disproportionate rates of criminalization of Black people. This increased likelihood of recidivating may be attributed to the systemic racism in policing (e.g., predominantly Black neighborhoods tend to be overpoliced in comparison to predominantly white neighborhoods). 
+
+```{python crosstable of recidivism by race}
+crosstable=pd.crosstab(df_viz['race'],df_viz['two_year_recid'])
+crosstable
+```
+
+```{python exploratory recidivism mosaic plot}
+props={}
+props[('Caucasian','Recidivated')]={'facecolor':green, 'edgecolor':'white'}
+props[('Caucasian','Survived')]={'facecolor':green, 'edgecolor':'white'}
+props[('African-American','Recidivated')]={'facecolor':purple,'edgecolor':'white'}
+props[('African-American','Survived')]=        {'facecolor':purple,'edgecolor':'white'}
+labelizer=lambda k:{('Caucasian','Recidivated'):822,('African-American','Recidivated'):1661,('Caucasian','Survived'):1278,('African-American','Survived'):1512}[k]
+mosaic(df_viz,['race','two_year_recid'],labelizer=labelizer,properties=props)
+
+plt.title("Recidivism Outcomes by Race")
+plt.rcParams["figure.figsize"]=(7,7)
+plt.show()
+```
+
+A higher percentage of white defendants (60.86%) than black defendants (47.65%) did not commit another crime within two years. This means that 39.14% of white defendants did recidivate within two years compared to 52.35% of black defendants.
+
+#### Prior Charges
+
+```{python exploratory priors by race}
+priors_by_race = sns.displot(x="priors_count", row = "race", col = "sex", hue ="race", data=df_viz, palette=workshop_palette)
+
+plt.show()
+```
+
+In the above plot, we can see that Black defendants, particularly men, are more likely to have a greater count of prior charges than white defendants. This again likely reflects the over-policing of Black people and communities. Additionally, we can see that male defendants have a higher number of prior charges than do female defendants. This is worth noting as ProPublica found that there is discrepancy in COMPAS risk assessment algorithm's prediction between sexes. When the recidivsim predictions are compared with the true recividism outcomes, female defendants have a notable false positive rate that predicts their recidivism risk as higher than their true outcomes (ProPublica). Though we do not know for sure which information goes into the COMPAS algorithm, it is likely that a defendant with prior charges will be coded as a having a higher risk of recidivism. Thus, by looking at the racial discrepancies in prior charges we can already see potential bias in the algorithm.
+
+# Baseline Metrics
+
+```{python baseline train and test}
+X_train, X_test, y_train, y_test = train_test_split(X_new, y_new, random_state=1234567)
+
+# one-hoy encode the categorical features
+data_preproc = make_column_transformer(
+        (OneHotEncoder(sparse=False, handle_unknown='ignore'), X_train.dtypes == 'category'))
+
+X_train = pd.DataFrame(data_preproc.fit_transform(X_train), index=X_train.index)
+X_test = pd.DataFrame(data_preproc.transform(X_test), index=X_test.index)
+
+# to save the information for the column names
+pd.get_dummies(X_new).head()
+```
+
+```{python baseline set up, include = FALSE}
+from aif360.sklearn.preprocessing import ReweighingMeta, Reweighing
+from sklearn.metrics import accuracy_score, confusion_matrix, plot_roc_curve, recall_score, precision_score
+
+
+lr = LogisticRegressionCV(solver='lbfgs')
+reg = lr.fit(X_train, y_train)
+y_pred = reg.predict(X_test)
+
+acc_base = accuracy_score(y_test, y_pred)
+print(f'[Baseline] The test accuracy of the algorithm is: {acc_base: .2%}')
+```
+
+```{python baseline confusion matrix}
+##Look at 2nd column of matrix for precision 
+##2nd row of matrix for recall 
+cf_matrix = confusion_matrix(y_test, y_pred)
+make_confusion_matrix(cf_matrix, "[Baseline]")
+plt.show()
+```
+
+The highest percentage in this confusion matrix is for true negatives, defendants who the model predicted to not recidivate and actually did not, at 35.41%. The number of true positives, defendants who the model predicted to recidivate and actually recidivated, is slightly lower at 25.85%. The percentages of false negatives and false positives, which represent incorrect model predictions, are somewhat high for this baseline model. This indicates that the model might need bias mitigation or improvements in accuracy. 
+
+```{python baseline metrics per group}
+metrics_per_group(y_test, y_pred)
+plt.show()
+```
+
+This graphs shows three different metrics of model quality and how they differ by race. Accuracy is calculated by summing the total number of true positives and true negatives and dividing by the total number of predictions:
+
+$$\frac{TP + TN}{TP + FP + TN + FN} $$
+
+Accuracy, as the name suggests, quantifies how accurately the model makes predictions. Looking at the graph, we can see that accuracy is fairly similar for Black, white, and all defendants, but the model is slightly less accurate in the case of Black defendants. The model makes accurate predictions for all defendants about 61% of the time, for Black defendants about 59% of the time, and for white defendants about 63% of the time. 
+
+The value of recall represents the proportion of actual positives which were predicted correctly. In other words, recall is the number of people who were predicted to recidivate and did recidivate out of the total number of people actually recidivated:
+
+$$\frac{TP}{TP + FN}$$
+
+In the case of our baseline mode, recall is highest for Black defendants at nearly 0.7, while recall for white defendants is much lower at just above 0.2. The model correctly identifies defendants who recidivate about 54% of the time, Black defendants who recidivate about 70% of the time, and white defendants who recidivate about 20% of the time. This means that the model frequently predicts white defendants to not recidivate (the more favorable outcome) when they actually do. This points to potential bias in the model, as the recall score for white defendants is so much lower than that for Black defendants.
+
+Slightly different from recall, precision is the proportion of predicted positives which were actually correct. Precision is therefore the number of people who were predicted to recidivate and did recidivate out of the total number of people who were predicted to recidivate:
+
+$$\frac{TP}{TP + FP}$$ 
+
+We can see that precision is very similar across groups, all approximately 0.6. This means that the model's predictions of a defendant, either Black or white, who recidivates are accurate about 60% of the time.
+
+## Group Fairness Metrics
+
+With group fairness metrics, different groups should receive similar treatments or outcomes. In this case of recidivism and race, this means that Black defendants should have similar rates of predicted recidivism as white defendants.
+
+### Statistical Parity Difference 
+
+Statistical Parity difference is computed as the difference in the rate of favorable outcomes (in this case, did not recidivate) received by the unprivileged group to the privileged group. It essentially equalizes the outcomes across the privileged and non-privileged groups.
+The ideal value of this metric is 0. Fairness for this metric is between -0.1 and 0.1. A negative value means there is higher benefit for the privileged group (in this case, white defendants).
+
+$P(\hat{Y}=1|D=Unprivileged) - P(\hat{Y}=1|D=Privileged)$
+
+```{python group fairnesss statistical parity difference}
+stat_par_diff = statistical_parity_difference(y_test, prot_attr='race', priv_group = 1, pos_label = 0)
+
+print(f'[Baseline] The statistical parity difference is {stat_par_diff: .2}')
+```
+
+Because the statistical parity difference is negative and not within -0.1 and 0.1, the algorithm unfairly benefits white defendants.
+
+### Disparate Impact Ratio
+
+This metric is the ratio of how often the favorable outcome occurs in one group versus the other. In the case of recidivism, this is the ratio of how many white defendants are predicted to not recidivate compared to how many black defendants are predicted to not recidivate. 
+
+A value of 1 means that the ratio is exactly 1:1. Less than 1 means the privileged group (white defendants) benefits, while a value greater than 1 means the unprivileged group (Black defendants) benefits. According to AI Fairness 360, a ratio between .8 to 1.25 is considered fair.
+
+The disparate impact ratio is calculated with the formula: 
+
+$$\frac{P(\hat{Y}=1|D=Unprivileged)}{P(\hat{Y}=1|D=Privileged)}$$ 
+
+where Y is the favorable outcome of a defendant's predicted two year recidivism and D is the race of the defendant. In our case, the favorable outcome is survived, or not recidivated, which is Y = 0. In terms of race, 0 = Black and 1 = White. So to calculate the disparate impact ratio on this data, the formula is: 
+
+$$\frac{P(\hat{Y}=0|D=0)}{P(\hat{Y}=0|D=1)}$$ 
+
+Say we have a data test set of 200 defendants, 125 Black and 75 white. Of the 125 Black defendants, 44% (55) were predicted to not recidivate. Of the 75 white defendants, 66% (50) were predicted to not recidivate.
+
+The disparate impact ratio would therefore be 
+
+$$\frac{0.44}{0.66} = 0.667$$
+
+Because this value is less than 1, it benefits white defendants. Additionally, because it is below 0.8, it is considered "unfair."
+
+```{python group fairnesss disparate impact ratio}
+disp_impact_ratio = disparate_impact_ratio(y_test, y_pred, prot_attr='race', priv_group = 1, pos_label = 0)
+
+print(f'[Baseline] The disparate impact ratio is {disp_impact_ratio: .2}')
+```
+
+Since the actual disparate impact ratio for our test data is 0.47 and below 0.8, the algorithm unfairly benefits white defendants i.e. disproportionately predicts them to not recidivate.
+
+### Equal Opportunity Difference 
+
+This metric is computed as the difference of true positive rates between the unprivileged and the privileged groups. The true positive rate is the ratio of true positives to the total number of actual positives for a given group.
+The ideal value is 0. A value of < 0 implies higher benefit for the privileged group and a value > 0 implies higher benefit for the unprivileged group.
+Fairness for this metric is between -0.1 and 0.1.
+
+$$TPR_{D = Unprivileged} - TPR_{D = Privileged}$$
+```{python group fairnesss equal opportunity difference}
+eq_opp_diff = equal_opportunity_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The equal opportunity difference is {eq_opp_diff: .2}')
+```
+
+Since the equal opportunity difference is below 0 and beyond -0.1, the algorithm unfairly benefits white defendants.
+
+### Average Odds Difference
+
+This metric, an expansion of equal opportunity difference, returns the average difference in false positive rate and true positive rate for the privileged and unprivileged groups. A value of 0 is considered fair, and a value below 0 implies benefit for the privileged group. Equality of odds is achieved in the case of recidivism when the proportion of people who were predicted to recidivate and did recidivate is equal (true positive rate) for both black and white defendants AND the proportion of people who were predicted to recidivate and did not recidivate (false positive rate) is equal for both black and white defendants. 
+
+$$\frac{1}{2}\left[(FPR_{D = Unprivileged} - FPR_{D = Privileged}) + \underbrace{(TPR_{D = Unprivileged} - TPR_{D = Privileged})}_\textrm{Equal Opportunity Difference}\right]$$
+
+```{python group fairnesss average odds difference}
+avg_odds_diff = average_odds_difference(y_test, y_pred, prot_attr='race', pos_label = 0)
+
+print(f'[Baseline] The average odds difference is {avg_odds_diff: .2}')
+```
+
+Since the average odds difference is below 0 by a substantial amount, white defendants are unfairly benefitted by the algorithm.
+
+### Plot Fairness Metrics (Baseline)
+
+```{python group fairness metrics plot}
+plot_fair_metrics([0, 0, 0, 0], '')
+plt.show()
+```
+
+As discussed above, all four fairness metrics define the baseline model as unfairly benefitting white defendants. The green bar represents the range of fair values, while the blue bars are the actual metric values for the baseline model. We can see that the margin of unfairness is smallest for statistical parity difference, as the value is only 0.038 outside of the -0.1 to 0.1 range of fairness. However, for the other three metrics, the value is significantly below the margin of fairness.
+
+# Pre-Processing
+
+## Reweighting
+
+```{python pre-processing set up, include = FALSE}
+lr = LogisticRegressionCV(solver='lbfgs')
+rew = ReweighingMeta(estimator=lr, reweigher=Reweighing('race'))
+rew.fit(X_train, y_train)
+y_pred_REW = rew.predict(X_test)
+```
+
+```{python pre-processing accuracy score} 
+acc_REW = accuracy_score(y_test, y_pred_REW)
+print(f'[Reweighting] The test accuracy of the algorithm is: {acc_REW: .2%}')
+```
+
+```{python pre-processing confusion matrix}
+cf_matrix = confusion_matrix(y_test, y_pred_REW)
+make_confusion_matrix(cf_matrix, "[Reweighting]")
+plt.show()
+```
+
+The highest percentage in this confusion matrix is for the true negative rate, defendants who were predicted to not recidivate and actually did not, at 36.24%, 0.83% higher than the true negatives in the baseline model. This means that the re-weighing model marginally improved the baseline model accuracy in predicting people who did not recidivate. However, the true positive rate, or those who were predicted to recidivate and did recidivate, is 24.72%, 1.13% lower than that of the baseline model. This means that the re-weighing model slightly lowered the accuracy of the baseline model in predicting people who did recidivate. As a result, the overall reweighting model accuracy remains about the same as the baseline model accuracy. The false negative and false positive rates, or the predictions that proved to be incorrect, are 23.20% and 15.85%, respectively. The re-weighing model increased the number of false negatives by 1.14% and decreased the number of false positives by 0.83%. We are most concerned about the false positives, which indicate defendants who are predicted to recidivate and do not actually recidivate. While there is a slight improvement in the percent of false positives, it is still relatively high at 15.85%, indicating that we should further precede with additional bias mitigation techniques.
+
+```{python pre-processing metrics per group}
+metrics_per_group(y_test, y_pred_REW)
+plt.show()
+```
+
+Like we saw in the metrics plot for the baseline model, the model accuracy for defendants of all races hovers around 61%, being slightly lower for Black defendants and slightly higher for white defendants. However, we can note that the gap between accuracy for Black and white defendants is smaller that it was with the baseline model (about a 3% gap rather than 4%).
+
+We can see clear effects of the reweighting approach in the recall scores, which are now all very similar around 0.5. This is a marked improvement from the baseline model, where the model only correctly identified white defendants who recidivated 20% of the time. The reweighting model now correctly identifies defendants of any race who recidivate about half of the time. Notably, the reweighting also lowered the recall score for Black defendants. 
+
+Whereas with the baseline model all three precision scores were relatively similar, with the reweighting model we see the precision score for Black defendants is the highest. The models predictions for Black defendants who recidivate are correct about 66% of the time. In contrast, these predictions are correct for white defendents only 50% of the time, and correct for all defendants 60% of the time. The increase in precision for Black defendants shows the effects of the bias mitigation, as fewer Black people are being incorrectly predicted to recidivate. 
+
+### Statistical Parity Difference
+
+```{python pre-processing statistical parity difference}
+stat_par_diff_RW = statistical_parity_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
+
+print(f'[Reweighting] The statistical parity difference is {stat_par_diff_RW: .2}')
+```
+
+This is a large improvement over our baseline model, which was -0.14. It still implies a slight benefit for white individuals, but it is in the range of -0.1 and 0.1.
+
+### Equal Opportunity Difference
+
+```{python pre-processing equal opportunity difference}
+eq_opp_diff_RW = equal_opportunity_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
+
+print(f'[Reweighting] The equal opportunity difference is {eq_opp_diff_RW: .2}')
+```
+
+This is also an improvement from the baseline, as it is now between -0.1 and 0.1. It also now implies a slight benefit for Black defendants.
+
+### Average Odds Difference
+
+```{python pre-processing average odds difference}
+avg_odds_diff_RW = average_odds_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
+
+print(f'[Reweighting] The average odds difference is {avg_odds_diff_RW: .2}')
+```
+
+This is also a vast improvement from -0.44 to 0.014. Since it is above 1 and below 0.1, it implies a slight benefit for Black defendants, but not an unfair benefit. 
+
+### Disparate Impact Ratio
+```{python pre_processing disparate impact ratio}
+disp_impact_ratio_RW = disparate_impact_ratio(y_test, y_pred_REW, prot_attr='race', priv_group = 1, pos_label = 0)
+
+print(f'[Reweighting] The disparate impact ratio is {disp_impact_ratio_RW: .2}')
+```
+
+The reweighting approach also improves the disparate impact ratio, bringing the value almost to 1, which conveys absolute fairness.
+
+### Plot Fairness Metrics (Reweighting)
+
+```{python pre-processing fairness metrics plot}
+plot_fair_metrics([stat_par_diff_RW, eq_opp_diff_RW, avg_odds_diff_RW, disp_impact_ratio_RW], 'Reweighting')
+plt.show()
+```
+
+The orange bars in these graphs represent the new values of the fairness metrics after implementing the reweighting approach. Like we saw above, reweighting the data improved the fairness in all four of these metrics. All four values are now within the range of values considered fair. Statistical parity difference and disparate impact ratio still imply a slight benefit for white defendants, while equal opportunity difference and average odds difference now imply a slight benefit for Black defendants. 
+
+# In-Processing
+
+```{python in-processing set up}
+df_train = X_train.copy()
+df_train["two_year_recid"] = y_train
+df_train.rename(columns={6:'race'}, inplace=True)
+df_train = df_train.reset_index(drop=True)
+
+df_test = X_test.copy()
+df_test["two_year_recid"] = y_test
+df_test = df_test.reset_index(drop=True)
+df_test.rename(columns={6:'race'}, inplace=True)
+```
+
+```{python in-processing training}
+train_BLD = BinaryLabelDataset(favorable_label='0',
+                                unfavorable_label='1',
+                                df=df_train,
+                                label_names=['two_year_recid'],
+                                protected_attribute_names=['race'])
+
+test_BLD = BinaryLabelDataset(favorable_label='0',
+                                unfavorable_label='1',
+                                df=df_test,
+                                label_names=['two_year_recid'],
+                                protected_attribute_names=['race'])
+```
+
+## Prejudice Remover
+```{python prejudice remover}
+from aif360.algorithms.inprocessing import PrejudiceRemover
+
+prej = PrejudiceRemover(eta = 1.0, sensitive_attr='race', class_attr='two_year_recid')
+prej.fit(train_BLD)
+y_pred_PREJ = prej.predict(test_BLD)
+y_pred_PREJ = y_pred_PREJ.labels.flatten()
+```
+
+```{python prejudice accuracy score}
+acc_PREJ = accuracy_score(y_test, y_pred_PREJ)
+print(f'[Prejudice Remover] The test accuracy of the algorithm is: {acc_PREJ: .2%}')
+```
+
+```{python prejudice remover confusion matrix}
+cf_matrix = confusion_matrix(y_test, y_pred_PREJ)
+make_confusion_matrix(cf_matrix, "[Prejudice Remover]")
+plt.show()
+```
+
+The highest percentage in this confusion matrix is for false positives, defendants who the model predicted to recidivate and actually did not, at 37.76%. This false positive percentage concerns us because we do not want defendants who do not recidivate to have unfairly long sentences due to their (incorrectly) predicted recidivism. The number of true positives, defendants who the model predicted to recidivate and actually recidivated, is lower at 23.88%. The percentage of false negatives is lower, whereas the true negative is low at 14.33%. This indicates that the model does not do a good job in predicting the defendents who don't recidivate. It is very likely that it will incorrectly predict that someone will recidivate. 
+
+
+```{python prejudice remover metrics per group}
+metrics_per_group(y_test, y_pred_PREJ)
+plt.show()
+```
+
+After the prejudice remover, the accuracy of the model is fairly similar across the board of races, but the model's accuracy is only 38.21%, which is much lower than the baseline and reweighting models. This accuracy score means that the model makes accurate predictions only 38% of the time.
+
+In terms of recall, the score for white defendants is very high at 0.7, meaning that the model correctly identifies white defendants who recidivate about 70% of the time. This number is about 50% for all defendants, but only 40% for Black defendants. Just as we saw a low recall score for white defendants in the baseline model, now we see the same for Black defendants in the prejudice remover model. This means that the model frequently predicts Black defendants to not recidivate (the more favorable outcome) when they actually do.
+
+Finally, the precision score has lowered from about 0.6 for the baseline model to about 0.4 for all defendants, 0.45 for Black defendants, and 0.3 for white defendants. This means that the model's predictions of a defendant who recidivates are accurate about 40% of the time, a number which is slightly higher for Black defendants and slightly lower for white defendants.
+
+### Statistical Parity Difference
+
+```{python prejudice remover statistical parity difference}
+stat_par_diff_PREJ = statistical_parity_difference(y_test, y_pred_PREJ, prot_attr='race', pos_label = 0)
+
+print(f'[Prejudice Remover] The statistical parity difference is {stat_par_diff_PREJ: .2}')
+```
+
+Compared to the baseline model, the predjudice remover is highly in favor of the unprivileged group, Black defendants, because its value is greater than 0. The value of 0.367 is much higher than 0, the value of fairness. 
+
+
+### Equal Opportunity Difference
+
+```{python prejudice remover equal opportunity difference}
+eq_opp_diff_PREJ = equal_opportunity_difference(y_test, y_pred_PREJ, prot_attr='race', pos_label = 0)
+
+print(f'[Prejudice Remover] The equal opportunity difference is {eq_opp_diff_PREJ: .2}')
+```
+
+Compared to the baseline model, the predjudice remover is highly in favor of Black defendants because its value is greater than 0. The value of 0.321 is much higher than 0, the value of fairness. 
+
+
+### Average Odds Difference
+
+```{python prejudice remover average odds difference}
+avg_odds_diff_PREJ = average_odds_difference(y_test, y_pred_PREJ, prot_attr='race', pos_label = 0)
+
+print(f'[Prejudice Remover] The average odds difference is {avg_odds_diff_PREJ: .2}')
+```
+
+Compared to the baseline model, the predjudice remover is highly in favor of Black defendants, because its value is greater than 0. 
+
+### Disparate Impact Ratio
+```{python prejudice remover disparate impact ratio}
+disp_impact_ratio_PREJ = disparate_impact_ratio(y_test, y_pred_PREJ, prot_attr='race', priv_group = 1, pos_label = 0)
+
+print(f'[Prejudice Remover] The disparate impact ratio is {disp_impact_ratio_PREJ: .2}')
+```
+
+The value of 3.3 indicates that the model is highly in favor of Black defendents, as it is much greater than 1. This is a hugely different from the baseline model which favors white defendants. 
+
+### Plot Fairness Metrics (Prejudice Remover)
+
+```{python prejudice remover fairness metrics plot}
+plot_fair_metrics([stat_par_diff_PREJ, eq_opp_diff_PREJ, avg_odds_diff_PREJ, disp_impact_ratio_PREJ], 'Prejudice Remover')
+plt.show()
+```
+
+Like the model performance metrics suggested, the prejudice remover approach resulted in an increased benefit for Black defendants. As the orange bars on these plots show, the values of the fairness metrics have reversed from their baseline values. Now all four metrics suggest an unfair advantage for Black defendants. Thus, this approach removed the model's prejudice against Black people, but it did not result in a "fair" model.
+
+# Post-Processing
+
+```{python post-processing calibrated equal odds set up, include = FALSE}
+from aif360.algorithms.postprocessing import EqOddsPostprocessing
+from aif360.sklearn.postprocessing import CalibratedEqualizedOdds, PostProcessingMeta
+
+pp = CalibratedEqualizedOdds('race', cost_constraint='fnr', random_state=1234567)
+ceo = PostProcessingMeta(estimator=lr, postprocessor=pp, random_state=1234567)
+ceo.fit(X_train, y_train)
+y_pred_CEO = ceo.predict(X_test)
+y_proba_CEO = ceo.predict_proba(X_test)
+```
+
+```{python post-processing accuracy score}
+acc_CEO = accuracy_score(y_test, y_pred_CEO)
+print(f'[Calibrated Equalized Odds] The test accuracy of the algorithm is: {acc_CEO: .2%}')
+```
+
+```{python post-processing calibrated equal odds}
+cf_matrix = confusion_matrix(y_test, y_pred_CEO)
+make_confusion_matrix(cf_matrix, "[Calibrated Equalized Odds]")
+plt.show()
+```
+
+The highest percentage in this confusion matrix is for true negatives, defendants who the model predicted to not recidivate and actually did not, at 50.04%. The number of true positives, defendants who the model predicted to recidivate and actually recidivated, is much lower at 3.11%. The percentage of false negatives is somewhat high for this baseline model, whereas the false positive rate is very low at 2.05%. This indicates that the model does a good job in predicting the defendents who don't recidivate. It is very unlikely that it will incorrectly predict that someone will recidivate. Though the accuracy score for the model is 0.53, lower than the baseline, this model is much better at identifying true negatives. 
+
+### Statistical Parity Difference
+
+```{python post-processing stat parity difference}
+stat_par_diff_CEO = statistical_parity_difference(y_test, y_pred_CEO, prot_attr='race', pos_label = 0)
+
+print(f'[Calibrated Equalized Odds] The statistical parity difference is {stat_par_diff_CEO: .2}')
+```
+
+At the value of 0.134, the statistical parity difference is now positive and slightly in favor of Black defendants. However, it is just outside the bounds of fairness.
+
+### Equal Opportunity Difference
+
+```{python post-processing equal opportunity diff}
+eq_opp_diff_CEO = equal_opportunity_difference(y_test, y_pred_CEO, prot_attr='race', pos_label = 0)
+
+print(f'[Calibrated Equalized Odds] The equal opportunity difference is {eq_opp_diff_CEO: .2}')
+```
+
+There has been a significant change from -0.408 to 0.088, showing that now the value is within the bounds of "fair" (-0.1 to 0.1). Additionally, since the value is positive, it implies a slight benefit for Black defendants.
+
+### Average Odds Difference
+
+```{python post-processing average odds difference}
+avg_odds_diff_CEO = average_odds_difference(y_test, y_pred_CEO, prot_attr='race', pos_label = 0)
+
+print(f'[Calibrated Equalized Odds] The average odds difference is {avg_odds_diff_CEO: .2}')
+```
+
+The baseline model with the average odds difference was -0.438 and now it is 0.15, which indicates slight unfairness (as it is above 0.1) and the model being in favor of Black defendants. 
+
+### Disparate Impact Ratio
+
+```{python post_processing disparate impact ratio}
+disp_impact_ratio_CEO = disparate_impact_ratio(y_test, y_pred_CEO, prot_attr='race', priv_group = 1, pos_label = 0)
+
+print(f'[Calibrated Equalized Odds] The disparate impact ratio is {disp_impact_ratio_CEO: .2}')
+```
+
+The baseline value was 0.466, which is significantly below the range of "fair" which begins at 0.8. Now at a value of 1.15 it is above 1, conveying fairness and a benefit of Black defendants. 
+
+### Plot Fairness Metrics (Calibrated Equalized Odds)
+
+```{python post-processing fairness metrics plot}
+plot_fair_metrics([stat_par_diff_CEO, eq_opp_diff_CEO, avg_odds_diff_CEO, disp_impact_ratio_CEO], 'Calibrated Equalized Odds')
+plt.show()
+```
+
+As we can see from the orange bars, the calibrated equalized odds approach results in all four metrics now suggesting a benefit for the originally unprivileged group, Black defendants. Though the values for statistical parity difference and average odds difference are slightly above the range of what is considered fair, the margin is much smaller than the original margin between the value and the range of fairness (as indicated by the blue bars). Thus, the calibrated equalized odds approach successfully counteracts the bias against Black defendants and results in a mostly fair model.
+
+

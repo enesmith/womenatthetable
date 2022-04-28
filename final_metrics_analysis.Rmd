@@ -14,7 +14,7 @@ library(reticulate)
 
 
 # for Dianne
-# use_condaenv("base")
+use_condaenv("base")
 
 # for Amrita
 # use_condaenv("anaconda3")
