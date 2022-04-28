@@ -554,16 +554,16 @@ y_pred_REW = rew.predict(X_test)
 
 ```{python pre-processing accuracy score} 
 acc_REW = accuracy_score(y_test, y_pred_REW)
-print(f'[Reweighting] The test accuracy of the algorithm is: {acc_REW: .2%}')
+print(f'[Reweighing] The test accuracy of the algorithm is: {acc_REW: .2%}')
 ```
 
 ```{python pre-processing confusion matrix}
 cf_matrix = confusion_matrix(y_test, y_pred_REW)
-make_confusion_matrix(cf_matrix, "[Reweighting]")
+make_confusion_matrix(cf_matrix, "[Reweighing]")
 plt.show()
 ```
 
-The highest percentage in this confusion matrix is for the true negative rate, defendants who were predicted to not recidivate and actually did not, at 36.24%, 0.83% higher than the true negatives in the baseline model. This means that the re-weighing model marginally improved the baseline model accuracy in predicting people who did not recidivate. However, the true positive rate, or those who were predicted to recidivate and did recidivate, is 24.72%, 1.13% lower than that of the baseline model. This means that the re-weighing model slightly lowered the accuracy of the baseline model in predicting people who did recidivate. As a result, the overall reweighting model accuracy remains about the same as the baseline model accuracy. The false negative and false positive rates, or the predictions that proved to be incorrect, are 23.20% and 15.85%, respectively. The re-weighing model increased the number of false negatives by 1.14% and decreased the number of false positives by 0.83%. We are most concerned about the false positives, which indicate defendants who are predicted to recidivate and do not actually recidivate. While there is a slight improvement in the percent of false positives, it is still relatively high at 15.85%, indicating that we should further precede with additional bias mitigation techniques.
+The highest percentage in this confusion matrix is for the true negative rate, defendants who were predicted to not recidivate and actually did not, at 36.24%, 0.83% higher than the true negatives in the baseline model. This means that the re-weighing model marginally improved the baseline model accuracy in predicting people who did not recidivate. However, the true positive rate, or those who were predicted to recidivate and did recidivate, is 24.72%, 1.13% lower than that of the baseline model. This means that the re-weighing model slightly lowered the accuracy of the baseline model in predicting people who did recidivate. As a result, the overall reweighing model accuracy remains about the same as the baseline model accuracy. The false negative and false positive rates, or the predictions that proved to be incorrect, are 23.20% and 15.85%, respectively. The re-weighing model increased the number of false negatives by 1.14% and decreased the number of false positives by 0.83%. We are most concerned about the false positives, which indicate defendants who are predicted to recidivate and do not actually recidivate. While there is a slight improvement in the percent of false positives, it is still relatively high at 15.85%, indicating that we should further precede with additional bias mitigation techniques.
 
 ```{python pre-processing metrics per group}
 metrics_per_group(y_test, y_pred_REW)
@@ -572,16 +572,16 @@ plt.show()
 
 Like we saw in the metrics plot for the baseline model, the model accuracy for defendants of all races hovers around 61%, being slightly lower for Black defendants and slightly higher for white defendants. However, we can note that the gap between accuracy for Black and white defendants is smaller that it was with the baseline model (about a 3% gap rather than 4%).
 
-We can see clear effects of the reweighting approach in the recall scores, which are now all very similar around 0.5. This is a marked improvement from the baseline model, where the model only correctly identified white defendants who recidivated 20% of the time. The reweighting model now correctly identifies defendants of any race who recidivate about half of the time. Notably, the reweighting also lowered the recall score for Black defendants. 
+We can see clear effects of the reweighing approach in the recall scores, which are now all very similar around 0.5. This is a marked improvement from the baseline model, where the model only correctly identified white defendants who recidivated 20% of the time. The reweighing model now correctly identifies defendants of any race who recidivate about half of the time. Notably, the reweighing also lowered the recall score for Black defendants. 
 
-Whereas with the baseline model all three precision scores were relatively similar, with the reweighting model we see the precision score for Black defendants is the highest. The models predictions for Black defendants who recidivate are correct about 66% of the time. In contrast, these predictions are correct for white defendents only 50% of the time, and correct for all defendants 60% of the time. The increase in precision for Black defendants shows the effects of the bias mitigation, as fewer Black people are being incorrectly predicted to recidivate. 
+Whereas with the baseline model all three precision scores were relatively similar, with the reweighing model we see the precision score for Black defendants is the highest. The models predictions for Black defendants who recidivate are correct about 66% of the time. In contrast, these predictions are correct for white defendents only 50% of the time, and correct for all defendants 60% of the time. The increase in precision for Black defendants shows the effects of the bias mitigation, as fewer Black people are being incorrectly predicted to recidivate. 
 
 ### Statistical Parity Difference
 
 ```{python pre-processing statistical parity difference}
 stat_par_diff_RW = statistical_parity_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
 
-print(f'[Reweighting] The statistical parity difference is {stat_par_diff_RW: .2}')
+print(f'[Reweighing] The statistical parity difference is {stat_par_diff_RW: .2}')
 ```
 
 This is a large improvement over our baseline model, which was -0.14. It still implies a slight benefit for white individuals, but it is in the range of -0.1 and 0.1.
@@ -591,7 +591,7 @@ This is a large improvement over our baseline model, which was -0.14. It still i
 ```{python pre-processing equal opportunity difference}
 eq_opp_diff_RW = equal_opportunity_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
 
-print(f'[Reweighting] The equal opportunity difference is {eq_opp_diff_RW: .2}')
+print(f'[Reweighing] The equal opportunity difference is {eq_opp_diff_RW: .2}')
 ```
 
 This is also an improvement from the baseline, as it is now between -0.1 and 0.1. It also now implies a slight benefit for Black defendants.
@@ -601,7 +601,7 @@ This is also an improvement from the baseline, as it is now between -0.1 and 0.1
 ```{python pre-processing average odds difference}
 avg_odds_diff_RW = average_odds_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
 
-print(f'[Reweighting] The average odds difference is {avg_odds_diff_RW: .2}')
+print(f'[Reweighing] The average odds difference is {avg_odds_diff_RW: .2}')
 ```
 
 This is also a vast improvement from -0.44 to 0.014. Since it is above 1 and below 0.1, it implies a slight benefit for Black defendants, but not an unfair benefit. 
@@ -610,19 +610,19 @@ This is also a vast improvement from -0.44 to 0.014. Since it is above 1 and bel
 ```{python pre_processing disparate impact ratio}
 disp_impact_ratio_RW = disparate_impact_ratio(y_test, y_pred_REW, prot_attr='race', priv_group = 1, pos_label = 0)
 
-print(f'[Reweighting] The disparate impact ratio is {disp_impact_ratio_RW: .2}')
+print(f'[Reweighing] The disparate impact ratio is {disp_impact_ratio_RW: .2}')
 ```
 
-The reweighting approach also improves the disparate impact ratio, bringing the value almost to 1, which conveys absolute fairness.
+The reweighing approach also improves the disparate impact ratio, bringing the value almost to 1, which conveys absolute fairness.
 
-### Plot Fairness Metrics (Reweighting)
+### Plot Fairness Metrics (Reweighing)
 
 ```{python pre-processing fairness metrics plot}
-plot_fair_metrics([stat_par_diff_RW, eq_opp_diff_RW, avg_odds_diff_RW, disp_impact_ratio_RW], 'Reweighting')
+plot_fair_metrics([stat_par_diff_RW, eq_opp_diff_RW, avg_odds_diff_RW, disp_impact_ratio_RW], 'Reweighing')
 plt.show()
 ```
 
-The orange bars in these graphs represent the new values of the fairness metrics after implementing the reweighting approach. Like we saw above, reweighting the data improved the fairness in all four of these metrics. All four values are now within the range of values considered fair. Statistical parity difference and disparate impact ratio still imply a slight benefit for white defendants, while equal opportunity difference and average odds difference now imply a slight benefit for Black defendants. 
+The orange bars in these graphs represent the new values of the fairness metrics after implementing the reweighing approach. Like we saw above, reweighing the data improved the fairness in all four of these metrics. All four values are now within the range of values considered fair. Statistical parity difference and disparate impact ratio still imply a slight benefit for white defendants, while equal opportunity difference and average odds difference now imply a slight benefit for Black defendants. 
 
 # In-Processing
 
@@ -684,7 +684,7 @@ metrics_per_group(y_test, y_pred_PREJ)
 plt.show()
 ```
 
-After the prejudice remover, the accuracy of the model is fairly similar across the board of races, but the model's accuracy is only 38.21%, which is much lower than the baseline and reweighting models. This accuracy score means that the model makes accurate predictions only 38% of the time.
+After the prejudice remover, the accuracy of the model is fairly similar across the board of races, but the model's accuracy is only 38.21%, which is much lower than the baseline and reweighing models. This accuracy score means that the model makes accurate predictions only 38% of the time.
 
 In terms of recall, the score for white defendants is very high at 0.7, meaning that the model correctly identifies white defendants who recidivate about 70% of the time. This number is about 50% for all defendants, but only 40% for Black defendants. Just as we saw a low recall score for white defendants in the baseline model, now we see the same for Black defendants in the prejudice remover model. This means that the model frequently predicts Black defendants to not recidivate (the more favorable outcome) when they actually do.
 

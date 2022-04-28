@@ -72,18 +72,21 @@
 
 %=================================================================
 % Full title of the paper (Capitalized)
-\Title{Does the COMPAS Needle Always Point Towards Equity? Finding Fairness in
-the COMPAS Risk Assessment Algorithm: A Case Study}
+\Title{Does the COMPAS Needle Always Point Towards Equity? Finding
+Fairness in the COMPAS Risk Assessment Algorithm: A Case Study}
 
 % Authors, for the paper (add full first names)
-\Author{Amrita Acharya$^{1}$, Dianne Caravela$^{1}$, Eunice Kim$^{1}$, Emma Kornberg$^{1}$, Elisabeth Nesmith$^{1}$}
+\Author{Amrita Acharya$^{1}$, Dianne Caravela$^{1}$, Eunice
+Kim$^{1}$, Emma Kornberg$^{1}$, Elisabeth Nesmith$^{1}$}
 
 % Authors, for metadata in PDF
-\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma Kornberg, Elisabeth Nesmith}
+\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma
+Kornberg, Elisabeth Nesmith}
 
 % Affiliations / Addresses (Add [1] after \address if there is only one affiliation.)
 \address{%
-$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA 01063; \href{mailto:bbaumer@smith.edu}{\nolinkurl{bbaumer@smith.edu}}\\
+$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA
+01063; \href{mailto:bbaumer@smith.edu}{\nolinkurl{bbaumer@smith.edu}}\\
 }
 % Contact information of the corresponding author
 \corres{Correspondence: \href{mailto:aacharya@smith.edu}{\nolinkurl{aacharya@smith.edu}},
@@ -106,24 +109,24 @@ $^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA 01063; 
 % Simple summary
 
 % Abstract (Do not insert blank lines, i.e. \\)
-\abstract{A variety of disciplines use risk assessment instruments to help humans
-make data-driven decisions. Northpointe, a software company, created an
-algorithmic risk assessment instrument known as the Correctional
-Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS
-uses various behavioral and psychological metrics related to recidivism
-to assist justice systems in assessing a defendant's potential
-recidivism risk. \citet{angwin2016machine} published a ProPublica
-article in which they conclude that the racial biases in the criminal
-justice system are reflected in the COMPAS recidivism risk scores. In
-response, \citet{equivant_response_2016} published a rebuttal on behalf
-of Northpointe defending the COMPAS algorithm and refuting
-\citet{angwin2016machine}'s allegation of racial bias. Using a human
-rights framework adopted from the organizations Women at the Table and
-AI Fairness 360, we use debiasing algorithms and fairness metrics to
-analyze the argument between Northpointe and ProPublica and determine
-whether and to what extent there is racial bias in the COMPAS algorithm.
-All four group fairness metrics determine that the COMPAS algorithm
-favors white defendants over Black defendants.}
+\abstract{A variety of disciplines use risk assessment instruments to
+help humans make data-driven decisions. Northpointe, a software company,
+created an algorithmic risk assessment instrument known as the
+Correctional Offender Management Profiling for Alternative Sanctions
+(COMPAS). COMPAS uses various behavioral and psychological metrics
+related to recidivism to assist justice systems in assessing a
+defendant's potential recidivism risk. \citet{angwin2016machine}
+published a ProPublica article in which they conclude that the racial
+biases in the criminal justice system are reflected in the COMPAS
+recidivism risk scores. In response, \citet{equivant_response_2016}
+published a rebuttal on behalf of Northpointe defending the COMPAS
+algorithm and refuting \citet{angwin2016machine}'s allegation of racial
+bias. Using a human rights framework adopted from the organizations
+Women at the Table and AI Fairness 360, we use debiasing algorithms and
+fairness metrics to analyze the argument between Northpointe and
+ProPublica and determine whether and to what extent there is racial bias
+in the COMPAS algorithm. All four group fairness metrics determine that
+the COMPAS algorithm favors white defendants over Black defendants.}
 
 % Keywords
 
@@ -318,18 +321,16 @@ recidivism rate (Figures \ref{fig:recid plot} \&
 greater proportion (\textgreater{} 50\%) of Black defendants recidivated
 than their white counterparts. \label{tab:recid table}}\tabularnewline
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived &
-Total\tabularnewline
+Two Year Recidivism by Race & Recidivated & Survived & Total \\
 \midrule
 \endfirsthead
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived &
-Total\tabularnewline
+Two Year Recidivism by Race & Recidivated & Survived & Total \\
 \midrule
 \endhead
-African American & 1661 & 1512 & 3173\tabularnewline
-Caucasian & 822 & 1278 & 2100\tabularnewline
-Total & 2483 & 2790 & 5273\tabularnewline
+African American & 1661 & 1512 & 3173 \\
+Caucasian & 822 & 1278 & 2100 \\
+Total & 2483 & 2790 & 5273 \\
 \bottomrule
 \end{longtable}
 
@@ -428,39 +429,64 @@ pre-processing, in-processing, and post-processing de-biasing
 algorithms. These are all based on using predictive models to figure out
 how we can ``fix'' the bias that is present.
 
-Pre-processing refers to assessing the training data, and it is the most
-flexible method because it has not yet trained a model that may carry
-assumptions about the data. It is important to keep in mind that
-pre-processing prevents assumptions in the modeling, but does not
-account for the bias in data collection. With pre-processing, we use the
-re-weighing algorithm from AIF360 which weights the examples in each
-(group, label) combination differently to ensure fairness before
-classification \citep{aif360-oct-2018}. We use a logistic regression
-model for this algorithm, as it is the easiest to interpret in the given
-context. After running the fairness metrics using the pre-processing
-algorithm, we are able to compare our results to the baseline metrics
-from the previous section.
+Pre-processing refers to mitigating bias within the training data, and
+it is the most flexible method because it has not yet trained a model
+that may carry assumptions about the data. It is important to keep in
+mind that pre-processing prevents assumptions in the modeling, but does
+not account for the bias in data collection. Training data is where bias
+is most likely to be introduced. We use the reweighing pre-processing
+algorithm from AIF360 which assigns weights to the data. ``The advantage
+of this approach is, instead of modifying the labels, it assigns
+different weights to the examples based upon their categories of
+protected attribute and outcome such that bias is removed from the
+training dataset. The weights are based on frequency counts. However as
+this technique is designed to work only with classifiers that can handle
+row-level weights, this may limit your modeling options''
+\citep{Ronaghan2019AI}. We used a logistic regression model for this
+algorithm, as it is the easiest to interpret in the given context. After
+running the fairness metrics using the pre-processing algorithm, we were
+able to compare our results to the baseline metrics from the previous
+section.
 
-Another approach, in-processing, explores how bias can be targeted while
-building a model. It assesses how we build learning algorithms, which
-often prioritize accuracy over fairness. The technique we use is the
-Meta Classification algorithm, which accounts for the fairness metric as
-part of the input and returns a classifier optimized by that particular
-metric. Similarly to pre-processing, we compare the results of our
-in-processing methods with both the baseline and the pre-processing to
-gauge which method so far has better individual or group fairness.
+In-processing mitigates bias in classifiers while building a model. A
+classifier ``is an algorithm that automatically orders or categorizes
+data into one or more sets'' \citep{baxter2021what}. The in-processing
+technique we use is the prejudice remover algorithm, which accounts for
+the fairness metric as part of the input and returns a classifier
+optimized by that particular metric. In order to do this, we first
+needed to convert our data frame into a data type called a
+BinaryLabelDataset. Similarly to pre-processing, we compared the results
+of our in-processing methods with both the baseline and the
+pre-processing to gauge which method so far has better individual or
+group fairness.
 
-Our last approach, post-processing, makes transformations on model
-outputs. Similarly to the pre-processing, it is flexible because it does
-not work directly with the algorithm, but instead has direct access to
-all the predicted classification values. Because the algorithms are
-often so complex and difficult to interpret, post-processors are trained
-in a black box. To get around this, we use the PostProcessingMeta class
-from AIF360 which combines the training and prediction for a random
-estimator and the post-processor while simultaneously splitting the data
-set \citep{aif360-oct-2018}. Based on these results, we look
-comparatively at all the approaches to determine which we assess to be
-the most fair.
+The prejudice remover is a method for reducing indirect prejudice
+(i.e.~how COMPAS is racially biased because it uses proxy variables for
+race). The prejudice remover implements two different regularizers, one
+to avoid overfitting and one to enforce fair classification. The
+prejudice remover regularizer works by minimizing the prejudice index, a
+mathematical equation for quantifying fairness defined by Kamishima et.
+al.~This in turn enforces a classifier's independence from sensitive
+information (e.g., race).
+
+Our last approach, post-processing bias mitigation, is used after
+training a model. Post-processing algorithms equalize the outcomes
+(i.e., predicted classification values) to mitigate bias instead of
+adjusting the classifier or the training data \citep{baxter2021AI}. We
+use calibrated equalized odds, which ``optimizes over calibrated
+classifier score outputs to find probabilities with which to change
+output labels with an equalized odds objective'' {[}insert aif360
+website citation here{]}. An equalized odds objective constrains
+classification algorithms such that no error type (false-positive or
+false-negative) disproportionately affects any population subgroup; both
+groups, in our case both white and Black defendants, should have the
+same false-positive and false-negative rates. Through the calibrated
+equalized odds method, we want to decrease bias while also maintaining
+calibration \citep{pleiss2017fairness}.
+\href{https://medium.com/analytics-vidhya/calibration-in-machine-learning-e7972ac93555}{Calibration}
+refers to improving a model so that the distribution of predicted
+outcomes is similar to the distribution of observed probability in the
+training data.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
@@ -500,28 +526,23 @@ the AIF360 toolkit to see if we can make COMPAS fair at all.
 \caption{Results of Baseline Fairness Metric Analysis
 \label{tab:baseline metrics table}}\tabularnewline
 \toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited
-Group\tabularnewline
+Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
 \midrule
 \endfirsthead
 \toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited
-Group\tabularnewline
+Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
 \midrule
 \endhead
-Statistical Parity Difference & 0 & -0.14 & White
-Defendants\tabularnewline
-Disparate Impact Ratio & 1 & 0.47 & White Defendants\tabularnewline
-Average Odds Difference & 0 & -0.44 & White Defendants\tabularnewline
-Equal Opportunity Difference & 0 & -0.41 & White
-Defendants\tabularnewline
+Statistical Parity Difference & 0 & -0.14 & White Defendants \\
+Disparate Impact Ratio & 1 & 0.47 & White Defendants \\
+Average Odds Difference & 0 & -0.44 & White Defendants \\
+Equal Opportunity Difference & 0 & -0.41 & White Defendants \\
 \bottomrule
 \end{longtable}
 
 \hypertarget{pre-processing-approach}{%
 \subsection{Pre-Processing Approach}\label{pre-processing-approach}}
 
-We chose the reweighing as our pre-processing bias mitigation algorithm.
 After running the reweighing algorithm, our fairness metrics are -0.015
 for statistical parity difference, 0.015 for equal opportunity
 difference, 0.014 for average odds difference, and 0.98 for disparate
@@ -590,4 +611,3 @@ algorithm.
 
 
 \end{document}
-
