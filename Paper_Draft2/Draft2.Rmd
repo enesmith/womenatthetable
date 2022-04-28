@@ -31,7 +31,7 @@ correspondence: |
   aacharya@smith.edu, dcaravela@smith.edu, ekim89@smith.edu, ekornberg@smith.edu, enesmith@smith.edu
 
 abstract: |
- A variety of disciplines use risk assessment instruments to help humans make data-driven decisions. Northpointe, a software company, created an algorithmic risk assessment instrument known as the Correctional Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS uses various behavioral and psychological metrics related to recidivism to assist justice systems in assessing a defendant’s potential recidivism risk. @angwin2016machine published a ProPublica article in which they conclude that the racial biases in the criminal justice system are reflected in the COMPAS recidivism risk scores. In response, @equivant_response_2016 published a rebuttal on behalf of Northpointe defending the COMPAS algorithm and refuting @angwin2016machine’s allegation of racial bias. Using a human rights framework adopted from the organizations Women at the Table and AI Fairness 360, we use debiasing algorithms and fairness metrics to analyze the argument between Northpointe and ProPublica and determine whether and to what extent there is racial bias in the COMPAS algorithm. 
+ A variety of disciplines use risk assessment instruments to help humans make data-driven decisions. Northpointe, a software company, created an algorithmic risk assessment instrument known as the Correctional Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS uses various behavioral and psychological metrics related to recidivism to assist justice systems in assessing a defendant’s potential recidivism risk. @angwin2016machine published a ProPublica article in which they conclude that the racial biases in the criminal justice system are reflected in the COMPAS recidivism risk scores. In response, @equivant_response_2016 published a rebuttal on behalf of Northpointe defending the COMPAS algorithm and refuting @angwin2016machine’s allegation of racial bias. Using a human rights framework adopted from the organizations Women at the Table and AI Fairness 360, we use debiasing algorithms and fairness metrics to analyze the argument between Northpointe and ProPublica and determine whether and to what extent there is racial bias in the COMPAS algorithm. All four group fairness metrics determine that the COMPAS algorithm favors white defendants over Black defendants. 
 
 output: rticles::mdpi_article
 ---
@@ -40,8 +40,9 @@ output: rticles::mdpi_article
 
 The Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) algorithm was created by the private, for-profit company Northpointe (now known by its parent company [equivant](https://www.equivant.com/faq/)), to predict defendants’ risk of recidivism. It generates a decile score that classifies defendants’ risk of recidivism as either low, medium, or high [@angwin2016machine]. Jurisdictions across the United States use the COMPAS risk assessment instrument, including but not limited to the [New York](https://doccs.ny.gov/system/files/documents/2020/11/8500.pdf), [Massachusetts](https://hdsr.mitpress.mit.edu/pub/hzwo7ax4/release/4), [Michigan](https://hdsr.mitpress.mit.edu/pub/hzwo7ax4/release/4), [California](https://hdsr.mitpress.mit.edu/pub/hzwo7ax4/release/4), and [Wisconsin](https://doc.wi.gov/Pages/AboutDOC/COMPAS.aspx) Departments of Corrections. 
 
-Due to the proprietary nature of the COMPAS algorithm, it is unknown how exactly these recidivism risk scores are calculated. However, a [sample COMPAS Risk Assessment Survey](https://www.documentcloud.org/documents/2702103-Sample-Risk-Assessment-COMPAS-CORE#document/p5/a296598) has been made publicly available, revealing the algorithm’s input information. @angwin2016machine has critiqued for using proxy variables for race that do not explicitly factor in a defendant’s race but heavily imply it, allowing Northpointe to claim that their algorithm is free of racial bias. For example, the COMPAS risk assessment survey asks screeners to speculate if a defendant might be affiliated with a gang. It also asks if a defendant has any friends or family members who have been crime victims [@Angwin2016Sample]. Although these questions do not directly ask about race, they do not take into account the pervasive nature of systemic racism that infiltrates every aspect of the lives of marginalized people, thereby indirectly asking about race. 
-@angwin2016machine. analyzes the methods and algorithms used by Northpointe in their COMPAS risk score assessment algorithm and uncovers racial biases in defendants’ scores [@angwin2016machine]. They find that “the algorithm [is] somewhat more accurate than a coin flip,” a worrisome level of accuracy given the potential impact its determinations may have on real people’s lives. @angwin2016machine specifically investigate the distribution of COMPAS scores by decile among Black and white defendants. They write: “The analysis also [shows] that even when controlling for prior crimes, future recidivism, age, and gender, Black defendants [are] 45 percent more likely to be assigned higher risk scores than white defendants” [@larson2016we]. After examining the fairness metric statistical parity difference, @angwin2016machine conclude that the algorithm is racially biased [@larson2016we]. 
+Due to the proprietary nature of the COMPAS algorithm, it is unknown how exactly these recidivism risk scores are calculated. However, a [sample COMPAS Risk Assessment Survey](https://www.documentcloud.org/documents/2702103-Sample-Risk-Assessment-COMPAS-CORE#document/p5/a296598) has been made publicly available, revealing the algorithm’s input information. @angwin2016machine critiques this survey for using proxy variables for race that do not explicitly factor in a defendant’s race but heavily imply it, allowing Northpointe to claim that their algorithm is free of racial bias. For example, the COMPAS risk assessment survey asks screeners to speculate if a defendant might be affiliated with a gang. It also asks if a defendant has any friends or family members who have been crime victims [@Angwin2016Sample]. Although these questions do not directly ask about race, they do not take into account the pervasive nature of systemic racism that infiltrates every aspect of the lives of marginalized people, thereby indirectly asking about race.  
+
+@angwin2016machine analyzes the methods and algorithms used by Northpointe in their COMPAS risk score assessment algorithm and uncovers racial biases in defendants’ scores [@angwin2016machine]. They find that “the algorithm [is] somewhat more accurate than a coin flip,” a worrisome level of accuracy given the potential impact its determinations may have on real people’s lives. @angwin2016machine specifically investigate the distribution of COMPAS scores by decile among Black and white defendants. They write: “The analysis also [shows] that even when controlling for prior crimes, future recidivism, age, and gender, Black defendants [are] 45 percent more likely to be assigned higher risk scores than white defendants” [@larson2016we]. After examining the fairness metric statistical parity difference, @angwin2016machine conclude that the algorithm is racially biased [@larson2016we]. 
 
 @equivant_response_2016, on behalf of Northpointe, deny the allegations of racial bias and offer their own analyses based on different fairness metrics in rebuttal [@equivant_response_2016]. @angwin2016machine maintain that there are biases in the outcome values, protected attributes, and covariates during @equivant_response_2016’s data processing phase. ProPublica collaborators @larson2016we account for these biases in their analyses. In their response, @equivant_response_2016 highlight that @angwin2016machine did not account for base rates of recidivism in their analysis, which are important initial percentages without the presence of other information. 
 
@@ -70,9 +71,10 @@ library(tidyverse)
 ```
 
 ```{r, include = FALSE}
-x <- tribble(~`Two Year Recidivism by Race`, ~`Recidivated`, ~`Survived`,
-             "African American", "1661", "1512",
-             "Caucasian", "822", "1278")
+x <- tribble(~`Two Year Recidivism by Race`, ~`Recidivated`, ~`Survived`, ~`Total`,
+             "African American", 1661, 1512, 3173,
+             "Caucasian", 822, 1278, 2100,
+             "Total", 2483, 2790, 5273)
 ```
 
 ```{r, echo = FALSE}
@@ -81,23 +83,19 @@ knitr::kable(x, caption = "Incidence of recidivism by race, illustrating how a m
 
 # Methods
 
-AI Fairness 360 (AIF360) is an open-source Python toolkit that seeks to "to help facilitate the transition of fairness research algorithms to use in an industrial setting and to provide a common framework for fairness researchers to share and evaluate algorithms" [@aif360-oct-2018]. It contains multiple data sets, including the COMPAS data set that accompanied the @angwin2016machine piece.
+AI Fairness 360 (AIF360) is an open-source Python toolkit that seeks “to help facilitate the transition of fairness research algorithms to use in an industrial setting and to provide a common framework for fairness researchers to share and evaluate algorithms” [@aif360-oct-2018]. It contains multiple data sets, including the COMPAS data set that accompanied @angwin2016machine.
 
-The AIF360 toolkit contains various group and individual fairness metrics as well as pre-processing, in-processing, and post-processing algorithms that we used for our experiments [@aif360-oct-2018]. We researched the definitions and applications of different fairness metrics [@ashokan2021fairness] to determine which metric would be most appropriate for our project. We chose to look at four group fairness metrics instead of individual fairness metrics. Group fairness takes into account the attributes of a whole group as opposed to just one individual in the group, allowing us to represent more of the systemic issues happening. In general, group fairness metrics require that the unprivileged group is treated similarly to the privileged group, whereas individual fairness metrics require individuals to be treated consistently [@kypraiou_what_2021]. Group and individual metrics work in opposition of one another, meaning that when group fairness improves, individual fairness gets worse.
+The AIF360 toolkit contains various group and individual fairness metrics as well as pre-processing, in-processing, and post-processing algorithms that we used to debias the COMPAS algorithm [@aif360-oct-2018]. We researched the definitions and applications of different fairness metrics [@ashokan2021fairness] to determine which metric would be most appropriate for our project. We chose to look at four group fairness metrics instead of individual fairness metrics. Group fairness metrics take into account the attributes of a whole group as opposed to just one individual in the group, allowing us to represent systemic issues. In general, group fairness metrics require that the unprivileged group is treated similarly to the privileged group, whereas individual fairness metrics require individuals to be treated consistently [@kypraiou_what_2021]. Group and individual metrics work in opposition of one another, meaning that when group fairness improves, individual fairness gets worse [@kypraiou_what_2021].
 
-**Statistical Parity Difference** - This metric measures the difference that the majority and protected classes get a particular outcome. The ideal value of this metric is 0. Fairness for this metric is between -0.1 and 0.1. A negative value means there is higher benefit for the privileged group (in this case, white defendants).
+**Statistical Parity Difference** - This metric measures the difference between privileged and marginalized groups’ likelihood to get a particular outcome. The ideal value of this metric is 0. Fairness for this metric is between -0.1 and 0.1. A negative value means there is higher benefit for the privileged group (in this case, white defendants).
 
 $$P(\hat{Y}=1|D=Unprivileged) - P(\hat{Y}=1|D=Privileged)$$
 
-**Disparate Impact Ratio** - This metric is the ratio of how often the favorable outcome occurs in one group versus the other. In the case of recidivism, this is the ratio of how many white defendants are predicted to not recidivate compared to how many Black defendants are predicted to not recidivate. A value of 1 means that the ratio is exactly 1:1. Less than 1 means the privileged group (white defendants) benefits, while a value greater than 1 means the unprivileged group (Black defendants) benefits. According to AIF360, a ratio between .8 to 1.25 is considered fair[@Ronaghan2019AI].
+  **Disparate Impact Ratio** - This metric is the ratio of how often the favorable outcome occurs in one group versus the other. In the case of recidivism, this is the ratio of how many white defendants are predicted to not recidivate compared to how many black defendants are predicted to not recidivate. A value of 1 means that the ratio is exactly 1:1. Less than 1 means the privileged group (white defendants) benefits, while a value greater than 1 means the unprivileged group (Black defendants) benefits. According to AIF360, a ratio between 0.8 to 1.25 is considered fair [@Ronaghan2019AI].
 
 $$\frac{P(\hat{Y}=1|D=Unprivileged)}{P(\hat{Y}=1|D=Privileged)}$$
 
-**Average Odds Difference** - This metric returns the average difference in false positive rate and true positive rate for the privileged and unprivileged groups. A value of 0 indicates equality of odds, and a value below 0 implies benefit for the privileged group. Equality of odds is achieved in the case of recidivism when the proportion of people who were predicted to recidivate and did recidivate is equal (true positive rate) for both Black and white defendants AND the proportion of people who were predicted to recidivate and did not recidivate (false positive rate) is equal for both Black and white defendants[@aif360-oct-2018]. 
-
-$$\frac{(FPR_{D = unprivileged} - FPR_{D = privileged}) + (TPR_{D = unprivileged} - TPR_{D = privileged})}{2}$$
-
-**Equal Opportunity Difference** - This metric is computed as the difference of true positive rates between the unprivileged and the privileged groups. The true positive rate is the ratio of true positives to the total number of actual positives for a given group[@GoogleDev].
+**Equal Opportunity Difference** - This metric is computed as the difference of true positive rates between the unprivileged and the privileged groups. The true positive rate is the ratio of true positives to the total number of actual positives for a given group [@GoogleDev].
 
 The ideal value is 0. A value less than 0 implies higher benefit for the privileged group and a value greater than 0 implies higher benefit for the unprivileged group.
 Fairness for this metric is between -0.1 and 0.1 [@aif360-oct-2018].
@@ -105,6 +103,11 @@ Fairness for this metric is between -0.1 and 0.1 [@aif360-oct-2018].
 This metric is best used when it is very important to catch positive outcomes while false positives are not exceptionally problematic [@Cortez2019How]. This is not the case for the COMPAS data set, as false positives mean extra jail time for someone who will not actually re-offend.
 
 $$TPR_{D = Unprivileged} - TPR_{D = Privileged}$$
+
+**Average Odds Difference** - This metric returns the average difference in false positive rate and true positive rate for the privileged and unprivileged groups. A value of 0 indicates equality of odds, and a value below 0 implies benefit for the privileged group. Equality of odds is achieved in the case of recidivism when the proportion of people who were predicted to recidivate and did recidivate is equal (true positive rate) for both Black and white defendants AND the proportion of people who were predicted to recidivate and did not recidivate (false positive rate) is equal for both Black and white defendants [@aif360-oct-2018]. 
+
+$$\frac{1}{2}\left[(FPR_{D = Unprivileged} - FPR_{D = Privileged}) + \underbrace{(TPR_{D = Unprivileged} - TPR_{D = Privileged})}_\textrm{Equal Opportunity Difference}\right]$$
+
 
 For the next step of our experiment, we need to determine where in the data science pipeline we can mitigate the most bias, using pre-processing, in-processing, and post-processing de-biasing algorithms. These are all based on using predictive models to figure out how we can “fix” the bias that is present. 
 
@@ -114,9 +117,9 @@ Another approach, in-processing, explores how bias can be targeted while buildin
 
 Our last approach, post-processing, makes transformations on model outputs. Similarly to the pre-processing, it is flexible because it does not work directly with the algorithm, but instead has direct access to all the predicted classification values. Because the algorithms are often so complex and difficult to interpret, post-processors are trained in a black box. To get around this, we use the PostProcessingMeta class from AIF360 which combines the training and prediction for a random estimator and the post-processor while simultaneously splitting the data set [@aif360-oct-2018]. Based on these results, we look comparatively at all the approaches to determine which we assess to be the most fair. 
 
-# Preliminary Results
+# Results
 
-With our baseline model, we ran the four different group fairness metrics we chose and compared the results (pictured in Table \ref{tab:baseline metrics table}))
+With our baseline model, we ran the four different group fairness metrics we chose and compared the results (pictured in Table \ref{tab:baseline metrics table}).
 
 The statistical parity difference is -0.14. This indicates that there is a large difference between white and Black defendants regarding whether or not they recidivate. The algorithm unfairly benefits white defendants over Black defendants. 
 Disparate impact ratio is 0.47. The ratio of white defendants predicted to not recidivate to the Black defendants predicted to not recidivate is 0.47. A ratio between 0.8 and 1.25 is considered fair, therefore the algorithm unfairly benefits white defendants. 
@@ -125,7 +128,7 @@ Average odds difference is -0.44. The average difference in false positive rates
 
 Equal opportunity difference is -0.41. The difference of true positive rates between the Black and white groups is -0.41. A value less than 0 indicates a benefit to the privileged group, so the algorithm unfairly benefits white defendants. The value is substantially less than -0.1, which indicates that the algorithm benefits white defendants. 
 
-All four group fairness metrics determine that the COMPAS algorithm favors white defendants over Black defendants. The statistical parity metric indicates unfairness by a smaller margin of 0.04 than equal opportunity difference which has a margin of error 0.4 below the threshold. Although this is true, each algorithm uses different penalties for unfavorable outcomes, so the higher the penalty the more of a difference there will be between the fairness threshold and the value. 
+All four group fairness metrics determine that the COMPAS algorithm favors white defendants over Black defendants. Although the magnitudes of the various fairness metrics are different, all of the fairness metrics are not within their respective fairness thresholds. Our goal is to use pre-processing, in-processing, and post-processing algorithms in the AIF360 toolkit to see if we can make COMPAS fair at all.  
 
 ```{r, echo = FALSE}
 baseline_metrics <- tribble(~`Fairness Metric`, ~`Ideal Value`, ~ `Baseline Value`, ~`Benefited Group`,
@@ -138,5 +141,9 @@ baseline_metrics <- tribble(~`Fairness Metric`, ~`Ideal Value`, ~ `Baseline Valu
 ```{r, echo = FALSE}
 knitr::kable(baseline_metrics, caption = "Results of Baseline Fairness Metric Analysis \\label{tab:baseline metrics table}")
 ```
+
+## Pre-Processing Approach
+
+We chose the reweighing as our pre-processing bias mitigation algorithm. After running the reweighing algorithm, our fairness metrics are -0.015 for statistical parity difference, 0.015 for equal opportunity difference, 0.014 for average odds difference, and 0.98 for disparate impact ratio. Overall, these fairness metrics show that the pre-processing algorithm reweighing improves the bias in the COMPAS algorithm. 
 
 # Bibliography
