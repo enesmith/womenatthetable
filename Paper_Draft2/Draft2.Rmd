@@ -147,3 +147,4 @@ knitr::kable(baseline_metrics, caption = "Results of Baseline Fairness Metric An
 We chose the reweighing as our pre-processing bias mitigation algorithm. After running the reweighing algorithm, our fairness metrics are -0.015 for statistical parity difference, 0.015 for equal opportunity difference, 0.014 for average odds difference, and 0.98 for disparate impact ratio. Overall, these fairness metrics show that the pre-processing algorithm reweighing improves the bias in the COMPAS algorithm. 
 
 # Bibliography
+
