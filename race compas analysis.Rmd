@@ -411,12 +411,12 @@ y_pred_REW = rew.predict(X_test)
 
 ```{python pre-processing accuracy score} 
 acc_REW = accuracy_score(y_test, y_pred_REW)
-print(f'[Reweighting] The test accuracy of the algorithm is: {acc_REW: .2%}')
+print(f'[Reweighing] The test accuracy of the algorithm is: {acc_REW: .2%}')
 ```
 
 ```{python pre-processing confusion matrix}
 cf_matrix = confusion_matrix(y_test, y_pred_REW)
-make_confusion_matrix(cf_matrix, "[Reweighting]")
+make_confusion_matrix(cf_matrix, "[Reweighing]")
 plt.show()
 ```
 
@@ -428,7 +428,7 @@ plt.show()
 ```{python pre-processing statistical parity difference}
 stat_par_diff_RW = statistical_parity_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
 
-print(f'[Reweighting] The statistical parity difference is {stat_par_diff_RW: .2}')
+print(f'[Reweighing] The statistical parity difference is {stat_par_diff_RW: .2}')
 ```
 
 This is a large improvement over our baseline model, which was -0.14. It still implies a slight benefit for white individuals, but it is in the range of -0.1 and 0.1.
@@ -436,7 +436,7 @@ This is a large improvement over our baseline model, which was -0.14. It still i
 ```{python pre-processing equal opportunity difference}
 eq_opp_diff_RW = equal_opportunity_difference(y_test, y_pred_REW, prot_attr='race', pos_label = 0)
 
-print(f'[Reweighting] The equal opportunity difference is {eq_opp_diff_RW: .2}')
+print(f'[Reweighing] The equal opportunity difference is {eq_opp_diff_RW: .2}')
 ```
 
 This is also an improvement from the baseline, as it is now between -0.1 and 0.1. It also now implies a slight benefit for Black defendants.
@@ -444,13 +444,13 @@ This is also an improvement from the baseline, as it is now between -0.1 and 0.1
 ```{python pre-processing generalized entropy error}
 gen_entr_error_RW = generalized_entropy_error(y_test, y_pred_REW, alpha=1, pos_label = 0)
 
-print(f'[Reweighting] The generalized entropy error is {gen_entr_error_RW: .2}')
+print(f'[Reweighing] The generalized entropy error is {gen_entr_error_RW: .2}')
 ```
 
 This is only a very slight improvement from 0.24 to 0.23.
 
 ```{python pre-processing fairness metrics plot}
-plot_fair_metrics([stat_par_diff_RW, eq_opp_diff_RW, gen_entr_error_RW], 'Reweighting')
+plot_fair_metrics([stat_par_diff_RW, eq_opp_diff_RW, gen_entr_error_RW], 'Reweighing')
 plt.show()
 ```
 
