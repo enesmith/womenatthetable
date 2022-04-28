@@ -1,0 +1,63 @@
+\begin{thebibliography}{-------}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[Angwin \em{et~al.}(2016)Angwin, Larson, Mattu, and
+  Kirchner]{angwin2016machine}
+Angwin, J.; Larson, J.; Mattu, S.; Kirchner, L.
+\newblock Machine bias,  2016.
+\newblock
+  \url{https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing}.
+
+\bibitem[Dieterich \em{et~al.}(2016)Dieterich, Mendoza, and
+  Brennan]{equivant_response_2016}
+Dieterich, W.; Mendoza, C.; Brennan, T.
+\newblock Response to {ProPublica}: {Demonstrating} accuracy equity and
+  predictive parity.
+\newblock {\em equivant} {\bf 2016}.
+\newblock
+  \url{http://go.volarisgroup.com/rs/430-MBX-989/images/ProPublica_Commentary_Final_070616.pdf}.
+
+\bibitem[Larson \em{et~al.}(2016)Larson, Mattu, Kirchner, and
+  Angwin]{larson2016we}
+Larson, J.; Mattu, S.; Kirchner, L.; Angwin, J.
+\newblock How we analyzed the COMPAS recidivism algorithm,  2016.
+\newblock
+  \url{https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm}.
+
+\bibitem[Bellamy \em{et~al.}(2018)Bellamy, Dey, Hind, Hoffman, Houde, Kannan,
+  Lohia, Martino, Mehta, Mojsilovic, Nagar, Ramamurthy, Richards, Saha,
+  Sattigeri, Singh, Varshney, and Zhang]{aif360-oct-2018}
+Bellamy, R.K.E.; Dey, K.; Hind, M.; Hoffman, S.C.; Houde, S.; Kannan, K.;
+  Lohia, P.; Martino, J.; Mehta, S.; Mojsilovic, A.; Nagar, S.; Ramamurthy,
+  K.N.; Richards, J.; Saha, D.; Sattigeri, P.; Singh, M.; Varshney, K.R.;
+  Zhang, Y.
+\newblock {AI Fairness} 360: An Extensible Toolkit for Detecting,
+  Understanding, and Mitigating Unwanted Algorithmic Bias,  2018.
+\newblock \url{https://arxiv.org/abs/1810.01943}.
+
+\bibitem[Ashokan and Haas(2021)]{ashokan2021fairness}
+Ashokan, A.; Haas, C.
+\newblock Fairness metrics and bias mitigation strategies for rating
+  predictions.
+\newblock {\em Information Processing \& Management} {\bf 2021}, {\em
+  58},~102646.
+
+\bibitem[Kypraiou(2021)]{kypraiou_what_2021}
+Kypraiou, S.
+\newblock What is {Fairness}?,  2021.
+\newblock \url{https://feministai.pubpub.org/pub/what-is-fairness-/release/1}.
+
+\bibitem[Ronaghan(2019)]{Ronaghan2019AI}
+Ronaghan, S.
+\newblock AI Fairness — Explanation of Disparate Impact Remover,  2019.
+\newblock
+  \url{https://towardsdatascience.com/ai-fairness-explanation-of-disparate-impact-remover-ce0da59451f1}.
+
+\bibitem[Cortez(2019)]{Cortez2019How}
+Cortez, V.
+\newblock How to define fairness to detect and prevent discriminatory outcomes
+  in Machine Learning,  2019.
+\newblock
+  \url{https://towardsdatascience.com/how-to-define-fairness-to-detect-and-prevent-discriminatory-outcomes-in-machine-learning-ef23fd408ef2}.
+
+\end{thebibliography}
