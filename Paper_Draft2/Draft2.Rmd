@@ -66,7 +66,7 @@ knitr::include_graphics("../images/age_race_plot_new.png")
 knitr::include_graphics("../images/prior_charges_plot.png")
 ```
 
-```{r recidivism mosaic, echo=FALSE, fig.align = 'center', fig.cap = 'When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. 39.14% of white defendants did recidivate within two years compared to 52.35% of black defendants. We can also see that there are more Black defendants in the dataset overall.', out.width= "100%"}
+```{r recidivism mosaic, echo=FALSE, fig.align = 'center', fig.cap = 'When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. 39.14\\% of white defendants did recidivate within two years compared to 52.35\\% of Black defendants. We can also see that there are more Black defendants in the dataset overall.', out.width= "100%"}
 knitr::include_graphics("../images/recidivism_mosaic.png")
 ```
 
