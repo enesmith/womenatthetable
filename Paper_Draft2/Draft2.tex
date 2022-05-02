@@ -72,21 +72,18 @@
 
 %=================================================================
 % Full title of the paper (Capitalized)
-\Title{Does the COMPAS Needle Always Point Towards Equity? Finding
-Fairness in the COMPAS Risk Assessment Algorithm: A Case Study}
+\Title{Does the COMPAS Needle Always Point Towards Equity? Finding Fairness in
+the COMPAS Risk Assessment Algorithm: A Case Study}
 
 % Authors, for the paper (add full first names)
-\Author{Amrita Acharya$^{1}$, Dianne Caravela$^{1}$, Eunice
-Kim$^{1}$, Emma Kornberg$^{1}$, Elisabeth Nesmith$^{1}$}
+\Author{Amrita Acharya$^{1}$, Dianne Caravela$^{1}$, Eunice Kim$^{1}$, Emma Kornberg$^{1}$, Elisabeth Nesmith$^{1}$}
 
 % Authors, for metadata in PDF
-\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma
-Kornberg, Elisabeth Nesmith}
+\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma Kornberg, Elisabeth Nesmith}
 
 % Affiliations / Addresses (Add [1] after \address if there is only one affiliation.)
 \address{%
-$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA
-01063; \href{mailto:bbaumer@smith.edu}{\nolinkurl{bbaumer@smith.edu}}\\
+$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA 01063; \href{mailto:bbaumer@smith.edu}{\nolinkurl{bbaumer@smith.edu}}\\
 }
 % Contact information of the corresponding author
 \corres{Correspondence: \href{mailto:aacharya@smith.edu}{\nolinkurl{aacharya@smith.edu}},
@@ -109,24 +106,24 @@ $^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA
 % Simple summary
 
 % Abstract (Do not insert blank lines, i.e. \\)
-\abstract{A variety of disciplines use risk assessment instruments to
-help humans make data-driven decisions. Northpointe, a software company,
-created an algorithmic risk assessment instrument known as the
-Correctional Offender Management Profiling for Alternative Sanctions
-(COMPAS). COMPAS uses various behavioral and psychological metrics
-related to recidivism to assist justice systems in assessing a
-defendant's potential recidivism risk. \citet{angwin2016machine}
-published a ProPublica article in which they conclude that the racial
-biases in the criminal justice system are reflected in the COMPAS
-recidivism risk scores. In response, \citet{equivant_response_2016}
-published a rebuttal on behalf of Northpointe defending the COMPAS
-algorithm and refuting \citet{angwin2016machine}'s allegation of racial
-bias. Using a human rights framework adopted from the organizations
-Women at the Table and AI Fairness 360, we use debiasing algorithms and
-fairness metrics to analyze the argument between Northpointe and
-ProPublica and determine whether and to what extent there is racial bias
-in the COMPAS algorithm. All four group fairness metrics determine that
-the COMPAS algorithm favors white defendants over Black defendants.}
+\abstract{A variety of disciplines use risk assessment instruments to help humans
+make data-driven decisions. Northpointe, a software company, created an
+algorithmic risk assessment instrument known as the Correctional
+Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS
+uses various behavioral and psychological metrics related to recidivism
+to assist justice systems in assessing a defendant's potential
+recidivism risk. \citet{angwin2016machine} published a ProPublica
+article in which they conclude that the racial biases in the criminal
+justice system are reflected in the COMPAS recidivism risk scores. In
+response, \citet{equivant_response_2016} published a rebuttal on behalf
+of Northpointe defending the COMPAS algorithm and refuting
+\citet{angwin2016machine}'s allegation of racial bias. Using a human
+rights framework adopted from the organizations Women at the Table and
+AI Fairness 360, we use debiasing algorithms and fairness metrics to
+analyze the argument between Northpointe and ProPublica and determine
+whether and to what extent there is racial bias in the COMPAS algorithm.
+All four group fairness metrics determine that the COMPAS algorithm
+favors white defendants over Black defendants.}
 
 % Keywords
 
@@ -284,10 +281,10 @@ which endeavors to evaluate the differing effects of the COMPAS
 algorithm on white defendants versus Black defendants, we have filtered
 the data to only include individuals whose race is listed as Caucasian
 or African-American. Our data therefore has 5,273 rows (Figure
-\ref{fig:table snip}), with the distributions of race (Figure
-\ref{fig:race plot}), age (Figure \ref{fig:age plot}), and two-year
-recidivism rate (Figures \ref{fig:recid plot} \&
-\ref{fig:recid race plot} and Table \ref{tab:recid table}) shown below.
+\ref{fig:table snip}), with the distributions of age (Figure
+\ref{fig:age plot}), prior charges (Figure \ref{fig:prior plot}), and
+two-year recidivism by race (Figure \ref{fig:recidivism mosaic}) and
+(Table \ref{tab:recid table}) shown below.
 
 \begin{figure}
 
@@ -304,33 +301,49 @@ recidivism rate (Figures \ref{fig:recid plot} \&
 
 }
 
-\caption{Distribution of defendant ages by race. The purple curve shows the distribution of the ages of Black defendants, and the green curve shows the distribution of the ages of white defendants. The probability of a defendant's age being between two points on the x-axis is the total shaded area of the curve under the two points. The purple dotted line represents the median age of Black defendants (29 years) and the green dotted line represents the median age of white defendants (35 years). For both groups, the majority of defendants are relatively young, but this is especially noticeable for Black defendants.}\label{fig:age plot}
+\caption{The purple curve shows the distribution of the ages of Black defendants, and the green curve shows the distribution of the ages of white defendants. The probability of a defendant's age being between two points on the x-axis is the total shaded area of the curve under the two points. The purple dotted line represents the median age of Black defendants (29 years) and the green dotted line represents the median age of white defendants (35 years). For both groups, the majority of defendants are relatively young, but this is especially noticeable for Black defendants.}\label{fig:age plot}
 \end{figure}
 
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{../images/race_recid_bar_plot_new} 
+{\centering \includegraphics[width=1\linewidth]{../images/prior_charges_plot} 
 
 }
 
-\caption{This plot shows the distribution of two-year recidivism outcomes by race. When we divide the data into Black and white defendants, we can see that Black defendants recidivate more than white defendants and Black defendants are more likely to recidivate than not recidivate. We can also see that there are more Black defendants in the dataset overall.}\label{fig:recid race plot}
+\caption{Black defendants, particularly men, are more likely to have a greater count of prior charges than white defendants. Male defendants have a higher number of prior charges than do female defendants. Though we do not know for sure which information goes into the COMPAS algorithm, it is likely that a defendant with prior charges will be coded as a having a higher risk of recidivism. Thus, by looking at the racial discrepancies in prior charges we can already see potential bias in the algorithm.}\label{fig:prior plot}
 \end{figure}
+
+\textbackslash{}begin\{figure\}
+
+\{\centering \includegraphics[width=1\linewidth]{../images/recidivism_mosaic}
+
+\}
+
+\textbackslash{}caption\{When we divide the data into Black and white
+defendants, we can see that Black defendants recidivate more than white
+defendants and Black defendants are more likely to recidivate than not
+recidivate. 39.14\% of white defendants did recidivate within two years
+compared to 52.35\% of black defendants. We can also see that there are
+more Black defendants in the dataset
+overall.\}\label{fig:recidivism mosaic} \textbackslash{}end\{figure\}
 
 \begin{longtable}[]{@{}lrrr@{}}
 \caption{Incidence of recidivism by race, illustrating how a much
 greater proportion (\textgreater{} 50\%) of Black defendants recidivated
 than their white counterparts. \label{tab:recid table}}\tabularnewline
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived & Total \\
+Two Year Recidivism by Race & Recidivated & Survived &
+Total\tabularnewline
 \midrule
 \endfirsthead
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived & Total \\
+Two Year Recidivism by Race & Recidivated & Survived &
+Total\tabularnewline
 \midrule
 \endhead
-African American & 1661 & 1512 & 3173 \\
-Caucasian & 822 & 1278 & 2100 \\
-Total & 2483 & 2790 & 5273 \\
+African American & 1661 & 1512 & 3173\tabularnewline
+Caucasian & 822 & 1278 & 2100\tabularnewline
+Total & 2483 & 2790 & 5273\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -526,17 +539,21 @@ the AIF360 toolkit to see if we can make COMPAS fair at all.
 \caption{Results of Baseline Fairness Metric Analysis
 \label{tab:baseline metrics table}}\tabularnewline
 \toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
+Fairness Metric & Ideal Value & Baseline Value & Benefited
+Group\tabularnewline
 \midrule
 \endfirsthead
 \toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
+Fairness Metric & Ideal Value & Baseline Value & Benefited
+Group\tabularnewline
 \midrule
 \endhead
-Statistical Parity Difference & 0 & -0.14 & White Defendants \\
-Disparate Impact Ratio & 1 & 0.47 & White Defendants \\
-Average Odds Difference & 0 & -0.44 & White Defendants \\
-Equal Opportunity Difference & 0 & -0.41 & White Defendants \\
+Statistical Parity Difference & 0 & -0.14 & White
+Defendants\tabularnewline
+Disparate Impact Ratio & 1 & 0.47 & White Defendants\tabularnewline
+Average Odds Difference & 0 & -0.44 & White Defendants\tabularnewline
+Equal Opportunity Difference & 0 & -0.41 & White
+Defendants\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -611,3 +628,4 @@ algorithm.
 
 
 \end{document}
+
