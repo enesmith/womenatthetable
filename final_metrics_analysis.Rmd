@@ -14,10 +14,10 @@ library(reticulate)
 
 
 # for Dianne
-use_condaenv("base")
+# use_condaenv("base")
 
 # for Amrita
-use_condaenv("anaconda3")
+# use_condaenv("anaconda3")
 ```
 
 ```{python import, include= FALSE}
@@ -563,7 +563,7 @@ make_confusion_matrix(cf_matrix, "[Reweighing]")
 plt.show()
 ```
 
-The highest percentage in this confusion matrix is for the true negative rate, defendants who were predicted to not recidivate and actually did not, at 36.24%, 0.83% higher than the true negatives in the baseline model. This means that the re-weighing model marginally improved the baseline model accuracy in predicting people who did not recidivate. However, the true positive rate, or those who were predicted to recidivate and did recidivate, is 24.72%, 1.13% lower than that of the baseline model. This means that the re-weighing model slightly lowered the accuracy of the baseline model in predicting people who did recidivate. As a result, the overall reweighing model accuracy remains about the same as the baseline model accuracy. The false negative and false positive rates, or the predictions that proved to be incorrect, are 23.20% and 15.85%, respectively. The re-weighing model increased the number of false negatives by 1.14% and decreased the number of false positives by 0.83%. We are most concerned about the false positives, which indicate defendants who are predicted to recidivate and do not actually recidivate. While there is a slight improvement in the percent of false positives, it is still relatively high at 15.85%, indicating that we should further precede with additional bias mitigation techniques.
+The highest percentage in this confusion matrix is for the percentage of true negatives, defendants who were predicted to not recidivate and actually did not, at 36.24%, 0.83% higher than the true negatives in the baseline model. This means that the reweighing model marginally improved the baseline model accuracy in predicting people who did not recidivate. However, the percentage of true positives, or those who were predicted to recidivate and did recidivate, is 24.72%, 1.13% lower than that of the baseline model. This means that the reweighing model slightly lowered the accuracy of the baseline model in predicting people who did recidivate. As a result, the overall reweighing model accuracy remains about the same as the baseline model accuracy. The false negative and false positive percentages, or the predictions that proved to be incorrect, are 23.20% and 15.85%, respectively. The re-weighing model increased the number of false negatives by 1.14% and decreased the number of false positives by 0.83%. We are most concerned about the false positives, which indicate defendants who are predicted to recidivate and do not actually recidivate. While there is a slight improvement in the percent of false positives, it is still relatively high at 15.85%, indicating that we should further precede with additional bias mitigation techniques.
 
 ```{python pre-processing metrics per group}
 metrics_per_group(y_test, y_pred_REW)
@@ -676,7 +676,7 @@ make_confusion_matrix(cf_matrix, "[Prejudice Remover]")
 plt.show()
 ```
 
-The highest percentage in this confusion matrix is for false positives, defendants who the model predicted to recidivate and actually did not, at 37.76%. This false positive percentage concerns us because we do not want defendants who do not recidivate to have unfairly long sentences due to their (incorrectly) predicted recidivism. The number of true positives, defendants who the model predicted to recidivate and actually recidivated, is lower at 23.88%. The percentage of false negatives is lower, whereas the true negative is low at 14.33%. This indicates that the model does not do a good job in predicting the defendents who don't recidivate. It is very likely that it will incorrectly predict that someone will recidivate. 
+The highest percentage in this confusion matrix is for false positives, defendants who the model predicted to recidivate and actually did not, at 37.76%. This false positive percentage concerns us because we do not want defendants who do not recidivate to have unfairly long sentences due to their (incorrectly) predicted recidivism. The number of true positives, defendants who the model predicted to recidivate and actually recidivated, is lower at 23.88%. The percentage of false negatives is lower, whereas the true negative is lowest at 14.33%. This indicates that the model does not do a good job in predicting the defendents who don't recidivate. It is very likely that it will incorrectly predict that someone will recidivate. 
 
 
 ```{python prejudice remover metrics per group}
@@ -768,7 +768,7 @@ make_confusion_matrix(cf_matrix, "[Calibrated Equalized Odds]")
 plt.show()
 ```
 
-The highest percentage in this confusion matrix is for true negatives, defendants who the model predicted to not recidivate and actually did not, at 50.04%. The number of true positives, defendants who the model predicted to recidivate and actually recidivated, is much lower at 3.11%. The percentage of false negatives is somewhat high for this baseline model, whereas the false positive rate is very low at 2.05%. This indicates that the model does a good job in predicting the defendents who don't recidivate. It is very unlikely that it will incorrectly predict that someone will recidivate. Though the accuracy score for the model is 0.53, lower than the baseline, this model is much better at identifying true negatives. 
+The highest percentage in this confusion matrix is for true negatives, defendants who the model predicted to not recidivate and actually did not, at 50.04%. The number of true positives, defendants who the model predicted to recidivate and actually recidivated, is much lower at 3.11%. The percentage of false negatives is somewhat high compared to the baseline model, whereas the percentage of false positives is very low at 2.05%. This indicates that the model does a good job in predicting the defendents who don't recidivate. It is very unlikely that it will incorrectly predict that someone will recidivate. Though the accuracy score for the model is 0.53, lower than the baseline, this model is much better at identifying true negatives. 
 
 ### Statistical Parity Difference
 
