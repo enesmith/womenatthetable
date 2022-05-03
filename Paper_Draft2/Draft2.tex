@@ -72,21 +72,18 @@
 
 %=================================================================
 % Full title of the paper (Capitalized)
-\Title{Does the COMPAS Needle Always Point Towards Equity? Finding
-Fairness in the COMPAS Risk Assessment Algorithm: A Case Study}
+\Title{Does the COMPAS Needle Always Point Towards Equity? Finding Fairness in
+the COMPAS Risk Assessment Algorithm: A Case Study}
 
 % Authors, for the paper (add full first names)
-\Author{Amrita Acharya$^{1}$, Dianne Caravela$^{1}$, Eunice
-Kim$^{1}$, Emma Kornberg$^{1}$, Elisabeth Nesmith$^{1}$}
+\Author{Amrita Acharya$^{1}$, Dianne Caravela$^{1}$, Eunice Kim$^{1}$, Emma Kornberg$^{1}$, Elisabeth Nesmith$^{1}$}
 
 % Authors, for metadata in PDF
-\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma
-Kornberg, Elisabeth Nesmith}
+\AuthorNames{Amrita Acharya, Dianne Caravela, Eunice Kim, Emma Kornberg, Elisabeth Nesmith}
 
 % Affiliations / Addresses (Add [1] after \address if there is only one affiliation.)
 \address{%
-$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA
-01063; \href{mailto:bbaumer@smith.edu}{\nolinkurl{bbaumer@smith.edu}}\\
+$^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA 01063; \href{mailto:bbaumer@smith.edu}{\nolinkurl{bbaumer@smith.edu}}\\
 }
 % Contact information of the corresponding author
 \corres{Correspondence: \href{mailto:aacharya@smith.edu}{\nolinkurl{aacharya@smith.edu}},
@@ -109,27 +106,26 @@ $^{1}$ \quad Statistical and Data Sciences Smith College Northampton, MA
 % Simple summary
 
 % Abstract (Do not insert blank lines, i.e. \\)
-\abstract{A variety of disciplines use risk assessment instruments to
-help humans make data-driven decisions. Northpointe, a software company,
-created an algorithmic risk assessment instrument known as the
-Correctional Offender Management Profiling for Alternative Sanctions
-(COMPAS). COMPAS uses various behavioral and psychological metrics
-related to recidivism to assist justice systems in assessing a
-defendant's potential recidivism risk. Angwin et al.~published a
-ProPublica article in which they conclude that the racial biases in the
-criminal justice system are reflected in the COMPAS recidivism risk
-scores. In response, Dieterich et al.~published a rebuttal on behalf of
-Northpointe defending the COMPAS algorithm and refuting Angwin et al.'s
-allegation of racial bias. Using a human rights framework adopted from
-the organizations Women at the Table and AI Fairness 360, we use
-debiasing algorithms and fairness metrics to analyze the argument
-between Northpointe and ProPublica and determine whether and to what
-extent there is racial bias in the COMPAS algorithm. All four group
-fairness metrics determine that the COMPAS algorithm favors white
-defendants over Black defendants. Our research found that the pre and
-post-processing bias mitigation algorithms, specifically reweighing and
-calibrated equalized odds, are the most effective at improving
-fairness.}
+\abstract{A variety of disciplines use risk assessment instruments to help humans
+make data-driven decisions. Northpointe, a software company, created an
+algorithmic risk assessment instrument known as the Correctional
+Offender Management Profiling for Alternative Sanctions (COMPAS). COMPAS
+uses various behavioral and psychological metrics related to recidivism
+to assist justice systems in assessing a defendant's potential
+recidivism risk. Angwin et al.~published a ProPublica article in which
+they conclude that the racial biases in the criminal justice system are
+reflected in the COMPAS recidivism risk scores. In response, Dieterich
+et al.~published a rebuttal on behalf of Northpointe defending the
+COMPAS algorithm and refuting Angwin et al.'s allegation of racial bias.
+Using a human rights framework adopted from the organizations Women at
+the Table and AI Fairness 360, we use debiasing algorithms and fairness
+metrics to analyze the argument between Northpointe and ProPublica and
+determine whether and to what extent there is racial bias in the COMPAS
+algorithm. All four group fairness metrics determine that the COMPAS
+algorithm favors white defendants over Black defendants. Our research
+found that the pre and post-processing bias mitigation algorithms,
+specifically reweighing and calibrated equalized odds, are the most
+effective at improving fairness.}
 
 % Keywords
 
@@ -303,11 +299,15 @@ differing effects of the COMPAS algorithm between white and Black
 defendants; as such, we filter the data to only include individuals
 whose race is listed as Caucasian or African-American. Our data
 therefore has 5,723 rows with information on defendant race, age,
-gender, prior crimes, and two-year recidivism rate. The average
-African-American defendant in our dataset is 29 years old, male, and has
-committed two prior crimes. The average Caucasian defendant in our
-dataset is 35 years old, male, and has committed one prior crime. The
-median defendant for both races do not have any juvenile convictions.
+gender, prior crimes, and two-year recidivism rate (Figure
+\ref{fig:table snip}). The distributions of age (Figure
+\ref{fig:age plot}), prior charges (Figure \ref{fig:prior plot}), and
+recidivism (Figure \ref{fig:recidivism mosaic} and Table
+\ref{tab:recid table}) all vary by race. The average African-American
+defendant in our dataset is 29 years old, male, and has committed two
+prior crimes. The average Caucasian defendant in our dataset is 35 years
+old, male, and has committed one prior crime. The average defendant for
+both races does not have any juvenile convictions.
 
 \begin{figure}
 
@@ -350,16 +350,18 @@ median defendant for both races do not have any juvenile convictions.
 greater proportion (\textgreater{} 50\%) of Black defendants recidivated
 than their white counterparts. \label{tab:recid table}}\tabularnewline
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived & Total \\
+Two Year Recidivism by Race & Recidivated & Survived &
+Total\tabularnewline
 \midrule
 \endfirsthead
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived & Total \\
+Two Year Recidivism by Race & Recidivated & Survived &
+Total\tabularnewline
 \midrule
 \endhead
-African American & 1661 & 1512 & 3173 \\
-Caucasian & 822 & 1278 & 2100 \\
-Total & 2483 & 2790 & 5273 \\
+African American & 1661 & 1512 & 3173\tabularnewline
+Caucasian & 822 & 1278 & 2100\tabularnewline
+Total & 2483 & 2790 & 5273\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -546,8 +548,8 @@ training data.
 \section{Results}\label{results}}
 
 With our baseline model, we ran the four different group fairness
-metrics we chose and compared the results (pictured in Table
-\ref{tab:baseline metrics table}).
+metrics we chose and compared the results (pictured in Figre
+\ref{fig:baseline metrics}).
 
 The statistical parity difference is -0.14. This indicates that there is
 a large difference between white and Black defendants regarding whether
@@ -577,29 +579,30 @@ within their respective fairness thresholds. Our goal is to use
 pre-processing, in-processing, and post-processing algorithms in the
 AIF360 toolkit to see if we can make COMPAS fair at all.
 
-Our confusion matrix for the baseline model indicates that the false
-positive and false negative percentages are 16.68\% and 22.06\%, which
-are the lowest values for this matrix. The highest value is the value of
-true positives, at 35.41\%, showing that of the total number of
-predictions, 35.41\% were correct predictions of recidivism.
+Our confusion matrix for the baseline model (see Figure
+\ref{fig:baseline matrix}) indicates that the false positive and false
+negative percentages are 16.68\% and 22.06\%, which are the lowest
+values for this matrix. The highest value is the value of true
+positives, at 35.41\%, showing that of the total number of predictions,
+35.41\% were correct predictions of recidivism.
 
-\begin{longtable}[]{@{}llll@{}}
-\caption{Results of Baseline Fairness Metric Analysis
-\label{tab:baseline metrics table}}\tabularnewline
-\toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
-\midrule
-\endfirsthead
-\toprule
-Fairness Metric & Ideal Value & Baseline Value & Benefited Group \\
-\midrule
-\endhead
-Statistical Parity Difference & 0 & -0.14 & White Defendants \\
-Disparate Impact Ratio & 1 & 0.47 & White Defendants \\
-Average Odds Difference & 0 & -0.44 & White Defendants \\
-Equal Opportunity Difference & 0 & -0.41 & White Defendants \\
-\bottomrule
-\end{longtable}
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{../images/baseline_metrics} 
+
+}
+
+\caption{Fairness Metrics of Baseline Model. For each of the four fairness metrics, the green section represents the range of fair values. The blue bars indicate the values of each of the metrics for the baseline model.}\label{fig:baseline metrics}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{../images/baseline_matrix} 
+
+}
+
+\caption{Confusion Matrix of the Baseline Model}\label{fig:baseline matrix}
+\end{figure}
 
 \hypertarget{pre-processing-approach-reweighing}{%
 \subsection{Pre-Processing Approach:
@@ -609,61 +612,99 @@ After running the reweighing algorithm, our fairness metrics are -0.015
 for statistical parity difference, 0.015 for equal opportunity
 difference, 0.014 for average odds difference, and 0.98 for disparate
 impact ratio. All of these values now fall within the margins of
-fairness (see reweighing metrics plot). These values make sense because
-the reweighing algorithm chooses different weights depending on whether
-an attribute is protected. This does an effective job of eliminating the
-bias, shown by each of the values in the graph being within the ``fair''
-range of the particular fairness metric. Overall, these fairness metrics
-show that the reweighing algorithm improves the bias in the COMPAS
-algorithm.
+fairness (see Figure \ref{fig:reweighing metrics}). These values make
+sense because the reweighing algorithm chooses different weights
+depending on whether an attribute is protected. This does an effective
+job of eliminating the bias, shown by each of the values in the graph
+being within the ``fair'' range of the particular fairness metric.
+Overall, these fairness metrics show that the reweighing algorithm
+improves the bias in the COMPAS algorithm.
 
-The highest percentage in this confusion matrix is for the percentage of
-true negatives, defendants who were predicted to not recidivate and
-actually did not, at 36.24\%, 0.83\% higher than the true negatives in
-the baseline model. This means that the reweighing model marginally
-improved the baseline model accuracy in predicting people who did not
-recidivate. However, the percentage of true positives, or those who were
-predicted to recidivate and did recidivate, is 24.72\%, 1.13\% lower
-than that of the baseline model. This means that the reweighing model
-slightly lowered the accuracy of the baseline model in predicting people
-who did recidivate. As a result, the overall reweighing model accuracy
-remains about the same as the baseline model accuracy. The false
-negative and false positive percentages, or the predictions that proved
-to be incorrect, are 23.20\% and 15.85\%, respectively. The re-weighing
-model increased the number of false negatives by 1.14\% and decreased
-the number of false positives by 0.83\%. We are most concerned about the
-false positives, which indicate defendants who are predicted to
-recidivate and do not actually recidivate. While there is a slight
-improvement in the percent of false positives, it is still relatively
-high at 15.85\%, indicating that we should further precede with
-additional bias mitigation techniques.
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{../images/reweighting_metrics} 
+
+}
+
+\caption{Fairness Metrics of Reweighing Model. For each of the four fairness metrics, the orange bars indicate the values for the reweighing model.}\label{fig:reweighing metrics}
+\end{figure}
+
+The highest percentage in the reweighing confusion matrix (Figure
+\ref{fig:reweighing matrix}) is for the percentage of true negatives,
+defendants who were predicted to not recidivate and actually did not, at
+36.24\%, 0.83\% higher than the true negatives in the baseline model.
+This means that the reweighing model marginally improved the baseline
+model accuracy in predicting people who did not recidivate. However, the
+percentage of true positives, or those who were predicted to recidivate
+and did recidivate, is 24.72\%, 1.13\% lower than that of the baseline
+model. This means that the reweighing model slightly lowered the
+accuracy of the baseline model in predicting people who did recidivate.
+As a result, the overall reweighing model accuracy remains about the
+same as the baseline model accuracy. The false negative and false
+positive percentages, or the predictions that proved to be incorrect,
+are 23.20\% and 15.85\%, respectively. The re-weighing model increased
+the number of false negatives by 1.14\% and decreased the number of
+false positives by 0.83\%. We are most concerned about the false
+positives, which indicate defendants who are predicted to recidivate and
+do not actually recidivate. While there is a slight improvement in the
+percent of false positives, it is still relatively high at 15.85\%,
+indicating that we should further precede with additional bias
+mitigation techniques.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{../images/reweighing_matrix} 
+
+}
+
+\caption{Confusion Matrix of the Reweighing Model}\label{fig:reweighing matrix}
+\end{figure}
 
 \hypertarget{in-processing-approach-prejudice-remover}{%
 \subsection{In-Processing Approach: Prejudice
 Remover}\label{in-processing-approach-prejudice-remover}}
 
-Our fairness metrics after running the prejudice remover are: 0.367 for
+Our fairness metrics after running the prejudice remover are 0.367 for
 statistical parity difference, 0.321 for equal opportunity difference,
 0.344 for average odds difference, and 3.3 for disparate impact ratio.
 Like the model performance metrics suggested, the prejudice remover
 approach resulted in an increased benefit for Black defendants. As the
-orange bars on these plots show, the values of the fairness metrics have
-reversed from their baseline values. Now all four metrics suggest an
-unfair advantage for Black defendants. Thus, this approach removed the
-model's prejudice against Black people, but it did not result in a
-``fair'' model.
+orange bars on Figure \ref{fig:prejudice metrics} show, the values of
+the fairness metrics have reversed from their baseline values. Now all
+four metrics suggest an unfair advantage for Black defendants. Thus,
+this approach removed the model's prejudice against Black people, but it
+did not result in a ``fair'' model.
 
-The highest percentage in this confusion matrix is for false positives,
-defendants who the model predicted to recidivate and actually did not,
-at 37.76\%. This false positive percentage concerns us because we do not
-want defendants who do not recidivate to have unfairly long sentences
-due to their (incorrectly) predicted recidivism. The number of true
-positives, defendants who the model predicted to recidivate and actually
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{../images/prejudice_remover_metrics} 
+
+}
+
+\caption{Fairness Metrics of Prejudice Remover Model. For each of the four fairness metrics, the orange bars indicate the values for the prejudice remover model.}\label{fig:prejudice metrics}
+\end{figure}
+
+The highest percentage in this confusion matrix (Figure
+\ref{fig:prejudice matrix}) is for false positives, defendants who the
+model predicted to recidivate and actually did not, at 37.76\%. This
+false positive percentage concerns us because we do not want defendants
+who do not recidivate to have unfairly long sentences due to their
+(incorrectly) predicted recidivism. The number of true positives,
+defendants who the model predicted to recidivate and actually
 recidivated, is lower at 23.88\%. The percentage of false negatives is
 lower, whereas the true negative is low at 14.33\%. This indicates that
 the model does not do a good job in predicting the defendants who don't
 recidivate. It is very likely that it will incorrectly predict that
 someone will recidivate.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{../images/prejudice_matrix} 
+
+}
+
+\caption{Confusion Matrix of the Prejudice Remover Model}\label{fig:prejudice matrix}
+\end{figure}
 
 After the prejudice remover, the accuracy of the model is fairly similar
 across the board of races, but the model's accuracy is only 38.21\%,
@@ -676,10 +717,10 @@ of the time.
 Odds}\label{post-processing-approach-calibrated-equalized-odds}}
 
 After running the calibrated equalized odds algorithm, our fairness
-metrics are: 0.134 for statistical parity difference, 0.088 for equal
+metrics are 0.134 for statistical parity difference, 0.088 for equal
 opportunity difference, 0.146 for average odds difference, and 1.155 for
-disparate impact ratio. As we can see from the orange bars, the
-calibrated equalized odds approach results in all four metrics now
+disparate impact ratio. As we can see in Figure \ref{fig:ceo metrics},
+the calibrated equalized odds approach results in all four metrics now
 suggesting a benefit for the originally unprivileged group, Black
 defendants. Though the values for statistical parity difference and
 average odds difference are slightly above the range of what is
@@ -689,17 +730,35 @@ bars). Thus, the calibrated equalized odds approach successfully
 counteracts the bias against Black defendants and results in a mostly
 fair model.
 
-The highest percentage in this confusion matrix is for true negatives,
-defendants who the model predicted to not recidivate and actually did
-not, at 50.04\%. The number of true positives, defendants who the model
-predicted to recidivate and actually recidivated, is much lower at
-3.11\%. The percentage of false negatives is somewhat high for this
-baseline model, whereas the amount of false positives is very low at
-2.05\%. This indicates that the model does a good job in predicting the
-defendants who don't recidivate. It is very unlikely that it will
-incorrectly predict that someone will recidivate. Though the accuracy
-score for the model is 0.53, lower than the baseline, this model is much
-better at identifying true negatives.
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{../images/calibrated_equalized_odds_metrics} 
+
+}
+
+\caption{Fairness Metrics of Calibrated Equalized Odds Model. For each of the four fairness metrics, the orange bars indicate the values for the calibrated equalized odds model.}\label{fig:ceo metrics}
+\end{figure}
+
+The highest percentage in this confusion matrix (Figure
+\ref{fig:ceo matrix}) is for true negatives, defendants who the model
+predicted to not recidivate and actually did not, at 50.04\%. The number
+of true positives, defendants who the model predicted to recidivate and
+actually recidivated, is much lower at 3.11\%. The percentage of false
+negatives is somewhat high for this baseline model, whereas the amount
+of false positives is very low at 2.05\%. This indicates that the model
+does a good job in predicting the defendants who don't recidivate. It is
+very unlikely that it will incorrectly predict that someone will
+recidivate. Though the accuracy score for the model is 0.53, lower than
+the baseline, this model is much better at identifying true negatives.
+
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{../images/ceo_matrix} 
+
+}
+
+\caption{Confusion Matrix of the Calibrated Equalized Odds Model}\label{fig:ceo matrix}
+\end{figure}
 
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}
@@ -885,3 +944,4 @@ Kypraiou for her mentorship and patience throughout this process.
 
 
 \end{document}
+
