@@ -140,9 +140,9 @@ Our last approach, post-processing bias mitigation, is implemented after trainin
 
 # Results
 
-With our baseline model, we ran the four different group fairness metrics we chose and compared the results (pictured in Figre \ref{fig:baseline metrics}).
+With our baseline model, we ran the four different group fairness metrics we chose and compared the results (pictured in Figure \ref{fig:baseline metrics}).
 
-The statistical parity difference is -0.14. This indicates that there is a large difference between white and Black defendants regarding whether or not they recidivate. The algorithm unfairly benefits white defendants over Black defendants. 
+Statistical parity difference is -0.14. This indicates that there is a large difference between white and Black defendants regarding whether or not they recidivate. The algorithm unfairly benefits white defendants over Black defendants. 
 
 Disparate impact ratio is 0.47. The ratio of white defendants predicted to not recidivate to Black defendants predicted to not recidivate is 0.47. A ratio between 0.8 and 1.25 is considered fair, therefore the algorithm unfairly benefits white defendants. 
 
@@ -226,7 +226,7 @@ The dataset we are working with only contains defendants’ criminal history rec
 
 ## Final Thoughts
 
-Through our methods, we concluded that the pre-processing and post-processing methods mitigate bias and increase fairness most successfully. The in-processing technique was effective at mitigating bias, but did not result in a mathematically fair model. However, these techniques only treat the symptoms of racial bias in the justice system, as opposed to addressing the root cause, systemic racism. We need to question why these flawed algorithms exist and why they can be used to determine someone’s fate in the justice system. While we may have methods for reducing bias algorithms such as COMPAS, the focus should be on addressing the over-policing and over-criminalization of Black communities that result in biased data and algorithms. 
+Through our methods, we concluded that the pre-processing and post-processing methods mitigate bias and increase fairness most successfully. The in-processing technique was effective at mitigating bias, but did not result in a mathematically fair model. However, these techniques only treat the symptoms of racial bias in the justice system, as opposed to addressing the root cause, systemic racism. We need to question why these flawed algorithms exist and why they can be used to determine someone’s fate in the justice system. While we may have methods for reducing biased algorithms such as COMPAS, the focus should be on addressing the over-policing and over-criminalization of Black communities that result in biased data and algorithms. 
 
 ## Ethical Statement
 
@@ -236,7 +236,7 @@ Throughout this project, we endeavored to debias an incredibly powerful algorith
 
 We would like to thank our sponsor organization Women At The Table and Professor Ben Baumer for introducing us to this incredibly meaningful work, supporting us, and answering the many questions we had throughout this semester-long project. We would specifically like to thank Sofia Kypraiou for her mentorship and patience throughout this process. 
 
-```{r word count, include=F}
+```{r word count, warning=FALSE, message=FALSE, echo=FALSE}
 wordcountaddin:::text_stats()
 ```
 
