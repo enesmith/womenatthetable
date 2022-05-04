@@ -2,7 +2,7 @@
 %  In case you need support, please attach all files that are necessary for compiling as well as the log file, and specify the details of your LaTeX setup (which operating system and LaTeX version / tools you are using).
 
 %=================================================================
-\documentclass[water,article,submit,moreauthors,pdftex]{mdpi}
+\documentclass[,article,,moreauthors,pdftex]{mdpi}
 
 % If you would like to post an early version of this manuscript as a preprint, you may use preprint as the journal and change 'submit' to 'accept'. The document class line would be, e.g., \documentclass[preprints,article,accept,moreauthors,pdftex]{mdpi}. This is especially recommended for submission to arXiv, where line numbers should be removed before posting. For preprints.org, the editorial staff will make this change immediately prior to posting.
 
@@ -258,7 +258,7 @@ corresponding data story that will be added to its library.
 
 Our project builds on Women at the Table's various debiasing algorithms
 used in its AI \& Equality Human Rights Toolbox to conduct our own
-analyses on the COMPAS data set. Based on this analysis, we employ a
+analyses on the COMPAS dataset. Based on this analysis, we employ a
 human rights framework to contribute to the ProPublica and Northpointe
 debate and investigate whether or to what extent there is racial bias in
 the COMPAS algorithm. With a solid understanding of the two sides, we
@@ -276,7 +276,7 @@ of machine biases in the justice system.
 \section{Data}\label{data}}
 
 The data we are using for this library addition is the COMPAS General
-Recidivism Risk Scores data set from the
+Recidivism Risk Scores dataset from the
 \href{https://aif360.readthedocs.io/en/stable/modules/generated/aif360.datasets.CompasDataset.html\#aif360.datasets.CompasDataset}{AI
 Fairness 360} (AIF360) toolkit. The AIF360 toolkit builds on the dataset
 released by ProPublica collaborators Larson et al.~created to examine
@@ -319,7 +319,7 @@ both races does not have any juvenile convictions.
 
 }
 
-\caption{A snippet of the data set we will be using, containing information on a defendant's age, sex, race, criminal history, charge degree, charge description, and two-year recidivism outcome.}\label{fig:table snip}
+\caption{A snippet of the dataset we will be using, containing information on a defendant's age, sex, race, criminal history, charge degree, charge description, and two-year recidivism outcome.}\label{fig:table snip}
 \end{figure}
 
 \begin{figure}
@@ -354,16 +354,18 @@ both races does not have any juvenile convictions.
 greater proportion (\textgreater{} 50\%) of Black defendants recidivated
 than their white counterparts. \label{tab:recid table}}\tabularnewline
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived & Total \\
+Two Year Recidivism by Race & Recidivated & Survived &
+Total\tabularnewline
 \midrule
 \endfirsthead
 \toprule
-Two Year Recidivism by Race & Recidivated & Survived & Total \\
+Two Year Recidivism by Race & Recidivated & Survived &
+Total\tabularnewline
 \midrule
 \endhead
-African American & 1661 & 1512 & 3173 \\
-Caucasian & 822 & 1278 & 2100 \\
-Total & 2483 & 2790 & 5273 \\
+African American & 1661 & 1512 & 3173\tabularnewline
+Caucasian & 822 & 1278 & 2100\tabularnewline
+Total & 2483 & 2790 & 5273\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -374,12 +376,12 @@ AI Fairness 360 (AIF360) is an open-source Python toolkit that seeks
 ``to help facilitate the transition of fairness research algorithms to
 use in an industrial setting and to provide a common framework for
 fairness researchers to share and evaluate algorithms''
-\citep{aif360-oct-2018}. It contains multiple data sets, including the
-COMPAS data set that accompanied \citet{angwin2016machine}.
+\citep{aif360-oct-2018}. It contains multiple datasets, including the
+COMPAS dataset that accompanied \citet{angwin2016machine}.
 
 The AIF360 toolkit contains various group and individual fairness
 metrics as well as pre-processing, in-processing, and post-processing
-algorithms that we used to debias the COMPAS algorithm
+algorithms that we use to debias the COMPAS algorithm
 \citep{aif360-oct-2018}. Fairness metrics are mathematical measures of
 whether an algorithm treats members of different groups (such as racial
 or gender groups) equally. An algorithm has no understanding of the
@@ -400,7 +402,7 @@ groups are given the same treatment, while someone else might only
 consider the algorithm fair if groups as a whole receive the same
 outcomes. In our research we choose to use the definition of group
 fairness as our definition for assessing fairness in the processing
-approach. Group fairness metrics take into account the attributes of a
+approaches. Group fairness metrics take into account the attributes of a
 whole group as opposed to just one individual in the group, allowing us
 to represent systemic issues. In general, group fairness metrics require
 that the unprivileged group is treated similarly to the privileged
@@ -455,7 +457,7 @@ the unprivileged group. Fairness for this metric is between -0.1 and 0.1
 
 This metric is best used when it is very important to catch positive
 outcomes while false positives are not exceptionally problematic
-\citep{Cortez2019How}. This is not the case for the COMPAS data set, as
+\citep{Cortez2019How}. This is not the case for the COMPAS dataset, as
 false positives mean extra jail time for someone who will not actually
 re-offend.
 
@@ -522,8 +524,8 @@ avoid overfitting and one to enforce fair classification
 by minimizing the prejudice index, a mathematical equation for
 quantifying fairness defined by \citet{kamishima2012fairness}. This in
 turn enforces a classifier's independence from sensitive information
-(e.g., race). Similarly to pre-processing, we compared the results of
-our in-processing methods with both the baseline and the pre-processing
+(e.g., race). Similar to pre-processing, we compare the results of our
+in-processing methods with both the baseline and the pre-processing
 model to gauge which method so far has the better group fairness.
 
 \hypertarget{post-processing}{%
@@ -886,8 +888,6 @@ Professor Ben Baumer for introducing us to this incredibly meaningful
 work, supporting us, and answering the many questions we had throughout
 this semester-long project. We would specifically like to thank Sofia
 Kypraiou for her mentorship and patience throughout this process.
-
-This document contains 4793 words
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %% optional

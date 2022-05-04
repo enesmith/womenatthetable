@@ -19,10 +19,9 @@ affiliation:
       Smith College
       Northampton, MA 01063
     email: bbaumer@smith.edu
-
-journal: water
+#journal: water
+#status: submit
 type: article
-status: submit
 bibliography: mybibfile.bib
 csl: ../resources/chicago-author-date.csl
 #appendix: appendix.tex
@@ -94,9 +93,9 @@ knitr::kable(x, caption = "Incidence of recidivism by race, illustrating how a m
 
 AI Fairness 360 (AIF360) is an open-source Python toolkit that seeks “to help facilitate the transition of fairness research algorithms to use in an industrial setting and to provide a common framework for fairness researchers to share and evaluate algorithms” [@aif360-oct-2018]. It contains multiple datasets, including the COMPAS dataset that accompanied @angwin2016machine.
 
-The AIF360 toolkit contains various group and individual fairness metrics as well as pre-processing, in-processing, and post-processing algorithms that we used to debias the COMPAS algorithm [@aif360-oct-2018]. Fairness metrics are mathematical measures of whether an algorithm treats members of different groups (such as racial or gender groups) equally. An algorithm has no understanding of the historical oppression of certain groups and how such bias is baked into the data on which the algorithm is trained. Thus, fairness metrics provide a method of evaluating an algorithm’s level of bias towards or against the unprivileged group versus the privileged group. We researched the definitions and applications of different fairness metrics [@ashokan2021fairness] to determine which metric would be most appropriate for our project. To begin, we implemented a logistic regression model predicting recidivism using the defendant data. This analyzes the baseline values without any bias mitigation. We use logistic regression, as it is the easiest model to interpret in the given context.
+The AIF360 toolkit contains various group and individual fairness metrics as well as pre-processing, in-processing, and post-processing algorithms that we use to debias the COMPAS algorithm [@aif360-oct-2018]. Fairness metrics are mathematical measures of whether an algorithm treats members of different groups (such as racial or gender groups) equally. An algorithm has no understanding of the historical oppression of certain groups and how such bias is baked into the data on which the algorithm is trained. Thus, fairness metrics provide a method of evaluating an algorithm’s level of bias towards or against the unprivileged group versus the privileged group. We researched the definitions and applications of different fairness metrics [@ashokan2021fairness] to determine which metric would be most appropriate for our project. To begin, we implemented a logistic regression model predicting recidivism using the defendant data. This analyzes the baseline values without any bias mitigation. We use logistic regression, as it is the easiest model to interpret in the given context.
 
-Fairness is subjective; one person might consider an algorithm fair if groups are given the same treatment, while someone else might only consider the algorithm fair if groups as a whole receive the same outcomes. In our research we choose to use the definition of group fairness as our definition for assessing fairness in the processing approach. Group fairness metrics take into account the attributes of a whole group as opposed to just one individual in the group, allowing us to represent systemic issues. In general, group fairness metrics require that the unprivileged group is treated similarly to the privileged group, whereas individual fairness metrics require individuals to be treated consistently [@kypraiou_what_2021]. Group and individual metrics work in opposition of one another, meaning that when group fairness improves, individual fairness gets worse [@kypraiou_what_2021]. We chose the following four group fairness metrics to evaluate our models. 
+Fairness is subjective; one person might consider an algorithm fair if groups are given the same treatment, while someone else might only consider the algorithm fair if groups as a whole receive the same outcomes. In our research we choose to use the definition of group fairness as our definition for assessing fairness in the processing approaches. Group fairness metrics take into account the attributes of a whole group as opposed to just one individual in the group, allowing us to represent systemic issues. In general, group fairness metrics require that the unprivileged group is treated similarly to the privileged group, whereas individual fairness metrics require individuals to be treated consistently [@kypraiou_what_2021]. Group and individual metrics work in opposition of one another, meaning that when group fairness improves, individual fairness gets worse [@kypraiou_what_2021]. We chose the following four group fairness metrics to evaluate our models. 
 
 ## Statistical Parity Difference
 This metric measures the difference between privileged and marginalized groups’ likelihood to get a particular outcome. The ideal value of this metric is 0. Fairness for this metric is between -0.1 and 0.1. A negative value means there is higher benefit for the privileged group (in this case, white defendants).
@@ -133,7 +132,7 @@ Pre-processing refers to mitigating bias within the training data, and it is the
 
 In-processing mitigates bias in classifiers while building a model. A classifier “is an algorithm that automatically orders or categorizes data into one or more sets” [@baxter2021AI]. The in-processing technique we use is the prejudice remover algorithm, which accounts for the fairness metric as part of the input and returns a classifier optimized by that particular metric. In order to do this, we first needed to convert our data frame into a data type called a BinaryLabelDataset.
 
-The prejudice remover is a method for reducing indirect prejudice (i.e., how COMPAS is racially biased because it uses proxy variables for race). The prejudice remover implements two different regularizers, one to avoid overfitting and one to enforce fair classification [@kamishima2012fairness]. The prejudice remover regularizer works by minimizing the prejudice index, a mathematical equation for quantifying fairness defined by @kamishima2012fairness. This in turn enforces a classifier’s independence from sensitive information (e.g., race). Similarly to pre-processing, we compared the results of our in-processing methods with both the baseline and the pre-processing model to gauge which method so far has the better group fairness.
+The prejudice remover is a method for reducing indirect prejudice (i.e., how COMPAS is racially biased because it uses proxy variables for race). The prejudice remover implements two different regularizers, one to avoid overfitting and one to enforce fair classification [@kamishima2012fairness]. The prejudice remover regularizer works by minimizing the prejudice index, a mathematical equation for quantifying fairness defined by @kamishima2012fairness. This in turn enforces a classifier’s independence from sensitive information (e.g., race). Similar to pre-processing, we compare the results of our in-processing methods with both the baseline and the pre-processing model to gauge which method so far has the better group fairness.
 
 ## Post-Processing
 
@@ -237,7 +236,10 @@ Throughout this project, we endeavored to debias an incredibly powerful algorith
 
 We would like to thank our sponsor organization Women At The Table and Professor Ben Baumer for introducing us to this incredibly meaningful work, supporting us, and answering the many questions we had throughout this semester-long project. We would specifically like to thank Sofia Kypraiou for her mentorship and patience throughout this process. 
 
-This document contains 4793 words
+```{r word count, include=F}
+wordcountaddin:::text_stats()
+```
+
 
 # Bibliography
 
