@@ -387,7 +387,11 @@ provide a method of evaluating an algorithm's level of bias towards or
 against the unprivileged group versus the privileged group. We
 researched the definitions and applications of different fairness
 metrics \citep{ashokan2021fairness} to determine which metric would be
-most appropriate for our project.
+most appropriate for our project. To begin, we implemented a logistic
+regression model predicting recidivism using the defendant data. This
+analyzes the baseline values without any bias mitigation. We use
+logistic regression, as it is the easiest model to interpret in the
+given context.
 
 Fairness is subjective; one person might consider an algorithm fair if
 groups are given the same treatment, while someone else might only
@@ -492,11 +496,9 @@ protected attribute and outcome such that bias is removed from the
 training dataset. The weights are based on frequency counts. However as
 this technique is designed to work only with classifiers that can handle
 row-level weights, this may limit your modeling options''
-\citep{Ronaghan2019AI}. We used a logistic regression model for this
-algorithm, as it is the easiest to interpret in the given context. After
-running the fairness metrics using the pre-processing algorithm, we were
-able to compare our results to the baseline metrics from the previous
-section.
+\citep{Ronaghan2019AI}. After running the fairness metrics using the
+pre-processing algorithm, we were able to compare our results to the
+baseline metrics from the previous section.
 
 \hypertarget{in-processing}{%
 \subsection{In-Processing}\label{in-processing}}
